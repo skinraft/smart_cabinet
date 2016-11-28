@@ -1,10 +1,10 @@
 package com.sicao.smartwine;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     // Used to load the 'native-lib' library on application startup.
     static {

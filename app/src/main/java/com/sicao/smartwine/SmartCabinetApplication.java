@@ -17,6 +17,10 @@ public class SmartCabinetApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+//        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+//        }
+
         GizWifiSDK.sharedInstance().setListener(new GizWifiSDKListener() {
             @Override
             public void didNotifyEvent(GizEventType eventType, Object eventSource, GizWifiErrorCode eventID, String eventMessage) {
