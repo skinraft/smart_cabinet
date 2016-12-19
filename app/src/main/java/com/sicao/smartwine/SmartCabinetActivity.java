@@ -8,7 +8,11 @@ import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 
+import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_SDK_DEVICE_CONFIG_IS_RUNNING;
+
 public class SmartCabinetActivity extends Activity {
+
+    protected SmartCabinetApi xApi;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -19,6 +23,7 @@ public class SmartCabinetActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        xApi = new SmartCabinetApi();
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
@@ -55,6 +60,27 @@ public class SmartCabinetActivity extends Activity {
                 }
             }
 
+            @Override
+            public void didChangeUserPassword(GizWifiErrorCode result) {
+                //重置密码，修改密码
+                if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
+                    // 修改成功
+                } else {
+                    // 修改失败
+                }
+            }
+            @Override
+            public  void didSetDeviceOnboarding (GizWifiErrorCode result, String mac, String did, String productKey) {
+                //等待配置完成或超时，回调配置完成接口
+                if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
+                    // 配置成功
+                } else if (result == GIZ_SDK_DEVICE_CONFIG_IS_RUNNING) {
+                    // 正在配置
+                } else {
+                    // 配置失败
+                }
+            }
+
         });
 
     }
@@ -66,6 +92,7 @@ public class SmartCabinetActivity extends Activity {
     public native String stringFromJNI();
 
     /**
+     * 获取appSecret
      *
      * @return appSecret
      */
