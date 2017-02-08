@@ -1,7 +1,9 @@
 package com.sicao.smartwine;
 
 import android.app.Application;
-import android.util.Log;
+import android.content.Context;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
@@ -9,44 +11,49 @@ import com.gizwits.gizwifisdk.enumration.GizEventType;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 
-/**
- * Created by techssd on 2016/11/28.
- */
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SmartCabinetApplication extends Application {
-    static {
-        System.loadLibrary("native-lib");
-    }
-
     /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
+     * 接口使用的线程池
      */
-    public native String appIDFromJNI();
+    public static ExecutorService mThreadPool = Executors
+            .newCachedThreadPool();
+    /**
+     * 窗口管理
+     */
+    private WindowManager mManager = null;
+    public static DisplayMetrics metrics = null;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        // 初始化屏幕参数
+        mManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        metrics = new DisplayMetrics();
+        mManager.getDefaultDisplay().getMetrics(metrics);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
         GizWifiSDK.sharedInstance().setListener(new GizWifiSDKListener() {
-
             @Override
             public void didNotifyEvent(GizEventType eventType, Object eventSource, GizWifiErrorCode eventID, String eventMessage) {
                 if (eventType == GizEventType.GizEventSDK) {
                     // SDK的事件通知
-                    Log.i("huahua", "SDK event happened: " + eventID + ", " + eventMessage);
+                    SmartSicaoApi.log("SDK event happened: " + eventID + ", " + eventMessage);
                 } else if (eventType == GizEventType.GizEventDevice) {
                     // 设备连接断开时可能产生的通知
                     GizWifiDevice mDevice = (GizWifiDevice) eventSource;
-                    Log.i("huahua", "device mac: " + mDevice.getMacAddress() + " disconnect caused by eventID: " + eventID + ", eventMessage: " + eventMessage);
+                    SmartSicaoApi.log("device mac: " + mDevice.getMacAddress() + " disconnect caused by eventID: " + eventID + ", eventMessage: " + eventMessage);
                 } else if (eventType == GizEventType.GizEventM2MService) {
                     // M2M服务返回的异常通知
-                    Log.i("huahua", "M2M domain " + (String) eventSource + " exception happened, eventID: " + eventID + ", eventMessage: " + eventMessage);
+                    SmartSicaoApi.log("M2M domain " + eventSource + " exception happened, eventID: " + eventID + ", eventMessage: " + eventMessage);
                 } else if (eventType == GizEventType.GizEventToken) {
                     // token失效通知
-                    Log.i("huahua", "token " + (String) eventSource + " expired: " + eventMessage);
+                    SmartSicaoApi.log("token " + eventSource + " expired: " + eventMessage);
                 }
             }
         });
-        GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), appIDFromJNI());
+        GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), "57368a09e0b847a39e40469f88c06782");
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

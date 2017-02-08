@@ -1,4 +1,4 @@
-package com.sicao.smartwine.xshare;
+package com.sicao.smartwine.xdata;
 
 import android.content.Context;
 import android.content.SharedPreferences;

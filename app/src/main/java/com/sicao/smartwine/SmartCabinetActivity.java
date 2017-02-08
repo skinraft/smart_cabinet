@@ -1,8 +1,17 @@
 package com.sicao.smartwine;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Message;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,33 +20,58 @@ import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
-import com.sicao.smartwine.xshare.XUserData;
+import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xhttp.XSmartCabinetListener;
+import com.sicao.smartwine.xhttp.XSmartCabinetReceiver;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_OPENAPI_USERNAME_UNAVALIABLE;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_SDK_DEVICE_CONFIG_IS_RUNNING;
 
-public class SmartCabinetActivity extends Activity {
-
-    protected SmartCabinetApi xApi;
+public abstract class SmartCabinetActivity extends Activity implements XSmartCabinetListener{
+    //硬件部分API
+    protected SmartCabinetApi xCabinetApi;
     protected XDeviceListener mBandListener;
-
+    //非硬件部分API
+    protected SmartSicaoApi xSicaoApi;
+    //内容布局
+    RelativeLayout mContent;
+    //进度框
+    private View mProgressView;
+    //顶部右侧按钮
+    protected TextView mRightText;
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
     }
+    /**
+     * 监控几个系统广播,用于更新页面设备信息
+     */
+    private XSmartCabinetReceiver xUpdateSmartCabinetReceiver;
+
+    /**
+     * 设置填充的布局ID
+     *
+     * @return
+     */
+    protected abstract int setView();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        xApi = new SmartCabinetApi();
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        xSicaoApi = new SmartSicaoApi();
         mBandListener = new XDeviceListener();
-        // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        xCabinetApi = new SmartCabinetApi();
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        mContent = (RelativeLayout) findViewById(R.id.base_content_layout);
+        mRightText= (TextView) findViewById(R.id.base_top_right_icon);
+        mProgressView = findViewById(R.id.login_progress);
+        mContent.addView(View.inflate(this, setView(), null));
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //每次启动activity都要注册一次sdk监听器，保证sdk状态能正确回调
         GizWifiSDK.sharedInstance().setListener(new GizWifiSDKListener() {
             @Override
@@ -45,8 +79,11 @@ public class SmartCabinetActivity extends Activity {
                 //用户注册回调
                 if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                     // 注册成功
-                    XUserData.setUID(SmartCabinetActivity.this, uid);
-                    XUserData.setTOKEN(SmartCabinetActivity.this, token);
+                    XUserData.saveCabinetUid(SmartCabinetActivity.this, uid);
+                    XUserData.saveCabinetToken(SmartCabinetActivity.this, token);
+                    registerSuccess();
+                } else if (result == GIZ_OPENAPI_USERNAME_UNAVALIABLE) {
+                    //用户名不可用----此处处理为已经注册过该用户名应转为登录
                     registerSuccess();
                 } else {
                     // 注册失败
@@ -61,7 +98,7 @@ public class SmartCabinetActivity extends Activity {
                 if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                     // 登录成功
                     XUserData.setUID(SmartCabinetActivity.this, uid);
-                    XUserData.setTOKEN(SmartCabinetActivity.this, token);
+                    XUserData.saveToken(SmartCabinetActivity.this, token);
                     loginSuccess();
                 } else {
                     // 登录失败
@@ -140,9 +177,35 @@ public class SmartCabinetActivity extends Activity {
                 }
             }
         });
-
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //注册监听广播
+        xUpdateSmartCabinetReceiver=new XSmartCabinetReceiver();
+        xUpdateSmartCabinetReceiver.setSmartCabinetListener(this);
+        IntentFilter filter=new IntentFilter();
+        // 开机广播
+        filter.addAction(Intent.ACTION_BOOT_COMPLETED);
+        // 网络状态发生变化
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        // 屏幕打开
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        //时间广播
+        filter.addAction(Intent.ACTION_TIME_TICK);
+        registerReceiver(xUpdateSmartCabinetReceiver,filter);
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(xUpdateSmartCabinetReceiver);
+    }
+
+    @Override
+    public void update(boolean update, String action) {
+
+    }
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
@@ -198,7 +261,7 @@ public class SmartCabinetActivity extends Activity {
             //接收设备状态结果
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 // 数据解析与3.5.3相同
-                 // 已定义的设备数据点，有布尔、数值和枚举型数据
+                // 已定义的设备数据点，有布尔、数值和枚举型数据
                 if (dataMap.get("data") != null) {
                     ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) dataMap.get("data");
                     // 普通数据点，打印对应的key和value
@@ -265,5 +328,41 @@ public class SmartCabinetActivity extends Activity {
     }
 
     public void setSubscribeError(GizWifiErrorCode result) {
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mContent.setVisibility(show ? View.GONE : View.VISIBLE);
+            mContent.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mContent.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mContent.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 }

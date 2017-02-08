@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sicao.smartwine">
+          package="com.sicao.smartwine">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.READ_PROFILE"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
         android:name=".SmartCabinetApplication"
@@ -18,13 +23,49 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <activity android:name=".SmartCabinetActivity">
+        <activity android:name=".xuser.XIndexActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- 设置渠道信息 -->
+        <meta-data
+            android:name="CHANNEL"
+            android:value="YYB"/>
+        <!-- 更新校验码的服务 -->
+        <service android:name=".xhttp.XApiService"/>
+
+        <!-- 注册页面 -->
+        <activity
+            android:name=".xuser.RegisterActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait">
+        </activity>
+        <!-- 主页面 -->
+        <activity
+            android:name=".xdevice.SmartCabinetDeviceInfoActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait">
+        </activity>
+        <!-- 设备列表页面 -->
+        <activity
+            android:name=".xdevice.SmartCabinetDeviceListActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"/>
+
+        <receiver
+            android:name=".xhttp.XSmartCabinetReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SmartCabinetApi {
     /***
-     * 注册用户
+     * 手机号注册用户
      *
      * @param phone    用户手机号
      * @param password 密码
@@ -29,7 +29,7 @@ public class SmartCabinetApi {
     }
 
     /***
-     * 注册用户
+     * 普通帐号注册用户
      *
      * @param username 用户登录名
      * @param password 用户密码
@@ -69,6 +69,15 @@ public class SmartCabinetApi {
      */
     public void changePassword(String token, String oldPassword, String newPassword) {
         GizWifiSDK.sharedInstance().changeUserPassword(token, oldPassword, newPassword);
+    }
+
+    /***
+     * 帐号密码登录
+     * @param username
+     * @param password
+     */
+    public void login(String username,String password){
+        GizWifiSDK.sharedInstance().userLogin(username, password);
     }
 
     /***

@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="actionBarColor">#ad1c79</color>
+    <color name="write">#FFFFFF</color>
+    <color name="get_code_color">#E0494A</color>
 </resources>
