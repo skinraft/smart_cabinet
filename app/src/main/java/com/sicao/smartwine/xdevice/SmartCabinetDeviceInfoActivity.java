@@ -23,6 +23,11 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {

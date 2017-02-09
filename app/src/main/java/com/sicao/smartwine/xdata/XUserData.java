@@ -114,10 +114,36 @@ public class XUserData {
      * 当前主面板显示的设备ID
      */
     public static String CURRENT_CABINET_ID = "CURRENT_CABINET_ID";
+
     public static void setCurrentCabinetId(Context context, String currentCabinetId) {
         XShareps.putString(context, CURRENT_CABINET_ID, CURRENT_CABINET_ID, currentCabinetId);
     }
+
     public static String getCurrentCabinetId(Context context) {
         return XShareps.getString(context, CURRENT_CABINET_ID, CURRENT_CABINET_ID);
+    }
+
+
+    /**
+     * 用户密码
+     */
+    public static String PASSWORD = "PASSWORD";
+
+    public static void setPassword(Context context, String password) {
+        XShareps.putString(context, PASSWORD, PASSWORD, password);
+    }
+    public static String getPassword(Context context) {
+        return XShareps.getString(context, PASSWORD, PASSWORD);
+    }
+    /**
+     * 用户名
+     */
+    public static String USERNAME = "USERNAME";
+
+    public static void setUserName(Context context, String username) {
+        XShareps.putString(context, USERNAME, USERNAME, username);
+    }
+    public static String getUserName(Context context) {
+        return XShareps.getString(context, USERNAME, USERNAME);
     }
 }

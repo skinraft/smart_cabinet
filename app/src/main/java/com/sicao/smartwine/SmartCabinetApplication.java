@@ -34,25 +34,6 @@ public class SmartCabinetApplication extends Application {
         metrics = new DisplayMetrics();
         mManager.getDefaultDisplay().getMetrics(metrics);
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        GizWifiSDK.sharedInstance().setListener(new GizWifiSDKListener() {
-            @Override
-            public void didNotifyEvent(GizEventType eventType, Object eventSource, GizWifiErrorCode eventID, String eventMessage) {
-                if (eventType == GizEventType.GizEventSDK) {
-                    // SDK的事件通知
-                    SmartSicaoApi.log("SDK event happened: " + eventID + ", " + eventMessage);
-                } else if (eventType == GizEventType.GizEventDevice) {
-                    // 设备连接断开时可能产生的通知
-                    GizWifiDevice mDevice = (GizWifiDevice) eventSource;
-                    SmartSicaoApi.log("device mac: " + mDevice.getMacAddress() + " disconnect caused by eventID: " + eventID + ", eventMessage: " + eventMessage);
-                } else if (eventType == GizEventType.GizEventM2MService) {
-                    // M2M服务返回的异常通知
-                    SmartSicaoApi.log("M2M domain " + eventSource + " exception happened, eventID: " + eventID + ", eventMessage: " + eventMessage);
-                } else if (eventType == GizEventType.GizEventToken) {
-                    // token失效通知
-                    SmartSicaoApi.log("token " + eventSource + " expired: " + eventMessage);
-                }
-            }
-        });
         GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), "57368a09e0b847a39e40469f88c06782");
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }

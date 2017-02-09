@@ -52,7 +52,7 @@ public class XApiService extends Service {
         public void run() {
             //耗时业务处理
             while (time>0){
-                Log.e("lili","更新倒计时剩余-----"+time+"秒-----校验码使用次数-----"+ XUserData.getPutaojiHttpParamsUseCount(XApiService.this));
+                SmartSicaoApi.log("更新倒计时剩余-----"+time+"秒-----校验码使用次数-----"+ XUserData.getPutaojiHttpParamsUseCount(XApiService.this));
                 time--;
                 //检测校验码使用次数 ，当校验码使用次数超过90时更新校验码，1分钟倒计准时更新校验码
                 if (time==0||XUserData.getPutaojiHttpParamsUseCount(XApiService.this)>=90){

@@ -109,7 +109,7 @@ public class SmartSicaoApi implements XApiException {
         });
     }
 
-    public void login(final Context context,String username,String password,final XApiCallBack xApiCallBack){
+    public void login(final Context context, final String username, final String password, final XApiCallBack xApiCallBack){
         String url = configParamsUrl("user/login?mobile="+username+"&value="+password+"&type=2", context);
         XHttpUtil http = new XHttpUtil(context);
         http.get(url, new XCallBack() {
@@ -121,6 +121,8 @@ public class SmartSicaoApi implements XApiException {
                     if (status(object)) {
                         XUserData.saveToken(context, object.getJSONObject("data").getString("user_token"));
                         XUserData.setUID(context, object.getJSONObject("data").getString("uid"));
+                        XUserData.setPassword(context,password);
+                        XUserData.setUserName(context,username);
                         if (null != xApiCallBack) {
                             xApiCallBack.response("success");
                         }

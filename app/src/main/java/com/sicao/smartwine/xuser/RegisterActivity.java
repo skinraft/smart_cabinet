@@ -59,6 +59,14 @@ public class RegisterActivity extends SmartCabinetActivity {
             }
         });
         mLoginFormView = findViewById(R.id.login_form);
+        //登录记录
+        if (!"".equals(XUserData.getCabinetUid(this))){
+            mEmailView.setText(XUserData.getUserName(this));
+            mPasswordView.setText(XUserData.getPassword(this));
+            //执行登录
+            showProgress(true);
+            xCabinetApi.login("sicao-" + XUserData.getUID(RegisterActivity.this),XUserData.getPassword(this));
+        }
     }
 
     /**

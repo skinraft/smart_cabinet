@@ -60,12 +60,21 @@
             android:exported="false"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait"/>
-
+         <!--接收系统网络和时间的广播，用于被动回调刷新设备信息函数以达到及时更新设备信息-->
         <receiver
             android:name=".xhttp.XSmartCabinetReceiver"
             android:enabled="true"
             android:exported="true">
         </receiver>
+        <!--设备配置页面 -->
+        <activity android:name=".xdevice.SmartCabinetConfigActivity"
+                  android:configChanges="orientation|keyboard"
+                  android:exported="false"
+                  android:label="@string/title_activity_register"
+                  android:screenOrientation="portrait"
+            >
+
+        </activity>
     </application>
 
 </manifest>

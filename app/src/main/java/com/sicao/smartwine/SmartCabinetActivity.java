@@ -17,20 +17,20 @@ import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
+import com.gizwits.gizwifisdk.enumration.GizEventType;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XSmartCabinetListener;
 import com.sicao.smartwine.xhttp.XSmartCabinetReceiver;
-
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_OPENAPI_USERNAME_UNAVALIABLE;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_SDK_DEVICE_CONFIG_IS_RUNNING;
 
-public abstract class SmartCabinetActivity extends Activity implements XSmartCabinetListener{
+public abstract class SmartCabinetActivity extends Activity implements XSmartCabinetListener {
     //硬件部分API
     protected SmartCabinetApi xCabinetApi;
     protected XDeviceListener mBandListener;
@@ -46,6 +46,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
     static {
         System.loadLibrary("native-lib");
     }
+
     /**
      * 监控几个系统广播,用于更新页面设备信息
      */
@@ -68,12 +69,34 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
         xCabinetApi = new SmartCabinetApi();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         mContent = (RelativeLayout) findViewById(R.id.base_content_layout);
-        mRightText= (TextView) findViewById(R.id.base_top_right_icon);
+        mRightText = (TextView) findViewById(R.id.base_top_right_icon);
         mProgressView = findViewById(R.id.login_progress);
         mContent.addView(View.inflate(this, setView(), null));
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //每次启动activity都要注册一次sdk监听器，保证sdk状态能正确回调
         GizWifiSDK.sharedInstance().setListener(new GizWifiSDKListener() {
+            @Override
+            public void didNotifyEvent(GizEventType eventType, Object eventSource, GizWifiErrorCode eventID, String eventMessage) {
+                if (eventType == GizEventType.GizEventSDK) {
+                    // SDK的事件通知
+                    SmartSicaoApi.log("SDK event happened: " + eventID + ", " + eventMessage);
+                } else if (eventType == GizEventType.GizEventDevice) {
+                    // 设备连接断开时可能产生的通知
+                    GizWifiDevice mDevice = (GizWifiDevice) eventSource;
+                    SmartSicaoApi.log("device mac: " + mDevice.getMacAddress() + " disconnect caused by eventID: " + eventID + ", eventMessage: " + eventMessage);
+                } else if (eventType == GizEventType.GizEventM2MService) {
+                    // M2M服务返回的异常通知
+                    SmartSicaoApi.log("M2M domain " + eventSource + " exception happened, eventID: " + eventID + ", eventMessage: " + eventMessage);
+                } else if (eventType == GizEventType.GizEventToken) {
+                    // token失效通知
+                    SmartSicaoApi.log("token " + eventSource + " expired: " + eventMessage);
+                    //需要重新登录
+                    if (!"".equals(XUserData.getCabinetUid(SmartCabinetActivity.this))) {
+                        xCabinetApi.login("sicao-" + XUserData.getUID(SmartCabinetActivity.this), XUserData.getPassword(SmartCabinetActivity.this));
+                        return;
+                    }
+                }
+            }
             @Override
             public void didRegisterUser(GizWifiErrorCode result, String uid, String token) {
                 //用户注册回调
@@ -97,8 +120,8 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
                 //用户登录回调
                 if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                     // 登录成功
-                    XUserData.setUID(SmartCabinetActivity.this, uid);
-                    XUserData.saveToken(SmartCabinetActivity.this, token);
+                    XUserData.saveCabinetUid(SmartCabinetActivity.this, uid);
+                    XUserData.saveCabinetToken(SmartCabinetActivity.this, token);
                     loginSuccess();
                 } else {
                     // 登录失败
@@ -149,10 +172,12 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
             public void didDiscovered(GizWifiErrorCode result, List<GizWifiDevice> deviceList) {
                 // 提示错误原因
                 if (result != GizWifiErrorCode.GIZ_SDK_SUCCESS) {
-
+                    SmartSicaoApi.log("result: " + result.name());
+                    return;
                 }
                 // 显示变化后的设备列表
-
+                SmartSicaoApi.log("discovered deviceList: " + deviceList);
+                refushDeviceList(deviceList);
             }
 
             @Override
@@ -179,20 +204,18 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
         });
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //注册监听广播
-        xUpdateSmartCabinetReceiver=new XSmartCabinetReceiver();
+        xUpdateSmartCabinetReceiver = new XSmartCabinetReceiver();
         xUpdateSmartCabinetReceiver.setSmartCabinetListener(this);
-        IntentFilter filter=new IntentFilter();
+        IntentFilter filter = new IntentFilter();
         // 开机广播
         filter.addAction(Intent.ACTION_BOOT_COMPLETED);
         // 网络状态发生变化
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         // 屏幕打开
         filter.addAction(Intent.ACTION_SCREEN_ON);
         //时间广播
         filter.addAction(Intent.ACTION_TIME_TICK);
-        registerReceiver(xUpdateSmartCabinetReceiver,filter);
+        registerReceiver(xUpdateSmartCabinetReceiver, filter);
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
@@ -204,20 +227,17 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
 
     @Override
     public void update(boolean update, String action) {
-
     }
+
     /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
+     * getProductKey
      */
-    public native String stringFromJNI();
+    public native String getProductKey();
 
     /**
      * 获取appSecret
-     *
-     * @return appSecret
      */
-    public native String appSecretFromJNI();
+    public native String getAppSecret();
 
 
     class XDeviceListener extends GizWifiDeviceListener {
@@ -328,6 +348,9 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
     }
 
     public void setSubscribeError(GizWifiErrorCode result) {
+    }
+
+    public void refushDeviceList(List<GizWifiDevice> deviceList) {
     }
 
     /**

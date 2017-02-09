@@ -10,7 +10,7 @@ public class XConfig {
     /*
      * API环境(默认为正式环境)
      */
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
     /*
      * API版本
      */
