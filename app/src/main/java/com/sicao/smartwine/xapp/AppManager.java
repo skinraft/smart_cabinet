@@ -15,6 +15,9 @@ import android.text.TextUtils;
 import com.sicao.smartwine.SmartSicaoApi;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.util.List;
 
 /***
@@ -203,5 +206,30 @@ public class AppManager {
             }
         }
         return false;
+    }
+
+    /***
+     * 获取手机MAC地址
+     * @return
+     */
+    public static String getMac() {
+        String macSerial = "";
+        try {
+            Process pp = Runtime.getRuntime().exec(
+                    "cat /sys/class/net/wlan0/address");
+            InputStreamReader ir = new InputStreamReader(pp.getInputStream());
+            LineNumberReader input = new LineNumberReader(ir);
+
+            String line;
+            while ((line = input.readLine()) != null) {
+                macSerial += line.trim();
+            }
+
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return macSerial;
     }
 }

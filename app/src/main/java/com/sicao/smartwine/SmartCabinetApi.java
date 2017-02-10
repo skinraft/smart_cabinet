@@ -143,6 +143,15 @@ public class SmartCabinetApi {
     }
 
     /***
+     * 绑定扫描二维码的设备
+     * @param uid  用户UID
+     * @param token  用户token
+     * @param QRContent  二维码值
+     */
+    public void bindDeviceByQRCode(String uid, String token, String QRContent) {
+        GizWifiSDK.sharedInstance().bindDeviceByQRCode(uid, token, QRContent);
+    }
+    /***
      * 设备解绑
      * 已绑定的设备可以解绑，解绑需要APP调用接口完成操作，SDK不支持自动解绑。
      * 对于已订阅的设备，解绑成功时会被解除订阅，同时断开设备连接，设备状态也不会再主动上报了。

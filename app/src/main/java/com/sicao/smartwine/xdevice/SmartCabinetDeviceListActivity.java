@@ -14,10 +14,12 @@ import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetDeviceAdapter;
+import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenu;
 import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenuCreator;
 import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenuItem;
 import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenuListView;
+import com.sicao.smartwine.xwidget.zxing.ActivityCapture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +48,8 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         initDate(xCabinetApi.getCacheDeviceList());
     }
 
-    public void initDate(List<GizWifiDevice> deviceList){
-        mListData=deviceList;
+    public void initDate(List<GizWifiDevice> deviceList) {
+        mListData = deviceList;
         mAdapter.update(mListData);
     }
 
@@ -78,7 +80,8 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         mRightText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                  startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetConfigActivity.class));
+//                startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetConfigActivity.class));
+                startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
                 finish();
             }
         });
@@ -101,6 +104,14 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             @Override
             public void onMenuItemClick(final int position, SwipeMenu menu, int index) {
                 //"设备解绑后您将不再拥有该设备,请谨慎操作!"
+                GizWifiDevice device = mListData.get(position);
+                if (device.isBind()) {
+                    //已经绑定的设备才可以处理解绑动作
+                    unBindDevice(device);
+                } else {
+                    //表逗我，没绑定解绑你妹哦
+                    Toast.makeText(SmartCabinetDeviceListActivity.this, "亲,您还没有绑定该设备哦", Toast.LENGTH_LONG).show();
+                }
             }
         });
         //Item的点击事件
@@ -116,13 +127,37 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         });
     }
 
+    /***
+     * 解绑设备
+     *
+     * @param device
+     */
+    public void unBindDevice(final GizWifiDevice device) {
+        final XWarnDialog dialog = new XWarnDialog(SmartCabinetDeviceListActivity.this, "设备解绑后您将不再拥有该设备,请谨慎操作!");
+        dialog.show();
+        dialog.setOnListener(new XWarnDialog.OnClickListener() {
+            @Override
+            public void makeSure() {
+                dialog.dismiss();
+                showProgress(true);
+                xCabinetApi.unBindDevice(XUserData.getCabinetUid(SmartCabinetDeviceListActivity.this), XUserData.getCabinetToken(SmartCabinetDeviceListActivity.this), device.getDid());
+            }
+            @Override
+            public void cancle() {
+                dialog.dismiss();
+            }
+        });
+    }
+
+
     @Override
     public void setSubscribeSuccess(GizWifiDevice device, boolean isSubscribed) {
         super.setSubscribeSuccess(device, isSubscribed);
         /***
          * 订阅OK
          */
-        finish();
+        if (isSubscribed)
+            finish();
     }
 
     @Override
@@ -131,16 +166,16 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         /***
          * 订阅失败
          */
-        Toast.makeText(this,result.toString(),Toast.LENGTH_LONG).show();
+        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void bindSuccess(String did) {
         super.bindSuccess(did);
         /***
-         * 绑定成功，刷新设备列表
+         * 绑定成功，
          */
-        initDate(xCabinetApi.getCacheDeviceList());
+        startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
     }
 
     @Override
@@ -149,7 +184,30 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         /***
          * 绑定失败
          */
-        Toast.makeText(this,result.toString(),Toast.LENGTH_LONG).show();
+        showProgress(false);
+        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
+        startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
+    }
+
+    @Override
+    public void unbindSuccess() {
+        super.unbindSuccess();
+        /***
+         * 解绑成功
+         */
+        showProgress(false);
+        startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "3"));
+    }
+
+    @Override
+    public void unbindError(GizWifiErrorCode result) {
+        super.unbindError(result);
+        /***
+         * 解绑失败
+         */
+        showProgress(false);
+        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
+        startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "4"));
     }
 
     private int dp2px(int dp) {
