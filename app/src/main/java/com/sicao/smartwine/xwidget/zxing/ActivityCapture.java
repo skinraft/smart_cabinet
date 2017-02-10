@@ -37,6 +37,8 @@ import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xdevice.SmartCabinetBindStatusActivity;
+import com.sicao.smartwine.xdevice.SmartCabinetDeviceListActivity;
 import com.sicao.smartwine.xwidget.zxing.camera.CameraManager;
 import com.sicao.smartwine.xwidget.zxing.decoding.CaptureActivityHandler;
 import com.sicao.smartwine.xwidget.zxing.decoding.InactivityTimer;
@@ -286,31 +288,28 @@ public class ActivityCapture extends SmartCabinetActivity implements Callback {
          * http://www.gizwits.com?product_key=cd688469b42446e99a6130c9550c9ee7&did=D2vcp7K6LnqMZK9SFBZr6i&passcode=123456
          */
         SmartSicaoApi.log(resultString);
-        if (resultString.contains("product_key")&&resultString.contains("did")&&resultString.contains("passcode")){
-            xCabinetApi.bindDeviceByQRCode(XUserData.getCabinetUid(this),XUserData.getCabinetToken(this),resultString);
-        }else{
+        if (resultString.contains("product_key=") && resultString.contains("did=") && resultString.contains("passcode=")) {
+            showProgress(true);
+            GizWifiSDK.sharedInstance().bindDevice(XUserData.getCabinetUid(this), XUserData.getCabinetToken(this), getParamFomeUrl(resultString, "did"),
+                    getParamFomeUrl(resultString, "passcode"), null);
+//          xCabinetApi.bindDeviceByQRCode(XUserData.getCabinetUid(this),XUserData.getCabinetToken(this),resultString);
+        } else {
             finish();
-            Toast.makeText(this,"抱歉,无法识别该二维码",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "抱歉,无法识别该二维码", Toast.LENGTH_LONG).show();
         }
-
     }
+
     @Override
     public void bindSuccess(String did) {
         super.bindSuccess(did);
-        /***
-         * 绑定成功，
+        /**
+         * 绑定OK
          */
+        showProgress(false);
+        Toast.makeText(this, "操作成功!", Toast.LENGTH_LONG).show();
+        XUserData.setCurrentCabinetId(this,did);
+        startActivity(new Intent(ActivityCapture.this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
         finish();
-        Toast.makeText(this,"绑定OK",Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void bindError(GizWifiErrorCode result) {
-        super.bindError(result);
-        /***
-         * 绑定失败
-         */
-        Toast.makeText(this,result.toString(),Toast.LENGTH_LONG).show();
     }
     private void initCamera(SurfaceHolder surfaceHolder) {
         try {
@@ -435,5 +434,19 @@ public class ActivityCapture extends SmartCabinetActivity implements Callback {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
         return BitmapFactory.decodeStream(isBm, null, opt);
+    }
+
+    private String getParamFomeUrl(String url, String param) {
+        String product_key = "";
+        int startindex = url.indexOf(param + "=");
+        startindex += (param.length() + 1);
+        String subString = url.substring(startindex);
+        int endindex = subString.indexOf("&");
+        if (endindex == -1) {
+            product_key = subString;
+        } else {
+            product_key = subString.substring(0, endindex);
+        }
+        return product_key;
     }
 }

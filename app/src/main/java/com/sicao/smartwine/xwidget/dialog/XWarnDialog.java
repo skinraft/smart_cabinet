@@ -35,7 +35,10 @@ public class XWarnDialog extends Dialog implements OnClickListener {
         super(context, R.style.warndialog);
         init(context, message);
     }
-
+    public XWarnDialog(Context context) {
+        super(context, R.style.warndialog);
+        init(context, "");
+    }
     /**
      * li'mingqi 2014-10-15
      */
@@ -50,7 +53,9 @@ public class XWarnDialog extends Dialog implements OnClickListener {
         mMakeSure.setOnClickListener(this);
         mColse.setOnClickListener(this);
         mContent = (TextView) view.findViewById(R.id.content);
-        mContent.setText(message);
+        if (!"".equals(message) && null != message){
+            mContent.setText(message);
+        }
         mTitle = (TextView) view.findViewById(R.id.title);
         addContentView(view, new LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT));

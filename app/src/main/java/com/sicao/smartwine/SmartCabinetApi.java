@@ -1,11 +1,17 @@
 package com.sicao.smartwine;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizUserAccountType;
 import com.gizwits.gizwifisdk.enumration.GizWifiConfigureMode;
 import com.gizwits.gizwifisdk.enumration.GizWifiGAgentType;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
+import com.sicao.smartwine.xhttp.XConfig;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,10 +79,11 @@ public class SmartCabinetApi {
 
     /***
      * 帐号密码登录
+     *
      * @param username
      * @param password
      */
-    public void login(String username,String password){
+    public void login(String username, String password) {
         GizWifiSDK.sharedInstance().userLogin(username, password);
     }
 
@@ -144,13 +151,15 @@ public class SmartCabinetApi {
 
     /***
      * 绑定扫描二维码的设备
-     * @param uid  用户UID
-     * @param token  用户token
-     * @param QRContent  二维码值
+     *
+     * @param uid       用户UID
+     * @param token     用户token
+     * @param QRContent 二维码值
      */
     public void bindDeviceByQRCode(String uid, String token, String QRContent) {
         GizWifiSDK.sharedInstance().bindDeviceByQRCode(uid, token, QRContent);
     }
+
     /***
      * 设备解绑
      * 已绑定的设备可以解绑，解绑需要APP调用接口完成操作，SDK不支持自动解绑。
@@ -173,19 +182,20 @@ public class SmartCabinetApi {
      * @param your_uid                用户UID
      * @param your_token              用户token
      * @param your_deivce_mac         设备mac
-     * @param your_device_product_key 设备product_key
+     * @param your_product_key        product_key
      * @param your_product_secret     密钥
      */
-    public void bandDeviceByCode(String your_uid, String your_token, String your_deivce_mac, String your_device_product_key, String your_product_secret) {
-        GizWifiSDK.sharedInstance().bindRemoteDevice(your_uid, your_token, your_deivce_mac, your_device_product_key, your_product_secret);
+    public void bindDevice(String your_uid, String your_token, String your_deivce_mac, String your_product_key, String your_product_secret) {
+        GizWifiSDK.sharedInstance().bindRemoteDevice(your_uid, your_token, your_deivce_mac, your_product_key, your_product_secret);
     }
 
     /***
      * 获取设备硬件信息
      * 不订阅设备也可以获取到硬件信息。APP可以获取模块协议版本号，mcu固件版本号等硬件信息，但是只能在小循环下才能获取。
-     * @param device  设备
+     *
+     * @param device 设备
      */
-    public void getHardwareInfo(GizWifiDevice device){
+    public void getHardwareInfo(GizWifiDevice device) {
         device.getHardwareInfo();
     }
 
@@ -193,9 +203,10 @@ public class SmartCabinetApi {
      * 设备状态查询
      * 设备订阅变成可控状态后，APP可以查询设备状态。设备状态查询结果也通过didReceiveData回调返回，
      * 回调参数sn为0。回调参数dataMap为设备回复的状态。
+     *
      * @param device
      */
-    public  void getDeviceStatus(GizWifiDevice device){
+    public void getDeviceStatus(GizWifiDevice device) {
         device.getDeviceStatus();
     }
 
@@ -205,15 +216,14 @@ public class SmartCabinetApi {
      * APP下发操作指令时可以指定action，通过回调参数中的sn能够对应到下发指令是否发送成功了。
      * 但回调参数dataMap有可能是空字典，这取决于设备回复时是否携带当前数据点的状态。
      * 如果APP下发指令后只关心是否有设备状态上报，那么下发指令的action可填0，这时回调参数action也为0。
+     *
      * @param device
      * @param key
      * @param object
      */
-    public void controlDevice(GizWifiDevice device,String key,Object object,int action){
+    public void controlDevice(GizWifiDevice device, String key, Object object, int action) {
         ConcurrentHashMap<String, Object> command = new ConcurrentHashMap<String, Object>();
         command.put(key, object);
-        device.write(command,action);
+        device.write(command, action);
     }
-
-
 }

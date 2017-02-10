@@ -18,8 +18,8 @@ public class XUserData {
     /**
      * 获取用户UID
      */
-    public static void setUID(Context context, String UID) {
-        XShareps.putString(context, UID, UID, UID);
+    public static void setUID(Context context, String uid) {
+        XShareps.putString(context, UID, UID, uid);
     }
 
     /**
@@ -87,7 +87,7 @@ public class XUserData {
      * 获取用户UID
      */
     public static void saveCabinetUid(Context context, String cabinet_uid) {
-        XShareps.putString(context, CABINET_UID, CABINET_UID, CABINET_UID);
+        XShareps.putString(context, CABINET_UID, CABINET_UID, cabinet_uid);
     }
 
     /**

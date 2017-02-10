@@ -17,6 +17,6 @@ public class XIndexActivity extends Activity {
         if (!AppManager.isServiceRunning(this, "com.sicao.smartwine.xhttp.XApiService")) {
             startService(new Intent(this, XApiService.class));
         }
-        startActivity(new Intent(this, RegisterActivity.class));
+        startActivity(new Intent(this, XLoginActivity.class));
     }
 }

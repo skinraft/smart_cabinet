@@ -107,7 +107,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 GizWifiDevice device = mListData.get(position);
                 if (device.isBind()) {
                     //已经绑定的设备才可以处理解绑动作
-                    unBindDevice(device);
+                    bindDevice(device, false);
                 } else {
                     //表逗我，没绑定解绑你妹哦
                     Toast.makeText(SmartCabinetDeviceListActivity.this, "亲,您还没有绑定该设备哦", Toast.LENGTH_LONG).show();
@@ -119,10 +119,17 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 GizWifiDevice device = mListData.get(position);
-                //切换设备监控对象,订阅该设备
-                device.setSubscribe(true);
-                XUserData.setCurrentCabinetId(SmartCabinetDeviceListActivity.this, device.getDid());
-                SmartSicaoApi.log("switch device ,your selected device id is " + device.getDid());
+                if (!device.isBind()) {
+                    //没有绑定的设备，执行绑定设备，并为其设置监听并订阅
+                    bindDevice(device, true);
+                    XUserData.setCurrentCabinetId(SmartCabinetDeviceListActivity.this, device.getDid());
+                    SmartSicaoApi.log("bind device ,your will bind device ,id is " + device.getDid());
+                } else {
+                    //已经绑定的设备，则执行为该设备设置监听,并订阅该设备
+                    xCabinetApi.bindDevice(device, mBindListener);
+                    XUserData.setCurrentCabinetId(SmartCabinetDeviceListActivity.this, device.getDid());
+                    SmartSicaoApi.log("set current device  ,your set current device id is " + device.getDid());
+                }
             }
         });
     }
@@ -132,16 +139,29 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
      *
      * @param device
      */
-    public void unBindDevice(final GizWifiDevice device) {
-        final XWarnDialog dialog = new XWarnDialog(SmartCabinetDeviceListActivity.this, "设备解绑后您将不再拥有该设备,请谨慎操作!");
+    public void bindDevice(final GizWifiDevice device, final boolean bind) {
+        final XWarnDialog dialog = new XWarnDialog(SmartCabinetDeviceListActivity.this);
+        if (bind) {
+            dialog.setTitle("设备绑定");
+            dialog.setContent("您将要绑定该设备,绑定成功后您可以对该设备进行控制操作!");
+        } else {
+            dialog.setTitle("解绑警告");
+            dialog.setContent("设备解绑后您将不再拥有该设备,请谨慎操作!");
+        }
         dialog.show();
         dialog.setOnListener(new XWarnDialog.OnClickListener() {
             @Override
             public void makeSure() {
                 dialog.dismiss();
                 showProgress(true);
-                xCabinetApi.unBindDevice(XUserData.getCabinetUid(SmartCabinetDeviceListActivity.this), XUserData.getCabinetToken(SmartCabinetDeviceListActivity.this), device.getDid());
+                if (bind) {
+                    //绑定该设备
+                    xCabinetApi.bindDevice(device, mBindListener);
+                } else {
+                    xCabinetApi.unBindDevice(XUserData.getCabinetUid(SmartCabinetDeviceListActivity.this), XUserData.getCabinetToken(SmartCabinetDeviceListActivity.this), device.getDid());
+                }
             }
+
             @Override
             public void cancle() {
                 dialog.dismiss();
@@ -156,8 +176,8 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         /***
          * 订阅OK
          */
-        if (isSubscribed)
-            finish();
+        Toast.makeText(this, "操作成功!", Toast.LENGTH_LONG).show();
+        finish();
     }
 
     @Override
@@ -166,6 +186,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         /***
          * 订阅失败
          */
+        showProgress(false);
         Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
     }
 

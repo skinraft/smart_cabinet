@@ -19,6 +19,4 @@ public class XConfig {
      *日志TAG
      */
     public static String LOG_TAG = "yacht";
-
-
 }

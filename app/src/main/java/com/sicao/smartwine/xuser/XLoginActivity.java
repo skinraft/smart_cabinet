@@ -23,7 +23,7 @@ import com.sicao.smartwine.xhttp.XApiCallBack;
 /**
  * 酒柜账户注册
  */
-public class RegisterActivity extends SmartCabinetActivity {
+public class XLoginActivity extends SmartCabinetActivity {
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -65,7 +65,7 @@ public class RegisterActivity extends SmartCabinetActivity {
             mPasswordView.setText(XUserData.getPassword(this));
             //执行登录
             showProgress(true);
-            xCabinetApi.login("sicao-" + XUserData.getUID(RegisterActivity.this),XUserData.getPassword(this));
+            xCabinetApi.login("sicao-" + XUserData.getUID(XLoginActivity.this),XUserData.getPassword(this));
         }
     }
 
@@ -111,7 +111,7 @@ public class RegisterActivity extends SmartCabinetActivity {
             xSicaoApi.login(this, email, password, new XApiCallBack() {
                 @Override
                 public void response(Object object) {
-                    xCabinetApi.register("sicao-" + XUserData.getUID(RegisterActivity.this), password);
+                    xCabinetApi.register("sicao-" + XUserData.getUID(XLoginActivity.this), password);
                 }
             });
 
@@ -137,7 +137,7 @@ public class RegisterActivity extends SmartCabinetActivity {
     public void registerSuccess() {
         super.registerSuccess();
         //执行登录动作
-        xCabinetApi.login("sicao-" + XUserData.getUID(RegisterActivity.this), mPasswordView.getText().toString());
+        xCabinetApi.login("sicao-" + XUserData.getUID(XLoginActivity.this), mPasswordView.getText().toString());
     }
 
     @Override

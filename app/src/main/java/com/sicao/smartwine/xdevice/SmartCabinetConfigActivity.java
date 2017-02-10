@@ -1,6 +1,7 @@
 package com.sicao.smartwine.xdevice;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
+import com.sicao.smartwine.xdata.XUserData;
 
 import java.util.List;
 
@@ -57,22 +59,51 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
     }
 
     @Override
+    public void bindSuccess(String did) {
+        super.bindSuccess(did);
+        /***
+         * 绑定成功，
+         */
+        showProgress(false);
+        startActivity(new Intent(this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
+        finish();
+    }
+
+    @Override
+    public void bindError(GizWifiErrorCode result) {
+        super.bindError(result);
+        /***
+         * 绑定失败
+         */
+        showProgress(false);
+        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
+        finish();
+    }
+
+    @Override
     public void startConfig(String mac, String did, String productKey) {
         super.startConfig(mac, did, productKey);
-        Toast.makeText(this,"设备配置OK",Toast.LENGTH_LONG).show();
-        finish();
+        //绑定该设备
+        xCabinetApi.bindDevice(XUserData.getCabinetUid(this), XUserData.getCabinetToken(this), mac, getProductKey(), getProductSecret());
+        Toast.makeText(this, "设备配置OK,正在绑定该设备", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void configing(String mac, String did, String productKey) {
         super.configing(mac, did, productKey);
+        /***
+         * 配置中
+         */
     }
 
     @Override
     public void configError(GizWifiErrorCode result) {
         super.configError(result);
-        showProgress(false);
-        Toast.makeText(this,result.toString(),Toast.LENGTH_LONG).show();
+        /***
+         * 配置异常
+         */
+        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -96,7 +127,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                             if (wifiInfo.getSSID().contains(scan.SSID) && wifiInfo.getBSSID().contains(scan.BSSID)) {
                                 //配置设备入网
                                 showProgress(true);
-                                xCabinetApi.configAirLink(scan.SSID,password.getText().toString().trim());
+                                xCabinetApi.configAirLink(scan.SSID, password.getText().toString().trim());
                                 return;
                             }
                         }

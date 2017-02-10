@@ -51,7 +51,7 @@
 
         <!-- 注册页面 -->
         <activity
-            android:name=".xuser.RegisterActivity"
+            android:name=".xuser.XLoginActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"
@@ -90,6 +90,14 @@
         <!--扫码页面-->
         <activity
             android:name=".xwidget.zxing.ActivityCapture"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"
+            ></activity>
+        <!--设备的绑定和解绑结果页面-->
+        <activity
+            android:name=".xdevice.SmartCabinetBindStatusActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"

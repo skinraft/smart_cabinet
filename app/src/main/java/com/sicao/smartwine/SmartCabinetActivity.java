@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +23,10 @@ import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XSmartCabinetListener;
 import com.sicao.smartwine.xhttp.XSmartCabinetReceiver;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,7 +36,7 @@ import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_SDK_DEVICE_
 public abstract class SmartCabinetActivity extends Activity implements XSmartCabinetListener {
     //硬件部分API
     protected SmartCabinetApi xCabinetApi;
-    protected XDeviceListener mBandListener;
+    protected XDeviceListener mBindListener;
     //非硬件部分API
     protected SmartSicaoApi xSicaoApi;
     //内容布局
@@ -42,6 +45,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
     private View mProgressView;
     //顶部右侧按钮
     protected TextView mRightText;
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -65,7 +69,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
         setContentView(R.layout.activity_main);
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         xSicaoApi = new SmartSicaoApi();
-        mBandListener = new XDeviceListener();
+        mBindListener = new XDeviceListener();
         xCabinetApi = new SmartCabinetApi();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         mContent = (RelativeLayout) findViewById(R.id.base_content_layout);
@@ -97,6 +101,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
                     }
                 }
             }
+
             @Override
             public void didRegisterUser(GizWifiErrorCode result, String uid, String token) {
                 //用户注册回调
@@ -138,6 +143,18 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
                 } else {
                     // 请求失败
                     requestCodeError(result);
+                }
+            }
+
+            @Override
+            public void didBindDevice(int error, String errorMessage, String did) {
+                super.didBindDevice(error, errorMessage, did);
+                if (error != 0) {
+                    Toast.makeText(SmartCabinetActivity.this, errorMessage,
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                } else {
+                    bindSuccess(did);
                 }
             }
 
@@ -239,6 +256,10 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
      */
     public native String getAppSecret();
 
+    /**
+     * 获取productSecert
+     */
+    public native String getProductSecret();
 
     class XDeviceListener extends GizWifiDeviceListener {
         @Override
@@ -285,16 +306,21 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
                 if (dataMap.get("data") != null) {
                     ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) dataMap.get("data");
                     // 普通数据点，打印对应的key和value
-                    StringBuilder sb = new StringBuilder();
+                    JSONObject jsonObject = new JSONObject();
                     for (String key : map.keySet()) {
-                        sb.append(key + "  :" + map.get(key) + "\r\n");
-                        Toast.makeText(SmartCabinetActivity.this,
-                                sb.toString(), Toast.LENGTH_SHORT).show();
+                        try {
+                            jsonObject.put(key, map.get(key));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    //更新设备信息
+                    SmartSicaoApi.log("the device info will update " + device.getDid());
+                    refushDeviceInfo(device, jsonObject);
                 }
             } else {
                 // 查询失败
-
+                SmartSicaoApi.log(result.toString());
             }
         }
     }
@@ -351,6 +377,9 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
     }
 
     public void refushDeviceList(List<GizWifiDevice> deviceList) {
+    }
+
+    public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
     }
 
     /**

@@ -26,6 +26,11 @@ public class SmartCabinetApplication extends Application {
     private WindowManager mManager = null;
     public static DisplayMetrics metrics = null;
 
+
+    static {
+        System.loadLibrary("native-lib");
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -34,7 +39,9 @@ public class SmartCabinetApplication extends Application {
         metrics = new DisplayMetrics();
         mManager.getDefaultDisplay().getMetrics(metrics);
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), "57368a09e0b847a39e40469f88c06782");
+        GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), getAppID());
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
+
+    public native String getAppID();
 }
