@@ -28,7 +28,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
     <application
         android:name=".SmartCabinetApplication"
         android:allowBackup="true"
@@ -72,7 +73,7 @@
             android:exported="false"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait"/>
-         <!--接收系统网络和时间的广播，用于被动回调刷新设备信息函数以达到及时更新设备信息-->
+        <!--接收系统网络和时间的广播，用于被动回调刷新设备信息函数以达到及时更新设备信息-->
         <receiver
             android:name=".xhttp.XSmartCabinetReceiver"
             android:enabled="true"
@@ -98,6 +99,14 @@
         <!--设备的绑定和解绑结果页面-->
         <activity
             android:name=".xdevice.SmartCabinetBindStatusActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"
+            ></activity>
+        <!--设备设置页面-->
+        <activity
+            android:name=".xdevice.SmartCabinetSettingActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"

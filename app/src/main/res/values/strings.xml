@@ -14,5 +14,44 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-
+    <string-array name="device_model_string">
+        <item>手动              可自由调节温度</item>
+        <item>红葡萄酒              15°C</item>
+        <item>白葡萄酒              12°C</item>
+        <item>气泡酒              8°C</item>
+    </string-array>
+    <string-array name="device_model_show">
+        <item>手动</item>
+        <item>红葡萄酒</item>
+        <item>白葡萄酒</item>
+        <item>气泡酒</item>
+    </string-array>
+    <integer-array name="device_model_temp">
+        <item>12</item>
+        <item>15</item>
+        <item>12</item>
+        <item>8</item>
+    </integer-array>
+    <integer-array name="device_model_int">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
+    <string-array name="device_temp">
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+    </string-array>
 </resources>

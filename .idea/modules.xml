@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/skinraft_smart_cabinet.iml" filepath="$PROJECT_DIR$/skinraft_smart_cabinet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smart_cabinet.iml" filepath="$PROJECT_DIR$/smart_cabinet.iml" />
     </modules>
   </component>
 </project>

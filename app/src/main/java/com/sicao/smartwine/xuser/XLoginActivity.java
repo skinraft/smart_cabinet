@@ -59,6 +59,11 @@ public class XLoginActivity extends SmartCabinetActivity {
             }
         });
         mLoginFormView = findViewById(R.id.login_form);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         //登录记录
         if (!"".equals(XUserData.getCabinetUid(this))){
             mEmailView.setText(XUserData.getUserName(this));
@@ -122,8 +127,9 @@ public class XLoginActivity extends SmartCabinetActivity {
     public void loginSuccess() {
         super.loginSuccess();
         showProgress(false);
-        Toast.makeText(this, "登录OK", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "登录成功", Toast.LENGTH_LONG).show();
         startActivity(new Intent(this, SmartCabinetDeviceInfoActivity.class));
+        finish();
     }
 
     @Override

@@ -18,5 +18,6 @@ public class XIndexActivity extends Activity {
             startService(new Intent(this, XApiService.class));
         }
         startActivity(new Intent(this, XLoginActivity.class));
+        finish();
     }
 }

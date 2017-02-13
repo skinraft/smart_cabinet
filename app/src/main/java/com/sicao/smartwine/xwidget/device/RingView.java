@@ -102,7 +102,7 @@ public class RingView extends View {
     /**
      * 振幅
      */
-    private float AmplitudeA = 1000;// 振幅
+    private float AmplitudeA = 2000;// 振幅
 
     /**
      * 心跳线条速度

@@ -14,6 +14,7 @@ import com.sicao.smartwine.xhttp.XConfig;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -224,6 +225,24 @@ public class SmartCabinetApi {
     public void controlDevice(GizWifiDevice device, String key, Object object, int action) {
         ConcurrentHashMap<String, Object> command = new ConcurrentHashMap<String, Object>();
         command.put(key, object);
+        device.write(command, action);
+    }
+
+    /***
+     * 发送一连串的控制指令
+     * 设备订阅变成可控状态后，APP可以发送操作指令。操作指令是字典格式，键值对为数据点名称和值。操作指令的确认回复，通过didReceiveData回调返回。
+     * APP下发操作指令时可以指定action，通过回调参数中的sn能够对应到下发指令是否发送成功了。
+     * 但回调参数dataMap有可能是空字典，这取决于设备回复时是否携带当前数据点的状态。
+     * 如果APP下发指令后只关心是否有设备状态上报，那么下发指令的action可填0，这时回调参数action也为0。
+     * @param device
+     * @param map
+     * @param action
+     */
+    public void controlDevice(GizWifiDevice device, HashMap<String,Object> map, int action) {
+        ConcurrentHashMap<String, Object> command = new ConcurrentHashMap<String, Object>();
+        for (String key : map.keySet()) {
+            command.put(key, map.get(key));
+        }
         device.write(command, action);
     }
 }

@@ -11,4 +11,6 @@ public interface XSmartCabinetListener {
      * @param action 动作类型
      */
     public void update(boolean update, String action);
+
+
 }
