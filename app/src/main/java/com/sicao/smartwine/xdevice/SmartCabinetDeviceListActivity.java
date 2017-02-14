@@ -11,9 +11,11 @@ import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
+import com.sicao.smartwine.SmartCabinetApplication;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetDeviceAdapter;
+import com.sicao.smartwine.xwidget.dialog.SmartCabinetSettingDialog;
 import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenu;
 import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenuCreator;
@@ -34,10 +36,29 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     List<GizWifiDevice> mListData = new ArrayList<GizWifiDevice>();
     //数据列表适配器
     SmartCabinetDeviceAdapter mAdapter;
+    //添加设备的菜单
+    SmartCabinetSettingDialog smartCabinetSettingDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String[] menu = new String[]{"扫码添加设备", "配置新设备"};
+        smartCabinetSettingDialog = new SmartCabinetSettingDialog(this);
+        smartCabinetSettingDialog.update(menu);
+        smartCabinetSettingDialog.setMenuItemClickListener(new SmartCabinetSettingDialog.MenuItemClickListener() {
+            @Override
+            public void onClick(int position, String value) {
+                smartCabinetSettingDialog.dismiss();
+                if (position == 0) {
+                    //扫码添加设备
+                    startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
+                } else {
+                    //配置新设备
+                    startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetConfigActivity.class));
+                }
+                finish();
+            }
+        });
         init();
     }
 
@@ -80,9 +101,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         mRightText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetConfigActivity.class));
-                startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
-                finish();
+                smartCabinetSettingDialog.showAsDropDown(v, SmartCabinetApplication.metrics.widthPixels / 2 - smartCabinetSettingDialog.getWidth() / 2, 0);
             }
         });
         SwipeMenuCreator creator = new SwipeMenuCreator() {

@@ -51,13 +51,6 @@
         <service android:name=".xhttp.XApiService"/>
 
         <!-- 注册页面 -->
-        <activity
-            android:name=".xuser.XLoginActivity"
-            android:configChanges="orientation|keyboard"
-            android:exported="false"
-            android:label="@string/title_activity_register"
-            android:screenOrientation="portrait">
-        </activity>
         <!-- 主页面 -->
         <activity
             android:name=".xdevice.SmartCabinetDeviceInfoActivity"
@@ -112,6 +105,27 @@
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait"
             ></activity>
+        <!--找回密码页面-->
+        <activity
+            android:name=".xuser.XFindPasswordActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"></activity>
+        <!--注册页面-->
+        <activity
+            android:name=".xuser.XRegisterActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"></activity>
+        <!--注册页面-->
+        <activity
+            android:name=".xuser.XLoginActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.sicao.smartwine;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
@@ -65,7 +66,7 @@ public class SmartSicaoApi implements XApiException {
                 + "&uid=" + XUserData.getUID(context) + "&api_version="
                 + XConfig.API_VERSION + "&w="
                 + SmartCabinetApplication.metrics.widthPixels + "&h="
-                + SmartCabinetApplication.metrics.heightPixels+"&tag=5618";
+                + SmartCabinetApplication.metrics.heightPixels + "&tag=5618";
     }
 
     /***
@@ -109,8 +110,16 @@ public class SmartSicaoApi implements XApiException {
         });
     }
 
-    public void login(final Context context, final String username, final String password, final XApiCallBack xApiCallBack){
-        String url = configParamsUrl("user/login?mobile="+username+"&value="+password+"&type=2", context);
+    /***
+     * 登录葡萄集平台,获取该平台中对应帐号的uid以便于登录机智云平台
+     *
+     * @param context      上下文对象
+     * @param username     用户手机号
+     * @param password     用户密码
+     * @param xApiCallBack 结果回调
+     */
+    public void login(final Context context, final String username, final String password, final XApiCallBack xApiCallBack) {
+        String url = configParamsUrl("user/login?mobile=" + username + "&value=" + password + "&type=2", context);
         XHttpUtil http = new XHttpUtil(context);
         http.get(url, new XCallBack() {
             @Override
@@ -121,8 +130,8 @@ public class SmartSicaoApi implements XApiException {
                     if (status(object)) {
                         XUserData.saveToken(context, object.getJSONObject("data").getString("user_token"));
                         XUserData.setUID(context, object.getJSONObject("data").getString("uid"));
-                        XUserData.setPassword(context,password);
-                        XUserData.setUserName(context,username);
+                        XUserData.setPassword(context, password);
+                        XUserData.setUserName(context, username);
                         if (null != xApiCallBack) {
                             xApiCallBack.response("success");
                         }
@@ -133,9 +142,97 @@ public class SmartSicaoApi implements XApiException {
                     error(e.getMessage());
                 }
             }
+
             @Override
             public void error(String response) {
                 error(response);
+            }
+        });
+    }
+
+    /***
+     * 注册(使用手机号和验证码进行注册)
+     *
+     * @param context   上下文对象
+     * @param mobile    手机号码
+     * @param code      验证码
+     * @param password  密码
+     * @param callback  接口执行OK回调对象
+     * @param exception 接口实现失败回调
+     */
+    public void register(final Context context, final String mobile, String code,
+                         final String password, final XApiCallBack callback,
+                         final XApiException exception) {
+        String url = configParamsUrl("user/setPassword", context) + "&mobile="
+                + mobile + "&code=" + code + "&password=" + password;
+        XHttpUtil http = new XHttpUtil(context);
+        http.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        if (null != callback) {
+                            XUserData.saveToken(context, object.getJSONObject("data").getString("user_token"));
+                            XUserData.setUID(context, object.getJSONObject("data").getString("uid"));
+                            XUserData.setPassword(context, password);
+                            XUserData.setUserName(context, mobile);
+                            callback.response("success");
+                        }
+                    } else {
+                        if (null != exception) {
+                            exception.error(object.getString("message"));
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void error(String response) {
+                error(response);
+                if (null != exception) {
+                    exception.error(response);
+                }
+            }
+        });
+    }
+
+    /***
+     * 获取短信验证码（注册时使用）
+     *
+     * @param context   上下文对象
+     * @param mobile    手机号码
+     * @param callback  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public void getCodeForRegister(final Context context, String mobile,
+                                   final XApiCallBack callback, final XApiException exception) {
+        String url = configParamsUrl("User/verifymobile", context) + "&mobile="
+                + mobile + "&type=getcodeForRegister";
+        XHttpUtil httpUtil = new XHttpUtil(context);
+        httpUtil.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        if (null != callback) {
+                            callback.response("true");
+                        }
+                    } else {
+                        Toast.makeText(context, object.getString("message"), Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void error(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
             }
         });
     }

@@ -1,16 +1,17 @@
 package com.sicao.smartwine.xuser;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
@@ -20,109 +21,150 @@ import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.SmartCabinetDeviceInfoActivity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 
-/**
- * 酒柜账户注册
- */
 public class XLoginActivity extends SmartCabinetActivity {
-    // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private View mLoginFormView;
-
-    @Override
-    protected int setView() {
-        return R.layout.activity_register;
-    }
+    // 用户名
+    EditText mUsername;
+    // 用户密码
+    EditText mPassword;
+    // 清除账号的按钮
+    ImageView mCleanUsername;
+    // 查看密码的按钮
+    ImageView mSeePassword;
+    // 密码是否正在显示
+    boolean passwordShow = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-        mLoginFormView = findViewById(R.id.login_form);
+        initView();
+        mCenterTitle.setText("登录");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //登录记录
-        if (!"".equals(XUserData.getCabinetUid(this))){
-            mEmailView.setText(XUserData.getUserName(this));
-            mPasswordView.setText(XUserData.getPassword(this));
+        if (!"".equals(XUserData.getCabinetUid(this))) {
+            mUsername.setText(XUserData.getUserName(this));
+            mPassword.setText(XUserData.getPassword(this));
             //执行登录
             showProgress(true);
-            xCabinetApi.login("sicao-" + XUserData.getUID(XLoginActivity.this),XUserData.getPassword(this));
+            xCabinetApi.login("sicao-" + XUserData.getUID(XLoginActivity.this), XUserData.getPassword(this));
         }
+    }
+    @SuppressWarnings("deprecation")
+    private void initView() {
+        mCenterTitle.setText("登录");
+        // 2016 3 8
+        mUsername = (EditText) findViewById(R.id.x_phone_edit);
+        mPassword = (EditText) findViewById(R.id.x_password_edit);
+        mCleanUsername = (ImageView) findViewById(R.id.x_phone_right);
+        mCleanUsername.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUsername.setText("");
+            }
+        });
+
+        mSeePassword = (ImageView) findViewById(R.id.x_password_right);
+        mSeePassword.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!passwordShow) {
+                    mPassword
+                            .setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    passwordShow = true;
+                } else {
+                    mPassword.setInputType(InputType.TYPE_CLASS_TEXT
+                            | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    passwordShow = false;
+                }
+            }
+        });
+        mRightText.setVisibility(View.VISIBLE);
+        mRightText.setText("注册");
+        mRightText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(XLoginActivity.this,
+                        XRegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+        mUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    mCleanUsername.setClickable(false);
+                    mCleanUsername.setVisibility(View.GONE);
+                } else {
+                    mCleanUsername.setClickable(true);
+                    mCleanUsername.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+    }
+
+    @Override
+    protected int setView() {
+        return R.layout.activity_device_login_by_psw;
     }
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
+     * 登陆按钮点击事件
+     *
+     * @param v
      */
-    private void attemptLogin() {
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        final String password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
+    public void login(View v) {
+        String username = mUsername.getText().toString().trim();
+        String password = mPassword.getText().toString().trim();
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(this, "账号不能为空", Toast.LENGTH_LONG).show();
+            return;
         }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "密码不能为空", Toast.LENGTH_LONG).show();
+            return;
         }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            //登录
-            xSicaoApi.login(this, email, password, new XApiCallBack() {
-                @Override
-                public void response(Object object) {
-                    xCabinetApi.register("sicao-" + XUserData.getUID(XLoginActivity.this), password);
-                }
-            });
-
-        }
+        showProgress(true);
+        login(username, password);
     }
 
+    /**
+     * 找回密码按钮点击事件
+     *
+     * @param v
+     */
+    public void findPassword(View v) {
+        startActivity(new Intent(this, XFindPasswordActivity.class));
+    }
+    /***
+     * 账号密码登录
+     *
+     * @param username
+     * @param password
+     */
+    public void login(final String username, final String password) {
+        showProgress(true);
+        //登录
+        xSicaoApi.login(this, username, password, new XApiCallBack() {
+            @Override
+            public void response(Object object) {
+                xCabinetApi.register("sicao-" + XUserData.getUID(XLoginActivity.this), password);
+            }
+        });
+    }
     @Override
     public void loginSuccess() {
         super.loginSuccess();
@@ -143,7 +185,7 @@ public class XLoginActivity extends SmartCabinetActivity {
     public void registerSuccess() {
         super.registerSuccess();
         //执行登录动作
-        xCabinetApi.login("sicao-" + XUserData.getUID(XLoginActivity.this), mPasswordView.getText().toString());
+        xCabinetApi.login("sicao-" + XUserData.getUID(XLoginActivity.this), mPassword.getText().toString().trim());
     }
 
     @Override
@@ -152,9 +194,4 @@ public class XLoginActivity extends SmartCabinetActivity {
         showProgress(false);
         Toast.makeText(this, "注册失败,请重试！" , Toast.LENGTH_LONG).show();
     }
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
-    }
 }
-

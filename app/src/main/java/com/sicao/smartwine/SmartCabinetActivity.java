@@ -46,6 +46,8 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
     private View mProgressView;
     //顶部右侧按钮
     protected TextView mRightText;
+    //頂部标题
+    protected  TextView mCenterTitle;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -76,6 +78,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
         mContent = (RelativeLayout) findViewById(R.id.base_content_layout);
         mRightText = (TextView) findViewById(R.id.base_top_right_icon);
         mProgressView = findViewById(R.id.login_progress);
+        mCenterTitle= (TextView) findViewById(R.id.base_top_center_text);
         mContent.addView(View.inflate(this, setView(), null));
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //注册监听广播
