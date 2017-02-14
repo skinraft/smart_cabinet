@@ -108,14 +108,15 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDevice = (GizWifiDevice) getIntent().getExtras().get("device");
-        xCabinetApi.bindDevice(mDevice,mBindListener);
         init();
         showProgress(true);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         //设备状态查询
+        xCabinetApi.bindDevice(mDevice,mBindListener);
         xCabinetApi.getDeviceStatus(mDevice);
     }
 
@@ -123,12 +124,13 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
         showProgress(false);
         try {
+            SmartSicaoApi.log("current device is " + device.toString() + "\n" + object.toString());
             int model = object.getInt("model");
             mWorkName.setText(getResources().getStringArray(R.array.device_model_string)[model]);
             mWorkTemp.setText(object.getString("set_temp") + "℃");
             wineName.setText(!"".equals(device.getRemark()) ? device.getRemark() : "智能酒柜");
         } catch (JSONException e) {
-            SmartSicaoApi.log("the device update data json has error " + e.toString());
+            SmartSicaoApi.log("the device update data json has error in " + (null == e ? getClass().getSimpleName() : e.getMessage()));
         }
     }
 

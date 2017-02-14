@@ -67,38 +67,12 @@ public class SmartCabinetSettingDialog extends PopupWindow {
             }
         });
     }
-
     @Override
     public void showAtLocation(View parent, int gravity, int x, int y) {
         ll_popup.startAnimation(AnimationUtils.loadAnimation(context,
                 R.anim.push_bottom_in));
         super.showAtLocation(parent, gravity, x, y);
     }
-
-    @Override
-    public void dismiss() {
-        ll_popup.startAnimation(anim_out);
-        anim_out.setAnimationListener(new AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                superDismiss();
-            }
-        });
-    }
-
-    private void superDismiss() {
-        super.dismiss();
-        anim_out = null;
-    }
-
     public interface MenuItemClickListener {
          void onClick(int  position,String value);
     }

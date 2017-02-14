@@ -1,5 +1,6 @@
 package com.sicao.smartwine.xdevice;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -15,6 +16,7 @@ import com.sicao.smartwine.SmartCabinetApplication;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetDeviceAdapter;
+import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xwidget.dialog.SmartCabinetSettingDialog;
 import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenu;
@@ -24,7 +26,9 @@ import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenuListView;
 import com.sicao.smartwine.xwidget.zxing.ActivityCapture;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /***
  * 我的酒柜列表数据
@@ -42,9 +46,58 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //获取缓存的设备列表数据
+        initDate(xCabinetApi.getCacheDeviceList());
+    }
+
+    public void initDate(List<GizWifiDevice> deviceList) {
+        mListData = deviceList;
+        //局域网设备融合数据
+        Iterator iter = SmartCabinetApplication.mLAN.entrySet().iterator();
+        ArrayList<GizWifiDevice> lans = new ArrayList<>();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            GizWifiDevice d = (GizWifiDevice) entry.getValue();
+            //如果用户已经绑定了该设备，则重绑定列表里面移除该设备对应的数据对象
+            for (GizWifiDevice device : mListData) {
+                if (device.getDid().equals(d.getDid())) {
+                    mListData.remove(device);
+                }
+            }
+            lans.add(d);
+        }
+        mListData.addAll(lans);
+        mAdapter.update(mListData);
+    }
+
+    @Override
+    public void refushDeviceList(List<GizWifiDevice> deviceList) {
+        initDate(xCabinetApi.getCacheDeviceList());
+    }
+
+    @Override
+    public void update(boolean update, String action) {
+        //刷新设备列表
+        initDate(xCabinetApi.getCacheDeviceList());
+    }
+
+    @Override
+    protected int setView() {
+        return R.layout.activity_device_list;
+    }
+
+    public void init() {
         String[] menu = new String[]{"扫码添加设备", "配置新设备"};
         smartCabinetSettingDialog = new SmartCabinetSettingDialog(this);
         smartCabinetSettingDialog.update(menu);
+        smartCabinetSettingDialog.setWidth(ActionBar.LayoutParams.WRAP_CONTENT);
+        smartCabinetSettingDialog.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
         smartCabinetSettingDialog.setMenuItemClickListener(new SmartCabinetSettingDialog.MenuItemClickListener() {
             @Override
             public void onClick(int position, String value) {
@@ -59,40 +112,6 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 finish();
             }
         });
-        init();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //获取缓存的设备列表数据
-        initDate(xCabinetApi.getCacheDeviceList());
-    }
-
-    public void initDate(List<GizWifiDevice> deviceList) {
-        mListData = deviceList;
-        mAdapter.update(mListData);
-    }
-
-    @Override
-    public void refushDeviceList(List<GizWifiDevice> deviceList) {
-        super.refushDeviceList(deviceList);
-        initDate(deviceList);
-    }
-
-    @Override
-    public void update(boolean update, String action) {
-        super.update(update, action);
-        //刷新设备列表
-        initDate(xCabinetApi.getCacheDeviceList());
-    }
-
-    @Override
-    protected int setView() {
-        return R.layout.activity_device_list;
-    }
-
-    public void init() {
         mDeviceListView = (SwipeMenuListView) findViewById(R.id.view4);
         mAdapter = new SmartCabinetDeviceAdapter(this, mListData);
         mDeviceListView.setAdapter(mAdapter);
@@ -101,7 +120,10 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         mRightText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                smartCabinetSettingDialog.showAsDropDown(v, SmartCabinetApplication.metrics.widthPixels / 2 - smartCabinetSettingDialog.getWidth() / 2, 0);
+                if (!smartCabinetSettingDialog.isShowing())
+                    smartCabinetSettingDialog.showAsDropDown(v, SmartCabinetApplication.metrics.widthPixels, 0);
+                else
+                    smartCabinetSettingDialog.dismiss();
             }
         });
         SwipeMenuCreator creator = new SwipeMenuCreator() {
@@ -230,12 +252,16 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     }
 
     @Override
-    public void unbindSuccess() {
-        super.unbindSuccess();
+    public void unbindSuccess(String did) {
+        super.unbindSuccess(did);
         /***
          * 解绑成功
          */
         showProgress(false);
+        //如果解绑的是当前正在控制的设备，则更新当前设备的标记
+        if (did.equals(XUserData.getCurrentCabinetId(this))) {
+            XUserData.setCurrentCabinetId(this, "");
+        }
         startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "3"));
     }
 

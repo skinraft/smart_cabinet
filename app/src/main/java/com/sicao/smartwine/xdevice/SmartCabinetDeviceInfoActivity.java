@@ -44,7 +44,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     //同步控件
     RelativeLayout mSynLayout;
     //当前设备
-    GizWifiDevice mDevice;
+    GizWifiDevice mDevice = null;
     //设备灯开关
     boolean isLight = false;
     //正在同步...控件
@@ -68,7 +68,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         mDeviceInfoLayout = (RelativeLayout) findViewById(R.id.lr_setting);
         mSynLayout = (RelativeLayout) findViewById(R.id.syn_layout);
         mOnLine = (TextView) findViewById(R.id.online);
-        mSynText= (TextView) findViewById(R.id.syn_text);
+        mSynText = (TextView) findViewById(R.id.syn_text);
         mRingView.setAnimListener(this);
     }
 
@@ -79,7 +79,14 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         if (!"".equals(XUserData.getCurrentCabinetId(this))) {
             //获取绑定的设备列表
             xCabinetApi.refushDeviceList(XUserData.getCabinetUid(this), XUserData.getCabinetToken(this), getProductKey());
-        }else{
+        } else {
+            //当前没有设备进行监控
+            mDevice = null;
+            mLight.setImageResource(R.drawable.ic_bulb_off);
+            mSetTemp.setText("0℃");
+            mRealTemp.setText("0℃");
+            mWorkModel.setText("未设置");
+            mOnLine.setText("离线");
             mSynText.setText("没有设备");
         }
     }
@@ -92,6 +99,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 device.setListener(mBindListener);
                 device.setSubscribe(true);
                 mSynText.setText("正在同步...");
+                xCabinetApi.getDeviceStatus(device);
             }
         }
     }
@@ -100,9 +108,9 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
         mDevice = device;
         mRingView.stopAnim();
-        SmartSicaoApi.log("current device is " + device.toString() + "\n" + object.toString());
         try {
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
+                SmartSicaoApi.log("current device is " + device.toString() + "\n" + object.toString());
                 //更新设备信息
                 isLight = object.getBoolean("light");
                 mLight.setImageResource(isLight ? R.drawable.ic_bulb_on : R.drawable.ic_bulb_off);
@@ -112,7 +120,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 mOnLine.setText(object.getBoolean("isOnline") ? "在线" : "离线");
             }
         } catch (JSONException e) {
-            SmartSicaoApi.log("the device update data json has error " + e.toString());
+            SmartSicaoApi.log("the device update data json has error in " + (null == e ? getClass().getSimpleName() : e.getMessage()));
         }
     }
 
@@ -124,11 +132,17 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 startActivity(new Intent(this, SmartCabinetDeviceListActivity.class));
                 break;
             case R.id.textView13://进入酒柜的设备页面
-                startActivity(new Intent(this, SmartCabinetSettingActivity.class).putExtra("device", mDevice));
+                if (null != mDevice) {
+                    startActivity(new Intent(this, SmartCabinetSettingActivity.class).putExtra("device", mDevice));
+                } else {
+                    Toast.makeText(this, "请选择某一设备后重试!", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.imageView3://设备灯开关
                 if (null != mDevice) {
                     xCabinetApi.controlDevice(mDevice, "light", isLight ? false : true, XConfig.CONFIG_CABINET_SET_LIGHT_ACTION);
+                } else {
+                    Toast.makeText(this, "请选择某一设备后重试!", Toast.LENGTH_LONG).show();
                 }
                 break;
         }

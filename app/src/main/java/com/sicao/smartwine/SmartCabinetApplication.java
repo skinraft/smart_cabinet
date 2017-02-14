@@ -11,6 +11,8 @@ import com.gizwits.gizwifisdk.enumration.GizEventType;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -26,6 +28,10 @@ public class SmartCabinetApplication extends Application {
     private WindowManager mManager = null;
     public static DisplayMetrics metrics = null;
 
+    /**
+     * 局域网设备
+     */
+    public static HashMap<String,GizWifiDevice> mLAN = new HashMap<>();
 
     static {
         System.loadLibrary("native-lib");

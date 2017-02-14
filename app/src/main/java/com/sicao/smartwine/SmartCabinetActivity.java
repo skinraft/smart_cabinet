@@ -47,7 +47,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
     //顶部右侧按钮
     protected TextView mRightText;
     //頂部标题
-    protected  TextView mCenterTitle;
+    protected TextView mCenterTitle;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -78,7 +78,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
         mContent = (RelativeLayout) findViewById(R.id.base_content_layout);
         mRightText = (TextView) findViewById(R.id.base_top_right_icon);
         mProgressView = findViewById(R.id.login_progress);
-        mCenterTitle= (TextView) findViewById(R.id.base_top_center_text);
+        mCenterTitle = (TextView) findViewById(R.id.base_top_center_text);
         mContent.addView(View.inflate(this, setView(), null));
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //注册监听广播
@@ -109,11 +109,13 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
         super.onDestroy();
         unregisterReceiver(xUpdateSmartCabinetReceiver);
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
+
     @Override
     public void update(boolean update, String action) {
     }
@@ -363,6 +365,16 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
                 SmartSicaoApi.log("result: " + result.name());
                 return;
             }
+            if (deviceList.size() == 0) {
+                SmartSicaoApi.log("result: 设备列表为空 ");
+                return;
+            }
+            for (GizWifiDevice device : deviceList) {
+                //另外保存局域网的设备
+                if (device.isLAN()&&!SmartCabinetApplication.mLAN.containsKey(device.getDid())) {
+                    SmartCabinetApplication.mLAN.put(device.getDid(),device);
+                }
+            }
             // 显示变化后的设备列表
             SmartSicaoApi.log("discovered deviceList: " + deviceList);
             refushDeviceList(deviceList);
@@ -372,7 +384,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
         public void didUnbindDevice(GizWifiErrorCode result, String did) {
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 // 解绑成功
-                unbindSuccess();
+                unbindSuccess(did);
             } else {
                 // 解绑失败
                 unbindError(result);
@@ -436,7 +448,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
     public void bindError(GizWifiErrorCode result) {
     }
 
-    public void unbindSuccess() {
+    public void unbindSuccess(String did) {
     }
 
     public void unbindError(GizWifiErrorCode result) {
