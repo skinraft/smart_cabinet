@@ -51,7 +51,7 @@ public class XHttpUtil {
                 } else if (FAIL == what) {
                     // 失败
                     if (null != callback) {
-                        callback.error((String) msg.obj);
+                        callback.fail((String) msg.obj);
                     }
                 }
                 return true;
@@ -148,7 +148,7 @@ public class XHttpUtil {
                 } else if (FAIL == what) {
                     // 失败
                     if (null != callback) {
-                        callback.error((String) msg.obj);
+                        callback.fail((String) msg.obj);
                     }
                 }
                 return true;

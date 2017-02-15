@@ -44,12 +44,12 @@ public class XLoginActivity extends SmartCabinetActivity {
     protected void onResume() {
         super.onResume();
         //登录记录
-        if (!"".equals(XUserData.getCabinetUid(this))) {
+        if (!"".equals(XUserData.getUserName(this))) {
             mUsername.setText(XUserData.getUserName(this));
             mPassword.setText(XUserData.getPassword(this));
             //执行登录
             showProgress(true);
-            xCabinetApi.login("sicao-" + XUserData.getUID(XLoginActivity.this), XUserData.getPassword(this));
+            login(XUserData.getUserName(this),XUserData.getPassword(this));
         }
     }
     @SuppressWarnings("deprecation")
@@ -161,7 +161,7 @@ public class XLoginActivity extends SmartCabinetActivity {
         xSicaoApi.login(this, username, password, new XApiCallBack() {
             @Override
             public void response(Object object) {
-                xCabinetApi.register("sicao-" + XUserData.getUID(XLoginActivity.this), password);
+                xCabinetApi.register("sicao-" + XUserData.getUID(XLoginActivity.this), XUserData.getPassword(XLoginActivity.this));
             }
         });
     }

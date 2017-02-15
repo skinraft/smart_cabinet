@@ -322,7 +322,7 @@ public class XRegisterActivity extends SmartCabinetActivity {
      * @param phoneNumber
      */
     public void getSMScode(String phoneNumber) {
-        xSicaoApi.getCodeForRegister(this, phoneNumber, new XApiCallBack() {
+        xSicaoApi.getCodeForRegister(this, phoneNumber,"getcodeForRegister", new XApiCallBack() {
             @Override
             public void response(Object object) {
                 Toast.makeText(XRegisterActivity.this, "验证码已发送至您的手机,请注意查收", Toast.LENGTH_LONG).show();

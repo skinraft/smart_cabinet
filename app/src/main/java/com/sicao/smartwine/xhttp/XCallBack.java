@@ -8,7 +8,7 @@ package com.sicao.smartwine.xhttp;
  */
 public interface XCallBack {
 	// 执行成功
-	public void success(String response);
+	 void success(String response);
 	// 执行失败
-	public void error(String response);
+	 void fail(String response);
 }

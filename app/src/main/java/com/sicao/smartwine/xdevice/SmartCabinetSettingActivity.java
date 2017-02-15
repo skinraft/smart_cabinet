@@ -1,5 +1,6 @@
 package com.sicao.smartwine.xdevice;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
+import com.sicao.smartwine.SmartCabinetApplication;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xwidget.dialog.SmartCabinetSettingDialog;
@@ -51,6 +53,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                 workMode.update(getResources().getStringArray(R.array.device_model_string));
                 workMode.showAtLocation(mContent, Gravity.BOTTOM,
                         0, 0);
+                workMode.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
                 workMode.setMenuItemClickListener(new SmartCabinetSettingDialog.MenuItemClickListener() {
                     @Override
                     public void onClick(int position, String value) {
@@ -83,6 +86,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                 }
                 workTemp = new SmartCabinetSettingDialog(SmartCabinetSettingActivity.this);
                 workTemp.update(getResources().getStringArray(R.array.device_temp));
+                workMode.setHeight(SmartCabinetApplication.metrics.widthPixels * 3 / 5);
                 workTemp.showAtLocation(mContent, Gravity.BOTTOM,
                         0, 0);
                 workTemp.setMenuItemClickListener(new SmartCabinetSettingDialog.MenuItemClickListener() {

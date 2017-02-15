@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
@@ -53,7 +54,11 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     protected void onResume() {
         super.onResume();
         //获取缓存的设备列表数据
-        initDate(xCabinetApi.getCacheDeviceList());
+        if (null!=xCabinetApi.getCacheDeviceList()&&xCabinetApi.getCacheDeviceList().size()>0){
+            initDate(xCabinetApi.getCacheDeviceList());
+        }else{
+            initDate(new ArrayList<GizWifiDevice>());
+        }
     }
 
     public void initDate(List<GizWifiDevice> deviceList) {
@@ -65,9 +70,11 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             Map.Entry entry = (Map.Entry) iter.next();
             GizWifiDevice d = (GizWifiDevice) entry.getValue();
             //如果用户已经绑定了该设备，则重绑定列表里面移除该设备对应的数据对象
-            for (GizWifiDevice device : mListData) {
-                if (device.getDid().equals(d.getDid())) {
-                    mListData.remove(device);
+            Iterator<GizWifiDevice> it = mListData.iterator();
+            while(it.hasNext()){
+                GizWifiDevice device = it.next();
+                if(device.getDid().equals(d.getDid())){
+                    it.remove();
                 }
             }
             lans.add(d);
@@ -96,7 +103,6 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         String[] menu = new String[]{"扫码添加设备", "配置新设备"};
         smartCabinetSettingDialog = new SmartCabinetSettingDialog(this);
         smartCabinetSettingDialog.update(menu);
-        smartCabinetSettingDialog.setWidth(ActionBar.LayoutParams.WRAP_CONTENT);
         smartCabinetSettingDialog.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
         smartCabinetSettingDialog.setMenuItemClickListener(new SmartCabinetSettingDialog.MenuItemClickListener() {
             @Override
@@ -121,7 +127,8 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             @Override
             public void onClick(View v) {
                 if (!smartCabinetSettingDialog.isShowing())
-                    smartCabinetSettingDialog.showAsDropDown(v, SmartCabinetApplication.metrics.widthPixels, 0);
+                    smartCabinetSettingDialog.showAtLocation(mContent, Gravity.BOTTOM,
+                            0, 0);
                 else
                     smartCabinetSettingDialog.dismiss();
             }

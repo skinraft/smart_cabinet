@@ -131,6 +131,7 @@
             android:onClick="findPassword"
             android:padding="10dp"
             android:text="忘记密码?"
+            android:visibility="gone"
             android:textColor="#4A1938"
             android:textSize="12sp"/>
 

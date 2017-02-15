@@ -101,7 +101,7 @@ public class SmartSicaoApi implements XApiException {
             }
 
             @Override
-            public void error(String response) {
+            public void fail(String response) {
                 if (null != callback) {
                     callback.response(XUserData.getCode(context));
                 }
@@ -144,7 +144,7 @@ public class SmartSicaoApi implements XApiException {
             }
 
             @Override
-            public void error(String response) {
+            public void fail(String response) {
                 error(response);
             }
         });
@@ -189,7 +189,7 @@ public class SmartSicaoApi implements XApiException {
             }
 
             @Override
-            public void error(String response) {
+            public void fail(String response) {
                 error(response);
                 if (null != exception) {
                     exception.error(response);
@@ -199,17 +199,17 @@ public class SmartSicaoApi implements XApiException {
     }
 
     /***
-     * 获取短信验证码（注册时使用）
+     * 获取短信验证码
      *
      * @param context   上下文对象
      * @param mobile    手机号码
      * @param callback  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public void getCodeForRegister(final Context context, String mobile,
+    public void getCodeForRegister(final Context context, String mobile,String type,
                                    final XApiCallBack callback, final XApiException exception) {
         String url = configParamsUrl("User/verifymobile", context) + "&mobile="
-                + mobile + "&type=getcodeForRegister";
+                + mobile + "&type="+type;
         XHttpUtil httpUtil = new XHttpUtil(context);
         httpUtil.get(url, new XCallBack() {
             @Override
@@ -229,7 +229,7 @@ public class SmartSicaoApi implements XApiException {
             }
 
             @Override
-            public void error(String response) {
+            public void fail(String response) {
                 error(response);
                 if (null != exception)
                     exception.error(response);
