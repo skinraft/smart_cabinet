@@ -2,6 +2,8 @@ package com.sicao.smartwine.xdevice;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -170,8 +172,16 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
 
     @Override
     public void animStop() {
-        mDeviceInfoLayout.setVisibility(View.VISIBLE);
-        wineSetting.setVisibility(View.VISIBLE);
-        mSynLayout.setVisibility(View.GONE);
+        mHandler.sendEmptyMessageDelayed(1, 2000);
     }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            mDeviceInfoLayout.setVisibility(View.VISIBLE);
+            wineSetting.setVisibility(View.VISIBLE);
+            mSynLayout.setVisibility(View.GONE);
+        }
+    };
+
 }
