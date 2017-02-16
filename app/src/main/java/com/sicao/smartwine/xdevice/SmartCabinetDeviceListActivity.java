@@ -54,11 +54,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     protected void onResume() {
         super.onResume();
         //获取缓存的设备列表数据
-        if (null!=xCabinetApi.getCacheDeviceList()&&xCabinetApi.getCacheDeviceList().size()>0){
-            initDate(xCabinetApi.getCacheDeviceList());
-        }else{
-            initDate(new ArrayList<GizWifiDevice>());
-        }
+        initDate(xCabinetApi.getCacheDeviceList());
     }
 
     public void initDate(List<GizWifiDevice> deviceList) {
