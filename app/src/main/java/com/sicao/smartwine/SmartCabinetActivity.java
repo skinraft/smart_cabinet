@@ -308,6 +308,7 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
                 // 登录失败
                 loginError(result);
             }
+            SmartSicaoApi.log("Version="+GizWifiSDK.sharedInstance().getVersion());
         }
 
         @Override
@@ -359,13 +360,14 @@ public abstract class SmartCabinetActivity extends Activity implements XSmartCab
                 // 配置失败
                 configError(result);
             }
+            xSicaoApi.log("mac="+mac+",did="+did+",key="+productKey);
         }
 
         @Override
         public void didDiscovered(GizWifiErrorCode result, List<GizWifiDevice> deviceList) {
             // 提示错误原因
             if (result != GizWifiErrorCode.GIZ_SDK_SUCCESS) {
-                SmartSicaoApi.log("result: " + result.name());
+                SmartSicaoApi.log("result: " + result.name()+"---"+errorCodeToString(result));
                 return;
             }
             if (deviceList.size() == 0) {

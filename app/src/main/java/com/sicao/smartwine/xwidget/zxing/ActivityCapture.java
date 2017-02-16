@@ -292,7 +292,6 @@ public class ActivityCapture extends SmartCabinetActivity implements Callback {
             showProgress(true);
             GizWifiSDK.sharedInstance().bindDevice(XUserData.getCabinetUid(this), XUserData.getCabinetToken(this), getParamFomeUrl(resultString, "did"),
                     getParamFomeUrl(resultString, "passcode"), null);
-//          xCabinetApi.bindDeviceByQRCode(XUserData.getCabinetUid(this),XUserData.getCabinetToken(this),resultString);
         } else {
             finish();
             Toast.makeText(this, "抱歉,无法识别该二维码", Toast.LENGTH_LONG).show();
