@@ -17,6 +17,10 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    <style name="x_index_theme" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@drawable/index</item>
+    </style>
+
 
     <style name="warndialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
@@ -26,4 +30,16 @@
         <item name="android:backgroundDimAmount">0.6</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+
+
+
+    <style name="MenuFragmentStyle" parent="AppTheme">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:colorForeground">@android:color/transparent</item>
+        <item name="android:colorForegroundInverse">@android:color/transparent</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
 </resources>

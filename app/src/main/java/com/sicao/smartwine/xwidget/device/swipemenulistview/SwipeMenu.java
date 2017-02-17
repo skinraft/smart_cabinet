@@ -1,4 +1,4 @@
-package com.sicao.smartwine.xwidget.swipemenulistview;
+package com.sicao.smartwine.xwidget.device.swipemenulistview;
 
 import android.content.Context;
 

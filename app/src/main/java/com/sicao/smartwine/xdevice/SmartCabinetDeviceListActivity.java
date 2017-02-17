@@ -4,11 +4,9 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
-
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
@@ -17,15 +15,13 @@ import com.sicao.smartwine.SmartCabinetApplication;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetDeviceAdapter;
-import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xwidget.dialog.SmartCabinetSettingDialog;
 import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
-import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenu;
-import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenuCreator;
-import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenuItem;
-import com.sicao.smartwine.xwidget.swipemenulistview.SwipeMenuListView;
+import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenu;
+import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuCreator;
+import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuItem;
+import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuListView;
 import com.sicao.smartwine.xwidget.zxing.ActivityCapture;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -99,6 +95,8 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         String[] menu = new String[]{"扫码添加设备", "配置新设备"};
         smartCabinetSettingDialog = new SmartCabinetSettingDialog(this);
         smartCabinetSettingDialog.update(menu);
+        smartCabinetSettingDialog.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_device_list_pop_menu_bg));
+        smartCabinetSettingDialog.setWidth(smartCabinetSettingDialog.dip2px(this,150));
         smartCabinetSettingDialog.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
         smartCabinetSettingDialog.setMenuItemClickListener(new SmartCabinetSettingDialog.MenuItemClickListener() {
             @Override
@@ -123,8 +121,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             @Override
             public void onClick(View v) {
                 if (!smartCabinetSettingDialog.isShowing())
-                    smartCabinetSettingDialog.showAtLocation(mContent, Gravity.BOTTOM,
-                            0, 0);
+                    smartCabinetSettingDialog.showLocation(R.id.base_top_right_icon);
                 else
                     smartCabinetSettingDialog.dismiss();
             }

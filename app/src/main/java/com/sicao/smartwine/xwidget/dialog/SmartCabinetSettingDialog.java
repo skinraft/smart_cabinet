@@ -1,6 +1,7 @@
 package com.sicao.smartwine.xwidget.dialog;
 
 import android.app.ActionBar.LayoutParams;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
@@ -20,7 +21,7 @@ import com.sicao.smartwine.SmartCabinetApplication;
 public class SmartCabinetSettingDialog extends PopupWindow {
     LinearLayout ll_popup;
     View mainview;
-    Context context;
+    Activity context;
     Animation anim_out;
     ListView mListView;
     PopBottomAdapter adapter;
@@ -35,7 +36,7 @@ public class SmartCabinetSettingDialog extends PopupWindow {
         adapter.update(mData);
     }
 
-    public SmartCabinetSettingDialog(final Context context) {
+    public SmartCabinetSettingDialog(final Activity context) {
         super(context);
         this.context = context;
         LayoutInflater inflater = (LayoutInflater) context
@@ -49,7 +50,7 @@ public class SmartCabinetSettingDialog extends PopupWindow {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (null != menuItemClickListener)
-                    menuItemClickListener.onClick(position,mData[position]);
+                    menuItemClickListener.onClick(position, mData[position]);
             }
         });
         setWidth(LayoutParams.MATCH_PARENT);
@@ -67,14 +68,32 @@ public class SmartCabinetSettingDialog extends PopupWindow {
             }
         });
     }
+
     @Override
     public void showAtLocation(View parent, int gravity, int x, int y) {
         ll_popup.startAnimation(AnimationUtils.loadAnimation(context,
                 R.anim.push_bottom_in));
         super.showAtLocation(parent, gravity, x, y);
     }
+
+    /**
+     * 设置显示的位置
+     *
+     * @param resourId 这里的x,y值自己调整可以
+     */
+    public void showLocation(int resourId) {
+        showAsDropDown(context.findViewById(resourId), dip2px(context, 0),
+                dip2px(context, -8));
+    }
+
+    // dip转换为px
+    public int dip2px(Context context, float dipValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
+    }
+
     public interface MenuItemClickListener {
-         void onClick(int  position,String value);
+        void onClick(int position, String value);
     }
 
     private MenuItemClickListener menuItemClickListener;

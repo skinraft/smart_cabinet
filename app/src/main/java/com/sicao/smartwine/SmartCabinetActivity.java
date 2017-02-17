@@ -3,12 +3,12 @@ package com.sicao.smartwine;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_OPENAPI_USERNAME_UNAVALIABLE;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_SDK_DEVICE_CONFIG_IS_RUNNING;
 
-public abstract class SmartCabinetActivity extends Activity implements XSmartCabinetListener {
+public abstract class SmartCabinetActivity extends AppCompatActivity implements XSmartCabinetListener {
     //硬件部分API
     protected SmartCabinetApi xCabinetApi;
     protected XDeviceListener mBindListener;
