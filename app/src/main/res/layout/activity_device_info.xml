@@ -294,6 +294,8 @@
                 android:id="@+id/my_wines"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:onClick="onClick"
                 android:background="@color/write">
 
                 <ImageView
@@ -323,6 +325,7 @@
                     <TextView
                         android:id="@+id/tv_add_wine"
                         android:layout_width="wrap_content"
+                        android:text="酒柜内未放置酒款"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
@@ -344,6 +347,7 @@
                 android:id="@+id/wineShop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:background="@color/write">
 
                 <ImageView
@@ -381,6 +385,8 @@
                 android:id="@+id/setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:onClick="onClick"
                 android:background="@color/write">
 
                 <ImageView
@@ -397,7 +403,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/iv_sever"
-                    android:text="设置"
+                    android:text="退出帐号"
                     android:textSize="15sp" />
 
 

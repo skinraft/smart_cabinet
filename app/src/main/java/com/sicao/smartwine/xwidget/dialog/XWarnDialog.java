@@ -10,11 +10,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.sicao.smartwine.R;
+import com.sicao.smartwine.SmartCabinetApplication;
 
 /**
  * @author li'mingqi
@@ -27,14 +29,6 @@ public class XWarnDialog extends Dialog implements OnClickListener {
     // name
     private EditText mName;
     View view;
-
-    /**
-     * @param context
-     */
-    public XWarnDialog(Context context, String message) {
-        super(context, R.style.warndialog);
-        init(context, message);
-    }
     public XWarnDialog(Context context) {
         super(context, R.style.warndialog);
         init(context, "");
@@ -61,6 +55,9 @@ public class XWarnDialog extends Dialog implements OnClickListener {
                 LayoutParams.WRAP_CONTENT));
         setCanceledOnTouchOutside(false);
         setCancelable(false);
+        WindowManager.LayoutParams params=getWindow().getAttributes();
+        params.width= SmartCabinetApplication.metrics.widthPixels*3/4;
+        getWindow().setAttributes(params);
     }
     public void setContent(String text) {
         if (!"".equals(text) && null != text) {
@@ -75,28 +72,6 @@ public class XWarnDialog extends Dialog implements OnClickListener {
             mTitle.setText(title);
         }
         mTitle.setText(title);
-    }
-
-    public void closeButtonShows(boolean shows) {
-        if (shows){
-            mColse.setVisibility(View.VISIBLE);
-        }else{
-            mColse.setVisibility(View.GONE);
-        }
-    }
-
-    public void openButtonShows(boolean shows) {
-        if (shows){
-            mMakeSure.setVisibility(View.VISIBLE);
-        }else{
-            mMakeSure.setVisibility(View.GONE);
-        }
-    }
-
-    public void setCancleText(String text) {
-        if (!"".equals(text) && null != text) {
-            mColse.setText(text);
-        }
     }
     public String getText() {
         String content = mContent.getText().toString();
@@ -140,6 +115,7 @@ public class XWarnDialog extends Dialog implements OnClickListener {
      */
     public void show() {
         super.show();
+
     }
 
     /***

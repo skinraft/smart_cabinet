@@ -118,7 +118,7 @@ public class SmartSicaoApi implements XApiException {
      * @param password     用户密码
      * @param xApiCallBack 结果回调
      */
-    public void login(final Context context, final String username, final String password, final XApiCallBack xApiCallBack) {
+    public void login(final Context context, final String username, final String password, final XApiCallBack xApiCallBack,final XApiException xApiException) {
         String url = configParamsUrl("user/login?mobile=" + username + "&value=" + password + "&type=2", context);
         XHttpUtil http = new XHttpUtil(context);
         http.get(url, new XCallBack() {
@@ -137,6 +137,9 @@ public class SmartSicaoApi implements XApiException {
                         }
                     } else {
                         error(object.getString("message"));
+                        if (null!=xApiException){
+                            xApiException.error(object.getString("message"));
+                        }
                     }
                 } catch (JSONException e) {
                     error(e.getMessage());
@@ -146,6 +149,9 @@ public class SmartSicaoApi implements XApiException {
             @Override
             public void fail(String response) {
                 error(response);
+                if (null!=xApiException){
+                    xApiException.error(response);
+                }
             }
         });
     }

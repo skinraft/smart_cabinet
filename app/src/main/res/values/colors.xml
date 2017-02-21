@@ -31,4 +31,10 @@
     <color name="status_text">#ffffffff</color>
     <color name="header">#58567D</color>
     <color name="grgray">#686868</color>
+
+
+    <color name="google_red">#EA4335</color>
+    <color name="google_yellow">#FBBC05</color>
+    <color name="google_blue">#4285F4</color>
+    <color name="google_green">#34A853</color>
 </resources>

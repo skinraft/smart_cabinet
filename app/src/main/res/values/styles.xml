@@ -17,29 +17,18 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    <style name="x_index_theme" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
-        <item name="android:windowBackground">@drawable/index</item>
-    </style>
-
-
     <style name="warndialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowTitleStyle">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimAmount">0.6</item>
+        <item name="android:windowAnimationStyle">@style/warndialog.anim</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
-
-
-    <style name="MenuFragmentStyle" parent="AppTheme">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:colorForeground">@android:color/transparent</item>
-        <item name="android:colorForegroundInverse">@android:color/transparent</item>
-        <item name="android:colorBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@android:color/transparent</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+    <style name="warndialog.anim" parent="android:Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/warn_dialog_anim_enter</item>
+        <item name="android:windowExitAnimation">@anim/warn_dialog_anim_exit</item>
     </style>
-
 </resources>

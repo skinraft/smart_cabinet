@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 android {
     compileSdkVersion 24
@@ -69,4 +70,5 @@ dependencies {
     compile files('libs/simpleconfigwizardlib.jar')
     testCompile 'junit:junit:4.12'
     compile files('libs/zxing.jar')
+    compile 'com.jrummyapps:animated-svg-view:1.0.1'
 }

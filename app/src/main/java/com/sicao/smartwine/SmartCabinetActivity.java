@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -55,7 +56,9 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     static {
         System.loadLibrary("native-lib");
     }
-
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
     /**
      * 监控几个系统广播,用于更新页面设备信息
      */

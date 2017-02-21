@@ -17,6 +17,7 @@ import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xwidget.device.RingView;
+import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +36,8 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     TextView mRealTemp;
     //工作模式
     TextView mWorkModel;
+    //酒柜内有多少瓶酒
+    TextView mBodys;
     //设备是否在线
     TextView mOnLine;
     //动画效果
@@ -71,6 +74,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         mSynLayout = (RelativeLayout) findViewById(R.id.syn_layout);
         mOnLine = (TextView) findViewById(R.id.online);
         mSynText = (TextView) findViewById(R.id.syn_text);
+        mBodys = (TextView) findViewById(R.id.tv_add_wine);
         mRingView.setAnimListener(this);
     }
 
@@ -147,6 +151,29 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                     Toast.makeText(this, "请选择某一设备后重试!", Toast.LENGTH_LONG).show();
                 }
                 break;
+            case R.id.setting://退出
+                final XWarnDialog dialog = new XWarnDialog(this);
+                dialog.setTitle("退出登录");
+                dialog.setContent("您将要退出该帐号的登录,\n 注意:下次启用需要重新登录!");
+                dialog.show();
+                dialog.setOnListener(new XWarnDialog.OnClickListener() {
+                    @Override
+                    public void makeSure() {
+                        dialog.dismiss();
+                        mHintText.setVisibility(View.VISIBLE);
+                        mHintText.setText("正在退出...");
+                        showProgress(true);
+                        mHandler.sendEmptyMessageDelayed(2, 2000);
+                    }
+                    @Override
+                    public void cancle() {
+                        dialog.dismiss();
+                    }
+                });
+                break;
+            case R.id.my_wines://酒柜内的酒款
+                Toast.makeText(this, "正在开发中...", Toast.LENGTH_LONG).show();
+                break;
         }
     }
 
@@ -178,9 +205,15 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            mDeviceInfoLayout.setVisibility(View.VISIBLE);
-            wineSetting.setVisibility(View.VISIBLE);
-            mSynLayout.setVisibility(View.GONE);
+            int what=msg.what;
+            if (what==1){
+                mDeviceInfoLayout.setVisibility(View.VISIBLE);
+                wineSetting.setVisibility(View.VISIBLE);
+                mSynLayout.setVisibility(View.GONE);
+            }else if(what==2){
+                XUserData.setPassword(SmartCabinetDeviceInfoActivity.this, "");
+                finish();
+            }
         }
     };
 

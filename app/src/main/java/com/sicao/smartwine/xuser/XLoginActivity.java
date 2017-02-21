@@ -18,6 +18,7 @@ import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.SmartCabinetDeviceInfoActivity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
+import com.sicao.smartwine.xhttp.XApiException;
 
 public class XLoginActivity extends SmartCabinetActivity {
     // 用户名
@@ -42,14 +43,22 @@ public class XLoginActivity extends SmartCabinetActivity {
     protected void onResume() {
         super.onResume();
         //登录记录
-        if (!"".equals(XUserData.getUserName(this))) {
-            mUsername.setText(XUserData.getUserName(this));
-            mPassword.setText(XUserData.getPassword(this));
-            //执行登录
-            showProgress(true);
-            login(XUserData.getUserName(this),XUserData.getPassword(this));
+        if (!"".equals(XUserData.getPassword(this))) {
+            if (!"".equals(XUserData.getUserName(this))) {
+                mUsername.setText(XUserData.getUserName(this));
+                mPassword.setText(XUserData.getPassword(this));
+                //执行登录
+                showProgress(true);
+                login(XUserData.getUserName(this), XUserData.getPassword(this));
+            }
+        } else {
+            if (!"".equals(XUserData.getUserName(this))) {
+                //如果此时用户已经退出了登录，将保存的用户名填入输入框
+                mUsername.setText(XUserData.getUserName(this));
+            }
         }
     }
+
     @SuppressWarnings("deprecation")
     private void initView() {
         mCenterTitle.setText("登录");
@@ -147,6 +156,7 @@ public class XLoginActivity extends SmartCabinetActivity {
     public void findPassword(View v) {
         startActivity(new Intent(this, XFindPasswordActivity.class));
     }
+
     /***
      * 账号密码登录
      *
@@ -154,6 +164,8 @@ public class XLoginActivity extends SmartCabinetActivity {
      * @param password
      */
     public void login(final String username, final String password) {
+        mHintText.setVisibility(View.VISIBLE);
+        mHintText.setText("正在登录...");
         showProgress(true);
         //登录
         xSicaoApi.login(this, username, password, new XApiCallBack() {
@@ -161,12 +173,21 @@ public class XLoginActivity extends SmartCabinetActivity {
             public void response(Object object) {
                 xCabinetApi.register("sicao-" + XUserData.getUID(XLoginActivity.this), XUserData.getPassword(XLoginActivity.this));
             }
+        }, new XApiException() {
+            @Override
+            public void error(String error) {
+                showProgress(false);
+                mHintText.setVisibility(View.GONE);
+                Toast.makeText(XLoginActivity.this, "请重试!" + error, Toast.LENGTH_LONG).show();
+            }
         });
     }
+
     @Override
     public void loginSuccess() {
         super.loginSuccess();
         showProgress(false);
+        mHintText.setVisibility(View.GONE);
         Toast.makeText(this, "登录成功", Toast.LENGTH_LONG).show();
         startActivity(new Intent(this, SmartCabinetDeviceInfoActivity.class));
         finish();
@@ -176,6 +197,7 @@ public class XLoginActivity extends SmartCabinetActivity {
     public void loginError(GizWifiErrorCode result) {
         super.loginError(result);
         showProgress(false);
+        mHintText.setVisibility(View.GONE);
         Toast.makeText(this, "登录失败,请检查您输入的帐号密码是否有误！", Toast.LENGTH_LONG).show();
     }
 
@@ -190,6 +212,7 @@ public class XLoginActivity extends SmartCabinetActivity {
     public void registerError(GizWifiErrorCode result) {
         super.registerError(result);
         showProgress(false);
-        Toast.makeText(this, "注册失败,请重试！" , Toast.LENGTH_LONG).show();
+        mHintText.setVisibility(View.GONE);
+        Toast.makeText(this, "注册失败,请重试！", Toast.LENGTH_LONG).show();
     }
 }
