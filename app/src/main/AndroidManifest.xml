@@ -38,8 +38,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".xuser.XIndexActivity"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
-            >
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -69,66 +68,64 @@
             android:exported="false"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait"/>
-        <!--接收系统网络和时间的广播，用于被动回调刷新设备信息函数以达到及时更新设备信息-->
+        <!-- 接收系统网络和时间的广播，用于被动回调刷新设备信息函数以达到及时更新设备信息 -->
         <receiver
             android:name=".xhttp.XSmartCabinetReceiver"
             android:enabled="true"
             android:exported="true">
         </receiver>
-        <!--设备配置页面 -->
+        <!-- 设备配置页面 -->
         <activity
             android:name=".xdevice.SmartCabinetConfigActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait">
         </activity>
-        <!--扫码页面-->
+        <!-- 扫码页面 -->
         <activity
             android:name=".xwidget.zxing.ActivityCapture"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait"
-            ></activity>
-        <!--设备的绑定和解绑结果页面-->
+            android:screenOrientation="portrait"/>
+        <!-- 设备的绑定和解绑结果页面 -->
         <activity
             android:name=".xdevice.SmartCabinetBindStatusActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait"
-            ></activity>
-        <!--设备设置页面-->
+            android:screenOrientation="portrait"/>
+        <!-- 设备设置页面 -->
         <activity
             android:name=".xdevice.SmartCabinetSettingActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait"
-            ></activity>
-        <!--找回密码页面-->
+            android:screenOrientation="portrait"/>
+        <!-- 找回密码页面 -->
         <activity
             android:name=".xuser.XFindPasswordActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait"></activity>
-        <!--注册页面-->
+            android:screenOrientation="portrait"/>
+        <!-- 注册页面 -->
         <activity
             android:name=".xuser.XRegisterActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait"></activity>
-        <!--注册页面-->
+            android:screenOrientation="portrait"/>
+        <!-- 注册页面 -->
         <activity
             android:name=".xuser.XLoginActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Main2Activity">
+        </activity>
     </application>
 
 </manifest>

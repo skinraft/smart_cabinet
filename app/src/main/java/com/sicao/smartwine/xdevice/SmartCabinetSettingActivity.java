@@ -86,7 +86,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                 }
                 workTemp = new SmartCabinetSettingDialog(SmartCabinetSettingActivity.this);
                 workTemp.update(getResources().getStringArray(R.array.device_temp));
-                workMode.setHeight(SmartCabinetApplication.metrics.widthPixels * 3 / 5);
+                workTemp.setHeight(SmartCabinetApplication.metrics.widthPixels * 3 / 5);
                 workTemp.showAtLocation(mContent, Gravity.BOTTOM,
                         0, 0);
                 workTemp.setMenuItemClickListener(new SmartCabinetSettingDialog.MenuItemClickListener() {

@@ -11,6 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
+import com.gizwits.gizwifisdk.api.GizWifiSDK;
+import com.gizwits.gizwifisdk.enumration.GizWifiDeviceNetStatus;
+import com.sicao.smartwine.Main2Activity;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
@@ -101,11 +104,17 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     public void refushDeviceList(List<GizWifiDevice> deviceList) {
         for (GizWifiDevice device : deviceList) {
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
-                mRingView.startAnim();
-                device.setListener(mBindListener);
-                device.setSubscribe(true);
-                mSynText.setText("正在同步...");
-                xCabinetApi.getDeviceStatus(device);
+                mCenterTitle.setText(!"".equals(device.getRemark()) ? device.getRemark() : device.getProductName());
+                if (device.getNetStatus()==GizWifiDeviceNetStatus.GizDeviceOnline||device.getNetStatus()==GizWifiDeviceNetStatus.GizDeviceControlled){
+                    mRingView.startAnim();
+                    device.setListener(mBindListener);
+                    device.setSubscribe(true);
+                    mSynText.setText("正在同步...");
+                    xCabinetApi.getDeviceStatus(device);
+                    GizWifiSDK.sharedInstance().getDevicesToSetServerInfo();
+                }else{
+                    Toast.makeText(SmartCabinetDeviceInfoActivity.this,"目标设备处于不可监控状态",Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
@@ -126,6 +135,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 mOnLine.setText(object.getBoolean("isOnline") ? "在线" : "离线");
             }
         } catch (JSONException e) {
+            Toast.makeText(SmartCabinetDeviceInfoActivity.this,"数据异常,请检查!",Toast.LENGTH_LONG).show();
             SmartSicaoApi.log("the device update data json has error in " + (null == e ? getClass().getSimpleName() : e.getMessage()));
         }
     }
@@ -173,6 +183,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 break;
             case R.id.my_wines://酒柜内的酒款
                 Toast.makeText(this, "正在开发中...", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(this, Main2Activity.class));
                 break;
         }
     }

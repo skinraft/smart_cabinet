@@ -28,15 +28,6 @@ public class SmartCabinetApplication extends Application {
     private WindowManager mManager = null;
     public static DisplayMetrics metrics = null;
 
-    /**
-     * 局域网设备
-     */
-    public static HashMap<String,GizWifiDevice> mLAN = new HashMap<>();
-
-    static {
-        System.loadLibrary("native-lib");
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -44,10 +35,7 @@ public class SmartCabinetApplication extends Application {
         mManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         metrics = new DisplayMetrics();
         mManager.getDefaultDisplay().getMetrics(metrics);
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), getAppID());
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
-    public native String getAppID();
+
 }

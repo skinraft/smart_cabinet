@@ -3,6 +3,7 @@ package com.sicao.smartwine.xdevice;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -16,11 +17,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gizwits.gizwifisdk.api.GizWifiGroup;
+import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdata.XUserData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sicao.smartwine.xdevice.SmartCabinetConfigActivity.ConfigStatus.BIND_ERROR;
@@ -98,6 +102,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
     public void configError(GizWifiErrorCode result) {
         super.configError(result);
         Toast.makeText(this,errorCodeToString(result),Toast.LENGTH_LONG).show();
+        //配置失败，
         Message msg=mHandler.obtainMessage();
         msg.obj=errorCodeToString(result);
         msg.what=ConfigStatus.CONFIG_ERROR.ordinal();

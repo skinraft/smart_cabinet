@@ -10,7 +10,7 @@ Java_com_sicao_smartwine_SmartCabinetActivity_getAppSecret(
     return env->NewStringUTF(hello.c_str());
 }
 jstring
-Java_com_sicao_smartwine_SmartCabinetApplication_getAppID(
+Java_com_sicao_smartwine_SmartCabinetActivity_getAppID(
         JNIEnv *env,
         jobject /* this */) {
     std::string hello = "57368a09e0b847a39e40469f88c06782";

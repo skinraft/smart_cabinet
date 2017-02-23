@@ -42,20 +42,9 @@ public class XLoginActivity extends SmartCabinetActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //登录记录
-        if (!"".equals(XUserData.getPassword(this))) {
-            if (!"".equals(XUserData.getUserName(this))) {
+        //登录记录,如果此时用户已经退出了登录，将保存的用户名填入输入框
+        if (!"".equals(XUserData.getUserName(this))&&"".equals(XUserData.getPassword(this))) {
                 mUsername.setText(XUserData.getUserName(this));
-                mPassword.setText(XUserData.getPassword(this));
-                //执行登录
-                showProgress(true);
-                login(XUserData.getUserName(this), XUserData.getPassword(this));
-            }
-        } else {
-            if (!"".equals(XUserData.getUserName(this))) {
-                //如果此时用户已经退出了登录，将保存的用户名填入输入框
-                mUsername.setText(XUserData.getUserName(this));
-            }
         }
     }
 
@@ -213,6 +202,6 @@ public class XLoginActivity extends SmartCabinetActivity {
         super.registerError(result);
         showProgress(false);
         mHintText.setVisibility(View.GONE);
-        Toast.makeText(this, "注册失败,请重试！", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "登录失败,请检查您输入的帐号密码是否有误！", Toast.LENGTH_LONG).show();
     }
 }

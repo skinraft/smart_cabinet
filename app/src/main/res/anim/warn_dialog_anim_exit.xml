@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="500"
+    android:duration="1000"
     >
     <!--向上位移出屏幕-->
     <translate
         android:fromYDelta="50%"
         android:toYDelta="-100%"
         ></translate>
+    <scale
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"
+        android:toXScale="0.0"
+        android:toYScale="0.0"
+        android:pivotY="50%"
+        android:pivotX="50%"
+        ></scale>
     <alpha
         android:fromAlpha="1.0"
         android:toAlpha="0"

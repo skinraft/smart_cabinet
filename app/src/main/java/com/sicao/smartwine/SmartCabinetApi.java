@@ -95,12 +95,12 @@ public class SmartCabinetApi {
      * 模块开启AirLink模式后，如果一分钟内未收到AirLink广播或无法正确连上路由器，将进入SoftAP模式
      *
      * @param ssid
-     * @param key
+     * @param password
      */
-    public void configAirLink(String ssid, String key) {
+    public void configAirLink(String ssid, String password) {
         List<GizWifiGAgentType> types = new ArrayList<GizWifiGAgentType>();
-        types.add(GizWifiGAgentType.GizGAgentESP);
-        GizWifiSDK.sharedInstance().setDeviceOnboarding(ssid, key, GizWifiConfigureMode.GizWifiAirLink, null, 60, types);
+        types.add(GizWifiGAgentType.GizGAgentHF);
+        GizWifiSDK.sharedInstance().setDeviceOnboarding(ssid, password, GizWifiConfigureMode.GizWifiAirLink, null, 60, types);
     }
 
     /***
@@ -110,11 +110,11 @@ public class SmartCabinetApi {
      * 使用机智云提供的模组固件，设备产生的Wifi热点以“XPG-GAgent-”开头，密码为” 123456789”。其他厂商提供的模组，SoftAP热点名称由各自厂商指定。APP可以根据需要传入正确的热点前缀。
      *
      * @param ssid
-     * @param key
+     * @param password
      * @param gagent_hotspot_prefix
      */
-    public void configSoftAp(String ssid, String key, String gagent_hotspot_prefix) {
-        GizWifiSDK.sharedInstance().setDeviceOnboarding(ssid, key, GizWifiConfigureMode.GizWifiSoftAP, gagent_hotspot_prefix, 60, null);
+    public void configSoftAp(String ssid, String password, String gagent_hotspot_prefix) {
+        GizWifiSDK.sharedInstance().setDeviceOnboarding(ssid, password, GizWifiConfigureMode.GizWifiSoftAP, gagent_hotspot_prefix, 60, null);
     }
 
     /***

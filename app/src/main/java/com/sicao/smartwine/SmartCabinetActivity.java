@@ -1,13 +1,18 @@
 package com.sicao.smartwine;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
@@ -56,9 +61,11 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     static {
         System.loadLibrary("native-lib");
     }
+
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
+
     /**
      * 监控几个系统广播,用于更新页面设备信息
      */
@@ -75,6 +82,8 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), getAppID());
+//        overridePendingTransition(R.anim.activity_out_anim, R.anim.activity_in_anim);// 淡出淡入动画效果
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         xSicaoApi = new SmartSicaoApi();
         mBindListener = new XDeviceListener();
@@ -84,7 +93,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         mRightText = (TextView) findViewById(R.id.base_top_right_icon);
         mProgressView = findViewById(R.id.login_progress);
         mCenterTitle = (TextView) findViewById(R.id.base_top_center_text);
-        mHintText= (TextView) findViewById(R.id.hint_text);
+        mHintText = (TextView) findViewById(R.id.hint_text);
         mContent.addView(View.inflate(this, setView(), null));
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //注册监听广播
@@ -122,6 +131,63 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         finish();
     }
 
+    /***
+     * 判断是否审核通过了某一个权限
+     * @param permission
+     * @return
+     */
+    public boolean checkPermission(String permission){
+        return ContextCompat.checkSelfPermission(this, permission)!= PackageManager.PERMISSION_GRANTED;
+    }
+    /***
+     * 申请权限部分
+     *
+     * @param permission  请求的具体权限
+     * @param requestCode 请求码
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void requestPermission(String permission, int requestCode) {
+        mPermissonRequestCode=requestCode;
+        requestPermissions(new String[]{permission}, requestCode);
+    }
+
+    int mPermissonRequestCode=0;
+
+    /***
+     * 权限请求失败
+     */
+    public  void requestPermissionError(){}
+
+    /***
+     * 权限请求OK
+     */
+    public  void requestPermissionSuccess(int requestCode){}
+
+    /***
+     * 申请权限返回结果
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == mPermissonRequestCode) {
+            if (permissions.length != 1 || grantResults.length != 1 ||
+                    grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionError();
+            } else  {
+                requestPermissionSuccess(requestCode);
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    /***
+     * @param update 是否需要更新设备信息
+     * @param action 动作类型
+     */
     @Override
     public void update(boolean update, String action) {
     }
@@ -135,6 +201,9 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
      * 获取appSecret
      */
     public native String getAppSecret();
+
+
+    public native String getAppID();
 
     /**
      * 获取productSecert
@@ -311,7 +380,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 // 登录失败
                 loginError(result);
             }
-            SmartSicaoApi.log("Version="+GizWifiSDK.sharedInstance().getVersion());
+            SmartSicaoApi.log("Version=" + GizWifiSDK.sharedInstance().getVersion());
         }
 
         @Override
@@ -363,25 +432,19 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 // 配置失败
                 configError(result);
             }
-            xSicaoApi.log("mac="+mac+",did="+did+",key="+productKey);
+            xSicaoApi.log("mac=" + mac + ",did=" + did + ",key=" + productKey);
         }
 
         @Override
         public void didDiscovered(GizWifiErrorCode result, List<GizWifiDevice> deviceList) {
             // 提示错误原因
             if (result != GizWifiErrorCode.GIZ_SDK_SUCCESS) {
-                SmartSicaoApi.log("result: " + result.name()+"---"+errorCodeToString(result));
+                SmartSicaoApi.log("result: " + result.name() + "---" + errorCodeToString(result));
                 return;
             }
             if (deviceList.size() == 0) {
                 SmartSicaoApi.log("result: 设备列表为空 ");
                 return;
-            }
-            for (GizWifiDevice device : deviceList) {
-                //另外保存局域网的设备
-                if (device.isLAN()&&!SmartCabinetApplication.mLAN.containsKey(device.getDid())) {
-                    SmartCabinetApplication.mLAN.put(device.getDid(),device);
-                }
             }
             // 显示变化后的设备列表
             SmartSicaoApi.log("discovered deviceList: " + deviceList);
