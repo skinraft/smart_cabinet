@@ -124,6 +124,14 @@
             android:exported="false"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait"/>
+        <!-- 设备绑定的帐号列表页面 -->
+        <activity
+            android:name=".xdevice.SmartCabinetBindUsersActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            ></activity>
+
         <activity android:name=".Main2Activity">
         </activity>
     </application>

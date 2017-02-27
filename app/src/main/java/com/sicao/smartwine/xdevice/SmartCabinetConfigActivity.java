@@ -70,32 +70,32 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
     @Override
     public void configSuccess(String mac, String did, String productKey) {
         super.configSuccess(mac, did, productKey);
-        mHandler.sendEmptyMessage(ConfigStatus.CONFIG_SUCCESS.ordinal());
+        handler.sendEmptyMessage(ConfigStatus.CONFIG_SUCCESS.ordinal());
         Toast.makeText(this,"设备配置OK,正在绑定该设备",Toast.LENGTH_LONG).show();
         //绑定该设备
         xCabinetApi.bindDevice(XUserData.getCabinetUid(this),XUserData.getCabinetToken(this),mac,getProductKey(),getProductSecret());
-        mHandler.sendEmptyMessageDelayed(ConfigStatus.START_BIND.ordinal(),2000);
+        handler.sendEmptyMessageDelayed(ConfigStatus.START_BIND.ordinal(),2000);
     }
 
     @Override
     public void bindSuccess(String did) {
         super.bindSuccess(did);
-        mHandler.sendEmptyMessageDelayed(ConfigStatus.BIND_SUCCESS.ordinal(),2000);
+        handler.sendEmptyMessageDelayed(ConfigStatus.BIND_SUCCESS.ordinal(),2000);
     }
 
     @Override
     public void bindError(GizWifiErrorCode result) {
         super.bindError(result);
-        Message msg=mHandler.obtainMessage();
+        Message msg=handler.obtainMessage();
         msg.obj=errorCodeToString(result);
         msg.what=ConfigStatus.BIND_ERROR.ordinal();
-        mHandler.sendMessageDelayed(msg,2000);
+        handler.sendMessageDelayed(msg,2000);
     }
 
     @Override
     public void configing(String mac, String did, String productKey) {
         super.configing(mac, did, productKey);
-        mHandler.sendEmptyMessage(ConfigStatus.CONFIG_ING.ordinal());
+        handler.sendEmptyMessage(ConfigStatus.CONFIG_ING.ordinal());
     }
 
     @Override
@@ -103,10 +103,10 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
         super.configError(result);
         Toast.makeText(this,errorCodeToString(result),Toast.LENGTH_LONG).show();
         //配置失败，
-        Message msg=mHandler.obtainMessage();
+        Message msg=handler.obtainMessage();
         msg.obj=errorCodeToString(result);
         msg.what=ConfigStatus.CONFIG_ERROR.ordinal();
-        mHandler.sendMessage(msg);
+        handler.sendMessage(msg);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                             if (wifiInfo.getSSID().contains(scan.SSID) && wifiInfo.getBSSID().contains(scan.BSSID)) {
                                 //配置设备入网
                                 showProgress(true);
-                                mHandler.sendEmptyMessage(ConfigStatus.START_CONFIG.ordinal());
+                                handler.sendEmptyMessage(ConfigStatus.START_CONFIG.ordinal());
                                 xCabinetApi.configAirLink(scan.SSID,password.getText().toString().trim());
                                 return;
                             }
@@ -177,52 +177,50 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
         BIND_ERROR, //绑定失败
     }
 
-    private Handler mHandler=new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-           ConfigStatus key=ConfigStatus.values()[msg.what];
-            switch (key){
-                case START_CONFIG:
-                    mHintText.setText("开始配置设备...");
-                    break;
-                case CONFIG_ING:
-                    mHintText.setText("正在配置设备...");
-                    break;
-                case CONFIG_SUCCESS:
-                    mHintText.setText("设备配置成功...");
-                    break;
-                case CONFIG_ERROR:
-                    mHintText.setText("设备配置失败,"+msg.obj);
-                    finish();
-                    break;
-                case START_BIND:
-                    mHintText.setText("开始绑定设备...");
-                    break;
-                case BIND_ING:
-                    mHintText.setText("正在绑定设备...");
-                    break;
-                case BIND_SUCCESS:
-                    mHintText.setText("绑定设备成功...");
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
-                            finish();
-                        }
-                    },2000);
-                    break;
-                case BIND_ERROR:
-                    mHintText.setText("绑定设备失败,"+msg.obj);
-                    Toast.makeText(SmartCabinetConfigActivity.this,(String)msg.obj,Toast.LENGTH_LONG).show();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
-                            finish();
-                        }
-                    },2000);
-                    break;
-            }
+    @Override
+    public void message(Message msg) {
+        ConfigStatus key=ConfigStatus.values()[msg.what];
+        switch (key){
+            case START_CONFIG:
+                mHintText.setText("开始配置设备...");
+                break;
+            case CONFIG_ING:
+                mHintText.setText("正在配置设备...");
+                break;
+            case CONFIG_SUCCESS:
+                mHintText.setText("设备配置成功...");
+                break;
+            case CONFIG_ERROR:
+                mHintText.setText("设备配置失败,"+msg.obj);
+                finish();
+                break;
+            case START_BIND:
+                mHintText.setText("开始绑定设备...");
+                break;
+            case BIND_ING:
+                mHintText.setText("正在绑定设备...");
+                break;
+            case BIND_SUCCESS:
+                mHintText.setText("绑定设备成功...");
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
+                        finish();
+                    }
+                },2000);
+                break;
+            case BIND_ERROR:
+                mHintText.setText("绑定设备失败,"+msg.obj);
+                Toast.makeText(SmartCabinetConfigActivity.this,(String)msg.obj,Toast.LENGTH_LONG).show();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
+                        finish();
+                    }
+                },2000);
+                break;
         }
-    };
+    }
 }

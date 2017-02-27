@@ -7,9 +7,12 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -20,10 +23,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gizwits.gizwifisdk.api.GizDeviceSharing;
+import com.gizwits.gizwifisdk.api.GizUserInfo;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizEventType;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
+import com.gizwits.gizwifisdk.listener.GizDeviceSharingListener;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.sicao.smartwine.xdata.XUserData;
@@ -56,6 +62,14 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     protected TextView mCenterTitle;
     //进度框下面的提示语句
     protected TextView mHintText;
+    //交互使用Handler
+    protected Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            message(msg);
+        }
+    };
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -117,6 +131,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         super.onResume();
         //每次启动activity都要注册一次sdk监听器，保证sdk状态能正确回调
         GizWifiSDK.sharedInstance().setListener(mGizListener);
+        GizDeviceSharing.setListener(mSharingListener);
     }
 
     @Override
@@ -133,12 +148,14 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
 
     /***
      * 判断是否审核通过了某一个权限
+     *
      * @param permission
      * @return
      */
-    public boolean checkPermission(String permission){
-        return ContextCompat.checkSelfPermission(this, permission)!= PackageManager.PERMISSION_GRANTED;
+    public boolean checkPermission(String permission) {
+        return ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED;
     }
+
     /***
      * 申请权限部分
      *
@@ -147,24 +164,27 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void requestPermission(String permission, int requestCode) {
-        mPermissonRequestCode=requestCode;
+        mPermissonRequestCode = requestCode;
         requestPermissions(new String[]{permission}, requestCode);
     }
 
-    int mPermissonRequestCode=0;
+    int mPermissonRequestCode = 0;
 
     /***
      * 权限请求失败
      */
-    public  void requestPermissionError(){}
+    public void requestPermissionError() {
+    }
 
     /***
      * 权限请求OK
      */
-    public  void requestPermissionSuccess(int requestCode){}
+    public void requestPermissionSuccess(int requestCode) {
+    }
 
     /***
      * 申请权限返回结果
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
@@ -176,7 +196,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             if (permissions.length != 1 || grantResults.length != 1 ||
                     grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 requestPermissionError();
-            } else  {
+            } else {
                 requestPermissionSuccess(requestCode);
             }
         } else {
@@ -473,6 +493,56 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             }
         }
     };
+
+    /***
+     * 设备分享监听
+     */
+    private GizDeviceSharingListener mSharingListener = new GizDeviceSharingListener() {
+        // 实现设备分享的回调
+        @Override
+        public void didSharingDevice(GizWifiErrorCode result, String deviceID, int sharingID, Bitmap QRCodeImage) {
+            if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
+                // 分享成功
+                getSharingInfoSuccess(deviceID, sharingID, QRCodeImage);
+            } else {
+                // 分享失败
+                getSharingInfoError(errorCodeToString(result));
+            }
+        }
+        //获取设备的绑定用户
+        @Override
+        public void didGetBindingUsers(GizWifiErrorCode result, String deviceID, List<GizUserInfo> bindUsers) {
+            super.didGetBindingUsers(result, deviceID, bindUsers);
+            if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
+                getBindingUsersSuccess(deviceID,bindUsers);
+            } else {
+                getBindingUsersError(errorCodeToString(result));
+            }
+        }
+
+        //解绑绑定设备的子账户
+        @Override
+        public void didUnbindUser(GizWifiErrorCode result, String deviceID, String guestUID) {
+            super.didUnbindUser(result, deviceID, guestUID);
+            if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
+                unBindGuestUserSuccess(deviceID,guestUID);
+            } else {
+                unBindGuestUserError(errorCodeToString(result));
+            }
+        }
+    };
+
+    public void message(Message msg){}
+    public void unBindGuestUserSuccess(String deviceID, String guestUID){}
+    public void unBindGuestUserError(String result){}
+    public  void getBindingUsersSuccess(String deviceID, List<GizUserInfo> bindUsers){}
+    public void getBindingUsersError(String result){}
+    public void getSharingInfoError(String result) {
+    }
+
+    public void getSharingInfoSuccess(String deviceID, int sharingID, Bitmap QRCodeImage) {
+    }
+
 
     public void setCustomInfoSuccess(GizWifiDevice device) {
     }

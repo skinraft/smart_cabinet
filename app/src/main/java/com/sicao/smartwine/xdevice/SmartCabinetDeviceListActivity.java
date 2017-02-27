@@ -4,11 +4,14 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
+
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.enumration.GizWifiDeviceNetStatus;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
@@ -23,7 +26,9 @@ import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenu;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuCreator;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuItem;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuListView;
+import com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout;
 import com.sicao.smartwine.xwidget.zxing.ActivityCapture;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +44,8 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     SmartCabinetDeviceAdapter mAdapter;
     //添加设备的菜单
     SmartCabinetSettingDialog smartCabinetSettingDialog = null;
-
+     //刷新控件
+    SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +85,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         smartCabinetSettingDialog = new SmartCabinetSettingDialog(this);
         smartCabinetSettingDialog.update(menu);
         smartCabinetSettingDialog.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_device_list_pop_menu_bg));
-        smartCabinetSettingDialog.setWidth(smartCabinetSettingDialog.dip2px(this,150));
+        smartCabinetSettingDialog.setWidth(smartCabinetSettingDialog.dip2px(this, 150));
         smartCabinetSettingDialog.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
         smartCabinetSettingDialog.setMenuItemClickListener(new SmartCabinetSettingDialog.MenuItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -89,10 +95,14 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 if (position == 0) {
                     //扫码添加设备
                     //判断权限
-                    if (checkPermission(android.Manifest.permission .CAMERA)){
-                        startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        if (!checkPermission(android.Manifest.permission.CAMERA)) {
+                            requestPermission(android.Manifest.permission.CAMERA, 10086);
+                        }else{
+                            startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
+                        }
                     }else{
-                        requestPermission(android.Manifest.permission .CAMERA,10086);
+                        startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
                     }
                 } else {
                     //配置新设备
@@ -102,10 +112,11 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             }
         });
         mDeviceListView = (SwipeMenuListView) findViewById(R.id.view4);
+        swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mAdapter = new SmartCabinetDeviceAdapter(this, mListData);
         mDeviceListView.setAdapter(mAdapter);
         mRightText.setVisibility(View.VISIBLE);
-        mRightText.setText("添加");
+        mRightText.setText("菜单");
         mRightText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,10 +168,10 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 } else {
                     //已经绑定的设备，则执行为该设备设置监听,并订阅该设备
                     //如果设备处于离线或者不可用的状态，则不执行订阅监控的操作
-                    if (device.getNetStatus()== GizWifiDeviceNetStatus.GizDeviceOffline||device.getNetStatus()==GizWifiDeviceNetStatus.GizDeviceUnavailable){
-                        Toast.makeText(SmartCabinetDeviceListActivity.this, "设备处于"+device.getNetStatus()+"状态", Toast.LENGTH_LONG).show();
-                        SmartSicaoApi.log("the device is not control ,that net status is " +device.getNetStatus());
-                    }else{
+                    if (device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOffline || device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceUnavailable) {
+                        Toast.makeText(SmartCabinetDeviceListActivity.this, "设备处于" + device.getNetStatus() + "状态", Toast.LENGTH_LONG).show();
+                        SmartSicaoApi.log("the device is not control ,that net status is " + device.getNetStatus());
+                    } else {
                         xCabinetApi.bindDevice(device, mBindListener);
                         XUserData.setCurrentCabinetId(SmartCabinetDeviceListActivity.this, device.getDid());
                         SmartSicaoApi.log("set current device  ,your set current device id is " + device.getDid());
@@ -168,19 +179,35 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 }
             }
         });
+        //
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.sendEmptyMessageDelayed(10090,2000);
+            }
+        });
     }
 
     @Override
+    public void message(Message msg) {
+        int what=msg.what;
+        if (what==10090){
+            swipeRefreshLayout.setRefreshing(false);
+            initDate(xCabinetApi.getCacheDeviceList());
+            Toast.makeText(SmartCabinetDeviceListActivity.this, "操作成功!", Toast.LENGTH_SHORT).show();
+        }
+    }
+    @Override
     public void requestPermissionError() {
         super.requestPermissionError();
-        Toast.makeText(this,"授权异常,请重试!",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "授权异常,请重试!", Toast.LENGTH_SHORT).show();
         finish();
     }
 
     @Override
     public void requestPermissionSuccess(int requestCode) {
         super.requestPermissionSuccess(requestCode);
-        if (requestCode==10086){
+        if (requestCode == 10086) {
             startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
             finish();
         }

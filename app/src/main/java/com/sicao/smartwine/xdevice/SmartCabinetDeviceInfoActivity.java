@@ -173,7 +173,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                         mHintText.setVisibility(View.VISIBLE);
                         mHintText.setText("正在退出...");
                         showProgress(true);
-                        mHandler.sendEmptyMessageDelayed(2, 2000);
+                        handler.sendEmptyMessageDelayed(10094, 2000);
                     }
                     @Override
                     public void cancle() {
@@ -210,22 +210,20 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
 
     @Override
     public void animStop() {
-        mHandler.sendEmptyMessageDelayed(1, 2000);
+        handler.sendEmptyMessageDelayed(10093, 2000);
     }
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            int what=msg.what;
-            if (what==1){
-                mDeviceInfoLayout.setVisibility(View.VISIBLE);
-                wineSetting.setVisibility(View.VISIBLE);
-                mSynLayout.setVisibility(View.GONE);
-            }else if(what==2){
-                XUserData.setPassword(SmartCabinetDeviceInfoActivity.this, "");
-                finish();
-            }
+    @Override
+    public void message(Message msg) {
+        int what=msg.what;
+        if (what==10093){
+            mDeviceInfoLayout.setVisibility(View.VISIBLE);
+            wineSetting.setVisibility(View.VISIBLE);
+            mSynLayout.setVisibility(View.GONE);
+        }else if(what==10094){
+            XUserData.setPassword(SmartCabinetDeviceInfoActivity.this, "");
+            finish();
         }
-    };
+    }
 
 }

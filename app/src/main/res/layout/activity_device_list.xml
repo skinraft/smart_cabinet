@@ -4,12 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
+    <com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout
+        android:id="@+id/swiperefreshlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/view4"
         android:background="@color/write"
         android:layout_centerInParent="true" />
+    </com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout>
 </RelativeLayout>
 

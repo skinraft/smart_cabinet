@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F9F6F7"
-    android:orientation="vertical"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#F9F6F7"
+              android:orientation="vertical"
     >
 
     <LinearLayout
@@ -23,7 +23,7 @@
             android:text="酒柜名称:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#3d3d3d"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/editText"
@@ -36,7 +36,7 @@
             android:paddingLeft="10dp"
             android:textColor="#3d3d3d"
             android:textColorHint="#d9d9d9"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/commit"
@@ -48,14 +48,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#3d3d3d"
             android:textSize="16sp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:layout_marginLeft="16dp"
-        android:background="#dcdcdc"
-        android:layout_height="1dp"></TextView>
+        android:background="#dcdcdc"></TextView>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -74,7 +74,7 @@
             android:text="工作模式:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#3d3d3d"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <ImageView
             android:id="@+id/img_right1"
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/rihgt" />
+            android:src="@drawable/rihgt"/>
 
         <EditText
             android:id="@+id/work_mode_name"
@@ -99,15 +99,15 @@
             android:paddingLeft="10dp"
             android:textColor="#3d3d3d"
             android:textColorHint="#d9d9d9"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
     </RelativeLayout>
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:layout_marginLeft="16dp"
-        android:background="#dcdcdc"
-        android:layout_height="1dp"></TextView>
+        android:background="#dcdcdc"></TextView>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -126,7 +126,7 @@
             android:text="设置温度:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#3d3d3d"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <ImageView
             android:id="@+id/img_right2"
@@ -134,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/rihgt" />
+            android:src="@drawable/rihgt"/>
 
         <EditText
             android:id="@+id/work_mode_temp_name"
@@ -151,6 +151,18 @@
             android:paddingLeft="10dp"
             android:textColor="#3d3d3d"
             android:textColorHint="#d9d9d9"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/qrcode"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true"/>
+
     </RelativeLayout>
 </LinearLayout>
