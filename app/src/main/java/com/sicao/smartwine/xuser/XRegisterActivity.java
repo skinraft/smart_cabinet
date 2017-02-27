@@ -60,7 +60,7 @@ public class XRegisterActivity extends SmartCabinetActivity {
             @Override
             public void onClick(View v) {
                 if (mPhone.getText().toString().trim().length() < 11) {
-                    Toast.makeText(XRegisterActivity.this, "请输入正确的手机号", Toast.LENGTH_LONG).show();
+                    Toast("请输入正确的手机号");
                     return;
                 }
                 // 1，API提交手机号
@@ -133,7 +133,7 @@ public class XRegisterActivity extends SmartCabinetActivity {
         mPasswordNumber = mPassword.getText().toString().trim();
         if ("".equals(mCodeNumber) || "".equals(mPhoneNumber)
                 || "".equals(mPasswordNumber)) {
-            Toast.makeText(XRegisterActivity.this, "请输入手机号以及验证码的信息", Toast.LENGTH_LONG).show();
+            Toast("请输入手机号以及验证码的信息");
             return;
         }
         showProgress(true);
@@ -141,7 +141,7 @@ public class XRegisterActivity extends SmartCabinetActivity {
             @Override
             public void response(Object object) {
                 //注册OK----返回登录页面
-                Toast.makeText(XRegisterActivity.this, "操作成功", Toast.LENGTH_LONG).show();
+                Toast("操作成功");
                 showProgress(false);
                 finish();
             }
@@ -149,7 +149,7 @@ public class XRegisterActivity extends SmartCabinetActivity {
             @Override
             public void error(String error) {
                 showProgress(false);
-                Toast.makeText(XRegisterActivity.this, "操作失败,请重试!" + error, Toast.LENGTH_LONG).show();
+                Toast("操作失败,请重试!");
             }
         });
     }
@@ -325,12 +325,12 @@ public class XRegisterActivity extends SmartCabinetActivity {
         xSicaoApi.getCodeForRegister(this, phoneNumber,"getcodeForRegister", new XApiCallBack() {
             @Override
             public void response(Object object) {
-                Toast.makeText(XRegisterActivity.this, "验证码已发送至您的手机,请注意查收", Toast.LENGTH_LONG).show();
+                Toast("验证码已发送至您的手机,请注意查收");
             }
         }, new XApiException() {
             @Override
             public void error(String error) {
-                Toast.makeText(XRegisterActivity.this, error+" 请重试!", Toast.LENGTH_LONG).show();
+                Toast(error+" 请重试!");
             }
         });
     }

@@ -93,7 +93,7 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
         int what=msg.what;
         if (what==10091){
             swipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(SmartCabinetBindUsersActivity.this, "操作成功!", Toast.LENGTH_SHORT).show();
+            Toast( "操作成功!");
         }
     }
     /***
@@ -122,7 +122,7 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     @Override
     public void unBindGuestUserSuccess(String deviceID, String guestUID) {
         super.unBindGuestUserSuccess(deviceID, guestUID);
-        Toast.makeText(this, "操作成功", Toast.LENGTH_LONG).show();
+        Toast( "操作成功!");
     }
 
     @Override
@@ -134,13 +134,13 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     @Override
     public void getBindingUsersError(String result) {
         super.getBindingUsersError(result);
-        Toast.makeText(this, "操作失败,请刷新重试"+result, Toast.LENGTH_LONG).show();
+        Toast( "操作失败,请刷新重试"+result);
     }
 
     @Override
     public void unBindGuestUserError(String result) {
         super.unBindGuestUserError(result);
-        Toast.makeText(this, "操作失败,请重试"+result, Toast.LENGTH_LONG).show();
+        Toast("操作失败,请重试"+result);
     }
 
     private int dp2px(int dp) {

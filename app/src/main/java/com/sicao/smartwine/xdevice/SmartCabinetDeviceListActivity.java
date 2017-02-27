@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.util.TypedValue;
@@ -20,12 +19,12 @@ import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetDeviceAdapter;
-import com.sicao.smartwine.xwidget.dialog.SmartCabinetSettingDialog;
-import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenu;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuCreator;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuItem;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuListView;
+import com.sicao.smartwine.xwidget.dialog.SmartCabinetSettingDialog;
+import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 import com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout;
 import com.sicao.smartwine.xwidget.zxing.ActivityCapture;
 
@@ -194,13 +193,13 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         if (what==10090){
             swipeRefreshLayout.setRefreshing(false);
             initDate(xCabinetApi.getCacheDeviceList());
-            Toast.makeText(SmartCabinetDeviceListActivity.this, "操作成功!", Toast.LENGTH_SHORT).show();
+            Toast("操作成功");
         }
     }
     @Override
     public void requestPermissionError() {
         super.requestPermissionError();
-        Toast.makeText(this, "授权异常,请重试!", Toast.LENGTH_SHORT).show();
+        Toast("授权异常,请重试!");
         finish();
     }
 
@@ -235,7 +234,6 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 showProgress(true);
                 if (bind) {
                     //绑定该设备
-//                    xCabinetApi.bindDevice(XUserData.getCabinetUid(SmartCabinetDeviceListActivity.this),XUserData.getCabinetToken(SmartCabinetDeviceListActivity.this),device.getMacAddress(),getProductKey(),getProductSecret());
                     xCabinetApi.bindDevice(device, mBindListener);
                 } else {
                     xCabinetApi.unBindDevice(XUserData.getCabinetUid(SmartCabinetDeviceListActivity.this), XUserData.getCabinetToken(SmartCabinetDeviceListActivity.this), device.getDid());
@@ -256,7 +254,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         /***
          * 订阅OK
          */
-        Toast.makeText(this, "操作成功!", Toast.LENGTH_LONG).show();
+        Toast("操作成功!");
         finish();
     }
 
@@ -267,7 +265,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
          * 订阅失败
          */
         showProgress(false);
-        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
+        Toast(result.toString());
     }
 
     @Override
@@ -286,7 +284,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
          * 绑定失败
          */
         showProgress(false);
-        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
+        Toast(result.toString());
         startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
     }
 
@@ -311,7 +309,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
          * 解绑失败
          */
         showProgress(false);
-        Toast.makeText(this, result.toString(), Toast.LENGTH_LONG).show();
+        Toast(result.toString());
         startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "4"));
     }
 

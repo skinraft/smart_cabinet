@@ -3,11 +3,9 @@ package com.sicao.smartwine.xdevice;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -15,19 +13,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.gizwits.gizwifisdk.api.GizWifiGroup;
-import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdata.XUserData;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.sicao.smartwine.xdevice.SmartCabinetConfigActivity.ConfigStatus.BIND_ERROR;
 
 /***
  * 配置设备
@@ -71,7 +63,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
     public void configSuccess(String mac, String did, String productKey) {
         super.configSuccess(mac, did, productKey);
         handler.sendEmptyMessage(ConfigStatus.CONFIG_SUCCESS.ordinal());
-        Toast.makeText(this,"设备配置OK,正在绑定该设备",Toast.LENGTH_LONG).show();
+        Toast("设备配置OK,正在绑定该设备");
         //绑定该设备
         xCabinetApi.bindDevice(XUserData.getCabinetUid(this),XUserData.getCabinetToken(this),mac,getProductKey(),getProductSecret());
         handler.sendEmptyMessageDelayed(ConfigStatus.START_BIND.ordinal(),2000);
@@ -101,7 +93,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
     @Override
     public void configError(GizWifiErrorCode result) {
         super.configError(result);
-        Toast.makeText(this,errorCodeToString(result),Toast.LENGTH_LONG).show();
+        Toast(errorCodeToString(result));
         //配置失败，
         Message msg=handler.obtainMessage();
         msg.obj=errorCodeToString(result);
@@ -121,7 +113,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                         wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
                         WifiInfo wifiInfo = wifi.getConnectionInfo();
                         if (null == wifiInfo) {
-                            Toast.makeText(SmartCabinetConfigActivity.this, "请正确配置当前WIFI信息", Toast.LENGTH_SHORT).show();
+                            Toast("请正确配置当前WIFI信息");
                             return;
                         }
                         SSID.setText(wifiInfo.getSSID());
@@ -137,7 +129,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                         }
 
                     } else {
-                        Toast.makeText(SmartCabinetConfigActivity.this, "请正确配置当前WIFI信息", Toast.LENGTH_SHORT).show();
+                        Toast("请正确配置当前WIFI信息");
                     }
                 } catch (Exception e) {
 
@@ -212,7 +204,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                 break;
             case BIND_ERROR:
                 mHintText.setText("绑定设备失败,"+msg.obj);
-                Toast.makeText(SmartCabinetConfigActivity.this,(String)msg.obj,Toast.LENGTH_LONG).show();
+                Toast((String)msg.obj);
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {

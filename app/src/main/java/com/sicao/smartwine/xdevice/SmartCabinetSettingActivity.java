@@ -156,7 +156,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
         super.setCustomInfoSuccess(device);
         showProgress(false);
         xCabinetApi.getDeviceStatus(mDevice);
-        Toast.makeText(this, "操作成功", Toast.LENGTH_LONG).show();
+        Toast("操作成功");
     }
 
     @Override
@@ -164,7 +164,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
         super.setCustomInfoError(result);
         showProgress(false);
         SmartSicaoApi.log("set sustom info error " + result);
-        Toast.makeText(this, "设备信息修改失败,请重试", Toast.LENGTH_LONG).show();
+        Toast(result.toString());
     }
 
     public void init() {
@@ -254,7 +254,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     public void getSharingInfoError(String result) {
         super.getSharingInfoError(result);
         QRcode.setVisibility(View.GONE);
-        Toast.makeText(this, "设备分享失败-"+result, Toast.LENGTH_LONG).show();
+        Toast(result.toString());
     }
 
     @Override

@@ -63,7 +63,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     //进度框下面的提示语句
     protected TextView mHintText;
     //交互使用Handler
-    protected Handler handler=new Handler(){
+    protected Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -78,6 +78,10 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    public void Toast(String str) {
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -509,12 +513,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 getSharingInfoError(errorCodeToString(result));
             }
         }
+
         //获取设备的绑定用户
         @Override
         public void didGetBindingUsers(GizWifiErrorCode result, String deviceID, List<GizUserInfo> bindUsers) {
             super.didGetBindingUsers(result, deviceID, bindUsers);
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
-                getBindingUsersSuccess(deviceID,bindUsers);
+                getBindingUsersSuccess(deviceID, bindUsers);
             } else {
                 getBindingUsersError(errorCodeToString(result));
             }
@@ -525,18 +530,28 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         public void didUnbindUser(GizWifiErrorCode result, String deviceID, String guestUID) {
             super.didUnbindUser(result, deviceID, guestUID);
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
-                unBindGuestUserSuccess(deviceID,guestUID);
+                unBindGuestUserSuccess(deviceID, guestUID);
             } else {
                 unBindGuestUserError(errorCodeToString(result));
             }
         }
     };
 
-    public void message(Message msg){}
-    public void unBindGuestUserSuccess(String deviceID, String guestUID){}
-    public void unBindGuestUserError(String result){}
-    public  void getBindingUsersSuccess(String deviceID, List<GizUserInfo> bindUsers){}
-    public void getBindingUsersError(String result){}
+    public void message(Message msg) {
+    }
+
+    public void unBindGuestUserSuccess(String deviceID, String guestUID) {
+    }
+
+    public void unBindGuestUserError(String result) {
+    }
+
+    public void getBindingUsersSuccess(String deviceID, List<GizUserInfo> bindUsers) {
+    }
+
+    public void getBindingUsersError(String result) {
+    }
+
     public void getSharingInfoError(String result) {
     }
 

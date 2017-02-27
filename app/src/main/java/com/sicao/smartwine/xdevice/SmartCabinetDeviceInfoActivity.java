@@ -2,13 +2,11 @@ package com.sicao.smartwine.xdevice;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
@@ -113,7 +111,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                     xCabinetApi.getDeviceStatus(device);
                     GizWifiSDK.sharedInstance().getDevicesToSetServerInfo();
                 }else{
-                    Toast.makeText(SmartCabinetDeviceInfoActivity.this,"目标设备处于不可监控状态",Toast.LENGTH_LONG).show();
+                    Toast("目标设备处于不可监控状态");
                 }
             }
         }
@@ -135,7 +133,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 mOnLine.setText(object.getBoolean("isOnline") ? "在线" : "离线");
             }
         } catch (JSONException e) {
-            Toast.makeText(SmartCabinetDeviceInfoActivity.this,"数据异常,请检查!",Toast.LENGTH_LONG).show();
+            Toast("数据异常,请检查!");
             SmartSicaoApi.log("the device update data json has error in " + (null == e ? getClass().getSimpleName() : e.getMessage()));
         }
     }
@@ -151,14 +149,14 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 if (null != mDevice) {
                     startActivity(new Intent(this, SmartCabinetSettingActivity.class).putExtra("device", mDevice));
                 } else {
-                    Toast.makeText(this, "请选择某一设备后重试!", Toast.LENGTH_LONG).show();
+                    Toast("请选择某一设备后重试!");
                 }
                 break;
             case R.id.imageView3://设备灯开关
                 if (null != mDevice) {
                     xCabinetApi.controlDevice(mDevice, "light", isLight ? false : true, XConfig.CONFIG_CABINET_SET_LIGHT_ACTION);
                 } else {
-                    Toast.makeText(this, "请选择某一设备后重试!", Toast.LENGTH_LONG).show();
+                    Toast("请选择某一设备后重试!");
                 }
                 break;
             case R.id.setting://退出
@@ -182,7 +180,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 });
                 break;
             case R.id.my_wines://酒柜内的酒款
-                Toast.makeText(this, "正在开发中...", Toast.LENGTH_LONG).show();
+                Toast("正在开发中...");
                 startActivity(new Intent(this, Main2Activity.class));
                 break;
         }
@@ -192,13 +190,13 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     public void setCustomInfoSuccess(GizWifiDevice device) {
         super.setCustomInfoSuccess(device);
         xCabinetApi.getDeviceStatus(mDevice);
-        Toast.makeText(this, "操作成功", Toast.LENGTH_LONG).show();
+        Toast("操作成功");
     }
 
     @Override
     public void setCustomInfoError(String result) {
         super.setCustomInfoError(result);
-        Toast.makeText(this, "请重试!", Toast.LENGTH_LONG).show();
+        Toast("请重试!");
     }
 
     @Override

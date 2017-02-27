@@ -126,11 +126,11 @@ public class XLoginActivity extends SmartCabinetActivity {
         String username = mUsername.getText().toString().trim();
         String password = mPassword.getText().toString().trim();
         if (TextUtils.isEmpty(username)) {
-            Toast.makeText(this, "账号不能为空", Toast.LENGTH_LONG).show();
+            Toast("账号不能为空");
             return;
         }
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "密码不能为空", Toast.LENGTH_LONG).show();
+            Toast("密码不能为空");
             return;
         }
         showProgress(true);
@@ -167,7 +167,7 @@ public class XLoginActivity extends SmartCabinetActivity {
             public void error(String error) {
                 showProgress(false);
                 mHintText.setVisibility(View.GONE);
-                Toast.makeText(XLoginActivity.this, "请重试!" + error, Toast.LENGTH_LONG).show();
+                Toast("请重试!" + error);
             }
         });
     }
@@ -177,7 +177,7 @@ public class XLoginActivity extends SmartCabinetActivity {
         super.loginSuccess();
         showProgress(false);
         mHintText.setVisibility(View.GONE);
-        Toast.makeText(this, "登录成功", Toast.LENGTH_LONG).show();
+        Toast("登录成功");
         startActivity(new Intent(this, SmartCabinetDeviceInfoActivity.class));
         finish();
     }
@@ -187,7 +187,7 @@ public class XLoginActivity extends SmartCabinetActivity {
         super.loginError(result);
         showProgress(false);
         mHintText.setVisibility(View.GONE);
-        Toast.makeText(this, "登录失败,请检查您输入的帐号密码是否有误！", Toast.LENGTH_LONG).show();
+        Toast("登录失败,请检查您输入的帐号密码是否有误！");
     }
 
     @Override
@@ -202,6 +202,6 @@ public class XLoginActivity extends SmartCabinetActivity {
         super.registerError(result);
         showProgress(false);
         mHintText.setVisibility(View.GONE);
-        Toast.makeText(this, "登录失败,请检查您输入的帐号密码是否有误！", Toast.LENGTH_LONG).show();
+        Toast("登录失败,请检查您输入的帐号密码是否有误！");
     }
 }
