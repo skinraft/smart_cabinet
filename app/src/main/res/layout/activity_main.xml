@@ -46,13 +46,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout
+            android:id="@+id/swiperefreshlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:id="@+id/base_content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/write">
+            </RelativeLayout>
+        </com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout>
         <RelativeLayout
-            android:id="@+id/base_content_layout"
+            android:id="@+id/base_content_layout2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/write">
         </RelativeLayout>
-
         <ProgressBar
             android:id="@+id/login_progress"
             style="?android:attr/progressBarStyleLarge"

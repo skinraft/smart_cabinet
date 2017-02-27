@@ -3,6 +3,7 @@ package com.sicao.smartwine.xdevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,6 +18,7 @@ import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XConfig;
+import com.sicao.smartwine.xuser.XSettingActivity;
 import com.sicao.smartwine.xwidget.device.RingView;
 import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 
@@ -160,24 +162,25 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 }
                 break;
             case R.id.setting://退出
-                final XWarnDialog dialog = new XWarnDialog(this);
-                dialog.setTitle("退出登录");
-                dialog.setContent("您将要退出该帐号的登录,\n 注意:下次启用需要重新登录!");
-                dialog.show();
-                dialog.setOnListener(new XWarnDialog.OnClickListener() {
-                    @Override
-                    public void makeSure() {
-                        dialog.dismiss();
-                        mHintText.setVisibility(View.VISIBLE);
-                        mHintText.setText("正在退出...");
-                        showProgress(true);
-                        handler.sendEmptyMessageDelayed(10094, 2000);
-                    }
-                    @Override
-                    public void cancle() {
-                        dialog.dismiss();
-                    }
-                });
+                  startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, XSettingActivity.class));
+//                final XWarnDialog dialog = new XWarnDialog(this);
+//                dialog.setTitle("退出登录");
+//                dialog.setContent("您将要退出该帐号的登录,\n 注意:下次启用需要重新登录!");
+//                dialog.show();
+//                dialog.setOnListener(new XWarnDialog.OnClickListener() {
+//                    @Override
+//                    public void makeSure() {
+//                        dialog.dismiss();
+//                        mHintText.setVisibility(View.VISIBLE);
+//                        mHintText.setText("正在退出...");
+//                        showProgress(true);
+//                        handler.sendEmptyMessageDelayed(10094, 2000);
+//                    }
+//                    @Override
+//                    public void cancle() {
+//                        dialog.dismiss();
+//                    }
+//                });
                 break;
             case R.id.my_wines://酒柜内的酒款
                 Toast("正在开发中...");

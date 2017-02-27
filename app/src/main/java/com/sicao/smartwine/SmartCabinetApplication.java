@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizEventType;
@@ -35,6 +36,8 @@ public class SmartCabinetApplication extends Application {
         mManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         metrics = new DisplayMetrics();
         mManager.getDefaultDisplay().getMetrics(metrics);
+        //初始化图片处理器
+        Fresco.initialize(this);
     }
 
 

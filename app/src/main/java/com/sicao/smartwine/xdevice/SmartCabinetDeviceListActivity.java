@@ -43,8 +43,6 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     SmartCabinetDeviceAdapter mAdapter;
     //添加设备的菜单
     SmartCabinetSettingDialog smartCabinetSettingDialog = null;
-     //刷新控件
-    SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +109,6 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             }
         });
         mDeviceListView = (SwipeMenuListView) findViewById(R.id.view4);
-        swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mAdapter = new SmartCabinetDeviceAdapter(this, mListData);
         mDeviceListView.setAdapter(mAdapter);
         mRightText.setVisibility(View.VISIBLE);
@@ -178,20 +175,12 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 }
             }
         });
-        //
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                handler.sendEmptyMessageDelayed(10090,2000);
-            }
-        });
     }
 
     @Override
     public void message(Message msg) {
         int what=msg.what;
-        if (what==10090){
-            swipeRefreshLayout.setRefreshing(false);
+        if (what==777777){
             initDate(xCabinetApi.getCacheDeviceList());
             Toast("操作成功");
         }

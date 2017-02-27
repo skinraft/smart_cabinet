@@ -118,7 +118,7 @@ public class SmartSicaoApi implements XApiException {
      * @param password     用户密码
      * @param xApiCallBack 结果回调
      */
-    public void login(final Context context, final String username, final String password, final XApiCallBack xApiCallBack,final XApiException xApiException) {
+    public void login(final Context context, final String username, final String password, final XApiCallBack xApiCallBack, final XApiException xApiException) {
         String url = configParamsUrl("user/login?mobile=" + username + "&value=" + password + "&type=2", context);
         XHttpUtil http = new XHttpUtil(context);
         http.get(url, new XCallBack() {
@@ -137,7 +137,7 @@ public class SmartSicaoApi implements XApiException {
                         }
                     } else {
                         error(object.getString("message"));
-                        if (null!=xApiException){
+                        if (null != xApiException) {
                             xApiException.error(object.getString("message"));
                         }
                     }
@@ -149,7 +149,7 @@ public class SmartSicaoApi implements XApiException {
             @Override
             public void fail(String response) {
                 error(response);
-                if (null!=xApiException){
+                if (null != xApiException) {
                     xApiException.error(response);
                 }
             }
@@ -212,10 +212,10 @@ public class SmartSicaoApi implements XApiException {
      * @param callback  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public void getCodeForRegister(final Context context, String mobile,String type,
+    public void getCodeForRegister(final Context context, String mobile, String type,
                                    final XApiCallBack callback, final XApiException exception) {
         String url = configParamsUrl("User/verifymobile", context) + "&mobile="
-                + mobile + "&type="+type;
+                + mobile + "&type=" + type;
         XHttpUtil httpUtil = new XHttpUtil(context);
         httpUtil.get(url, new XCallBack() {
             @Override
@@ -228,6 +228,49 @@ public class SmartSicaoApi implements XApiException {
                         }
                     } else {
                         Toast.makeText(context, object.getString("message"), Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+
+    /***
+     * 拉取个人信息
+     *
+     * @param context     上下文对象
+     * @param apiCallBack 接口执行OK回调对象
+     * @param exception   接口执行失败回调对象
+     */
+    public void getUserInfo(Context context, final XApiCallBack apiCallBack, final XApiException exception) {
+        String url = configParamsUrl("user/getProfile", context);
+        XHttpUtil http = new XHttpUtil(context);
+        http.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        JSONObject info = object.getJSONObject("data")
+                                .getJSONObject("profile");
+//                        mUserEntity.setAvatar(info.getString("avatar"));
+//                        mUserEntity.setNickname(info.getString("nickname"));
+//                        mUserEntity.setSignature(info.getString("signature"));
+//                        mUserEntity.setBirthday(info.getString("birthday"));
+//                        mUserEntity.setTitle(info.getString("title"));
+//                        mUserEntity.setSex(info.getString("sex"));
+//                        mUserEntity.setMobile(info.getString("mobile"));
+                        if (null != apiCallBack) {
+                            apiCallBack.response(info);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

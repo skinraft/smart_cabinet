@@ -36,6 +36,7 @@ import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xhttp.XSmartCabinetListener;
 import com.sicao.smartwine.xhttp.XSmartCabinetReceiver;
+import com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +54,10 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     //非硬件部分API
     protected SmartSicaoApi xSicaoApi;
     //内容布局
+    protected SwipeRefreshLayout swipeRefreshLayout;
     protected RelativeLayout mContent;
+    //主页使用的内容布局
+    protected  RelativeLayout mContent2;
     //进度框
     private View mProgressView;
     //顶部右侧按钮
@@ -66,7 +70,11 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     protected Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            if (msg.what == 777777) {
+                swipeRefreshLayout.setRefreshing(false);
+            } else if (msg.what == 999999) {
+                swipeRefreshLayout.setLoading(false);
+            }
             message(msg);
         }
     };
@@ -107,12 +115,35 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         mBindListener = new XDeviceListener();
         xCabinetApi = new SmartCabinetApi();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mContent = (RelativeLayout) findViewById(R.id.base_content_layout);
+        mContent2= (RelativeLayout) findViewById(R.id.base_content_layout2);
         mRightText = (TextView) findViewById(R.id.base_top_right_icon);
         mProgressView = findViewById(R.id.login_progress);
         mCenterTitle = (TextView) findViewById(R.id.base_top_center_text);
         mHintText = (TextView) findViewById(R.id.hint_text);
-        mContent.addView(View.inflate(this, setView(), null));
+        //兼容首页单独动画加载刷新数据
+        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity")){
+            mContent2.addView(View.inflate(this, setView(), null));
+            mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
+            mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT));
+        }else{
+            mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
+            mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT));
+            mContent.addView(View.inflate(this, setView(), null));
+        }
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.sendEmptyMessageDelayed(777777, 2000);
+            }
+        });
+        swipeRefreshLayout.setOnLoadListener(new SwipeRefreshLayout.OnLoadListener() {
+            @Override
+            public void onLoad() {
+                handler.sendEmptyMessageDelayed(999999, 2000);
+            }
+        });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //注册监听广播
         xUpdateSmartCabinetReceiver = new XSmartCabinetReceiver();
@@ -325,12 +356,12 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mContent.setVisibility(show ? View.GONE : View.VISIBLE);
-            mContent.animate().setDuration(shortAnimTime).alpha(
+            swipeRefreshLayout.setVisibility(show ? View.GONE : View.VISIBLE);
+            swipeRefreshLayout.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mContent.setVisibility(show ? View.GONE : View.VISIBLE);
+                    swipeRefreshLayout.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -346,7 +377,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mContent.setVisibility(show ? View.GONE : View.VISIBLE);
+            swipeRefreshLayout.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 

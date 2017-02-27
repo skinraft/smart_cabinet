@@ -35,8 +35,6 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     SmartCabinetUserAdapter mAdapter;
     //设备
     GizWifiDevice mDevice=null;
-    //刷新控件
-    SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +55,6 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
 
     public void init() {
         mDeviceListView = (SwipeMenuListView) findViewById(R.id.view4);
-        swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mAdapter = new SmartCabinetUserAdapter(this, mListData);
         mDeviceListView.setAdapter(mAdapter);
         SwipeMenuCreator creator = new SwipeMenuCreator() {
@@ -80,19 +77,12 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
                 unBindGuestUser(device);
             }
         });
-        //
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                handler.sendEmptyMessageDelayed(10091,2000);
-            }
-        });
     }
     @Override
     public void message(Message msg) {
         int what=msg.what;
-        if (what==10091){
-            swipeRefreshLayout.setRefreshing(false);
+        if (what==777777){
+            GizDeviceSharing.getBindingUsers(XUserData.getCabinetToken(this),mDevice.getDid());
             Toast( "操作成功!");
         }
     }
