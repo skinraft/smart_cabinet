@@ -148,6 +148,20 @@
             android:screenOrientation="portrait"
             >
         </activity>
+        <!-- 意见反馈页面 -->
+        <activity
+            android:name=".xuser.XFeedBackActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            ></activity>
+        <!-- 关于我们页面 -->
+        <activity
+            android:name=".xuser.XAboutActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            ></activity>
     </application>
 
 </manifest>

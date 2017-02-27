@@ -15,6 +15,8 @@ import com.sicao.smartwine.xhttp.XHttpUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 /**
  * 非硬件部分API
  */
@@ -261,13 +263,6 @@ public class SmartSicaoApi implements XApiException {
                     if (status(object)) {
                         JSONObject info = object.getJSONObject("data")
                                 .getJSONObject("profile");
-//                        mUserEntity.setAvatar(info.getString("avatar"));
-//                        mUserEntity.setNickname(info.getString("nickname"));
-//                        mUserEntity.setSignature(info.getString("signature"));
-//                        mUserEntity.setBirthday(info.getString("birthday"));
-//                        mUserEntity.setTitle(info.getString("title"));
-//                        mUserEntity.setSex(info.getString("sex"));
-//                        mUserEntity.setMobile(info.getString("mobile"));
                         if (null != apiCallBack) {
                             apiCallBack.response(info);
                         }
@@ -277,6 +272,44 @@ public class SmartSicaoApi implements XApiException {
                 }
             }
 
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+
+    /***
+     * 用户反馈接口/帖子举报接口
+     *
+     * @param context 上下文对象
+     * @param remark  type为1时标识为意见反馈，remark表示意见内容
+     */
+    public void feedBack(final Context context, final String remark,
+                         final XApiCallBack callback, final XApiException exception) {
+        String url = configParamsUrl("mine/feedback", context);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("type",  "1");
+        // 用户反馈
+        params.put("remark", remark + "");
+        XHttpUtil httpUtil = new XHttpUtil(context);
+        httpUtil.post(url, params, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (object.getBoolean("status")) {
+                        if (null != callback) {
+                            callback.response(object);
+                        }
+                    } else {
+                        Toast.makeText(context, object.getString("message"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                }
+            }
             @Override
             public void fail(String response) {
                 error(response);

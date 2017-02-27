@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
@@ -14,6 +15,9 @@ import com.sicao.smartwine.xapp.FileUtils;
 import java.io.File;
 import java.util.List;
 
+/***
+ * 设置页面
+ */
 public class XSettingActivity extends SmartCabinetActivity implements View.OnClickListener {
 
     //缓存
@@ -30,10 +34,11 @@ public class XSettingActivity extends SmartCabinetActivity implements View.OnCli
         init();
     }
 
-    void init(){
-        mCache= (TextView) findViewById(R.id.tv_cache);
+    void init() {
+        mCache = (TextView) findViewById(R.id.tv_cache);
         mCache.setText(calCache());
     }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -48,13 +53,14 @@ public class XSettingActivity extends SmartCabinetActivity implements View.OnCli
                 cleanCache();
                 break;
             case R.id.lr_suggest://意见反馈
-
+                startActivity(new Intent(XSettingActivity.this, XFeedBackActivity.class));
                 break;
             case R.id.lr_about_smart://关于智能酒柜
-
+                startActivity(new Intent(XSettingActivity.this, XAboutActivity.class));
                 break;
         }
     }
+
     /**
      * 清除缓存
      */
@@ -98,10 +104,12 @@ public class XSettingActivity extends SmartCabinetActivity implements View.OnCli
         } catch (Exception e) {
         }
     }
+
     public static boolean isMethodsCompat(int VersionCode) {
         int currentVersion = android.os.Build.VERSION.SDK_INT;
         return currentVersion >= VersionCode;
     }
+
     public int clearCacheFolder(File dir, long curTime) {
         int deletedFiles = 0;
         if (dir != null && dir.isDirectory()) {
@@ -122,6 +130,7 @@ public class XSettingActivity extends SmartCabinetActivity implements View.OnCli
         }
         return deletedFiles;
     }
+
     // 获取可用内存大小
     private long getAvailMemory(Context context) {
         // 获取android当前可用内存大小
@@ -134,6 +143,7 @@ public class XSettingActivity extends SmartCabinetActivity implements View.OnCli
         SmartSicaoApi.log("可用内存---->>>" + mi.availMem / (1024 * 1024));
         return mi.availMem / (1024 * 1024);
     }
+
     /**
      * 计算缓存大小
      *
