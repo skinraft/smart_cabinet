@@ -171,48 +171,50 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
 
     @Override
     public void message(Message msg) {
-        ConfigStatus key=ConfigStatus.values()[msg.what];
-        switch (key){
-            case START_CONFIG:
-                mHintText.setText("开始配置设备...");
-                break;
-            case CONFIG_ING:
-                mHintText.setText("正在配置设备...");
-                break;
-            case CONFIG_SUCCESS:
-                mHintText.setText("设备配置成功...");
-                break;
-            case CONFIG_ERROR:
-                mHintText.setText("设备配置失败,"+msg.obj);
-                finish();
-                break;
-            case START_BIND:
-                mHintText.setText("开始绑定设备...");
-                break;
-            case BIND_ING:
-                mHintText.setText("正在绑定设备...");
-                break;
-            case BIND_SUCCESS:
-                mHintText.setText("绑定设备成功...");
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
-                        finish();
-                    }
-                },2000);
-                break;
-            case BIND_ERROR:
-                mHintText.setText("绑定设备失败,"+msg.obj);
-                Toast((String)msg.obj);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
-                        finish();
-                    }
-                },2000);
-                break;
+        if (msg.what!=777777&&msg.what!=999999){
+            ConfigStatus key=ConfigStatus.values()[msg.what];
+            switch (key){
+                case START_CONFIG:
+                    mHintText.setText("开始配置设备...");
+                    break;
+                case CONFIG_ING:
+                    mHintText.setText("正在配置设备...");
+                    break;
+                case CONFIG_SUCCESS:
+                    mHintText.setText("设备配置成功...");
+                    break;
+                case CONFIG_ERROR:
+                    mHintText.setText("设备配置失败,"+msg.obj);
+                    finish();
+                    break;
+                case START_BIND:
+                    mHintText.setText("开始绑定设备...");
+                    break;
+                case BIND_ING:
+                    mHintText.setText("正在绑定设备...");
+                    break;
+                case BIND_SUCCESS:
+                    mHintText.setText("绑定设备成功...");
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
+                            finish();
+                        }
+                    },2000);
+                    break;
+                case BIND_ERROR:
+                    mHintText.setText("绑定设备失败,"+msg.obj);
+                    Toast((String)msg.obj);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
+                            finish();
+                        }
+                    },2000);
+                    break;
+            }
         }
     }
 }
