@@ -8,13 +8,17 @@ import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XApiException;
+import com.sicao.smartwine.xhttp.XApisCallBack;
 import com.sicao.smartwine.xhttp.XCallBack;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xhttp.XHttpUtil;
+import com.sicao.smartwine.xuser.address.XAddressEntity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -317,5 +321,128 @@ public class SmartSicaoApi implements XApiException {
                     exception.error(response);
             }
         });
+    }
+
+
+    /***
+     * 设置某一个地址为的默认地址
+     *
+     * @param context   上下文对象
+     * @param id        地址ID
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public  void configDefaultAddress(final Context context, String id,
+                                            final XApiCallBack callBack, final XApiException exception) {
+        String url = configParamsUrl("DealAddress/setdefaultaddress", context)+"&id="+id;
+        XHttpUtil http = new XHttpUtil(context);
+        http.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        if (null != callBack) {
+                            callBack.response(object);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+    /***
+     * 获取我的地址列表信息
+     *
+     * @param context   上下文对象
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public  void getAddressList(final Context context,
+                                      final XApisCallBack callBack, final XApiException exception) {
+        String url = configParamsUrl("DealAddress/getaddress", context);
+        XHttpUtil http = new XHttpUtil(context);
+        http.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        ArrayList<XAddressEntity> list = new ArrayList<>();
+                        JSONObject info = object.getJSONObject("data");
+                        JSONArray array = info.getJSONArray("list");
+                        for (int i = 0; i < array.length(); i++) {
+                            XAddressEntity add = new XAddressEntity();
+                            JSONObject address = array.getJSONObject(i);
+                            add.setAddress(address.getString("address"));
+                            add.setPhone(address.getString("tel"));
+                            add.setName(address.getString("realName"));
+                            add.setId(address.getString("id"));
+                            String defaults = address.getString("default");
+                            if ("1".equals(defaults)) {
+                                add.setIsdefault(true);
+                            } else {
+                                add.setIsdefault(false);
+                            }
+                            list.add(add);
+                        }
+                        if (null != callBack) {
+                            callBack.response(list);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+
+    /***
+     * 根据某一个地址的地址ID删除某一个地址
+     *
+     * @param context   上下文对象
+     * @param id        地址ID
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public  void deleteAddressByID(final Context context, String id,
+                                         final XApiCallBack callBack, final XApiException exception) {
+        String url = configParamsUrl("DealAddress/deleteaddress", context)+"&id="+id;
+        XHttpUtil http = new XHttpUtil(context);
+        http.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        if (null != callBack) {
+                            callBack.response(object);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+
     }
 }

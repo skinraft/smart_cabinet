@@ -88,7 +88,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                         map.put("set_temp", device_set_temp);
                         //更新设备的工作模式
                         xCabinetApi.controlDevice(mDevice, map, XConfig.CONFIG_CABINET_MODEL_TEMP_ACTION);
-                        showProgress(true);
+                        swipeRefreshLayout.setRefreshing(true);
                     }
                 });
                 break;
@@ -109,7 +109,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                         int device_set_temp = Integer.parseInt(getResources().getStringArray(R.array.device_temp)[position]);
                         //更新设备的设置温度
                         xCabinetApi.controlDevice(mDevice, "set_temp", device_set_temp, XConfig.CONFIG_CABINET_SET_TEMP_ACTION);
-                        showProgress(true);
+                        swipeRefreshLayout.setRefreshing(true);
                     }
                 });
                 break;
@@ -126,7 +126,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
         super.onCreate(savedInstanceState);
         mDevice = (GizWifiDevice) getIntent().getExtras().get("device");
         init();
-        showProgress(true);
+        swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
 
     @Override
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
-        showProgress(false);
+        swipeRefreshLayout.setRefreshing(false);
         try {
             SmartSicaoApi.log("current device is " + device.toString() + "\n" + object.toString());
             int model = object.getInt("model");
@@ -154,7 +154,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     @Override
     public void setCustomInfoSuccess(GizWifiDevice device) {
         super.setCustomInfoSuccess(device);
-        showProgress(false);
+        swipeRefreshLayout.setRefreshing(false);
         xCabinetApi.getDeviceStatus(mDevice);
         Toast("操作成功");
     }
@@ -162,7 +162,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     @Override
     public void setCustomInfoError(String result) {
         super.setCustomInfoError(result);
-        showProgress(false);
+        swipeRefreshLayout.setRefreshing(false);
         SmartSicaoApi.log("set sustom info error " + result);
         Toast(result.toString());
     }
@@ -214,7 +214,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
             @Override
             public void onClick(View v) {
                 if (mDevice != null) {
-                    showProgress(true);
+                    swipeRefreshLayout.setRefreshing(true);
                     mDevice.setCustomInfo(wineName.getText().toString(), wineName.getText().toString());
                 }
             }

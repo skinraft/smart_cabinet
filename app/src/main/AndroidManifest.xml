@@ -162,6 +162,14 @@
             android:exported="false"
             android:screenOrientation="portrait"
             ></activity>
+
+        <!-- 地址列表 -->
+        <activity
+            android:name=".xuser.address.XAddressListActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            ></activity>
     </application>
 
 </manifest>

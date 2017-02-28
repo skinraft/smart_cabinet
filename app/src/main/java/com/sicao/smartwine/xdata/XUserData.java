@@ -146,4 +146,17 @@ public class XUserData {
     public static String getUserName(Context context) {
         return XShareps.getString(context, USERNAME, USERNAME);
     }
+
+    /**
+     * 默认地址ID
+     */
+    public static  String DEFAULT_ADDRESS_ID="DEFAULT_ADDRESS_ID";
+
+    public static void setDefaultAddressId(Context context,String defaultAddressId) {
+        XShareps.putString(context, DEFAULT_ADDRESS_ID, DEFAULT_ADDRESS_ID, defaultAddressId);
+    }
+
+    public static String getDefaultAddressId(Context context) {
+        return XShareps.getString(context, DEFAULT_ADDRESS_ID, DEFAULT_ADDRESS_ID);
+    }
 }

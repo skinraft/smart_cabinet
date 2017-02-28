@@ -7,5 +7,5 @@ import java.util.ArrayList;
  */
 public interface XApisCallBack {
 	// 执行成功
-	public <T> void response(ArrayList<T> list);
+	 <T> void response(ArrayList<T> list);
 }

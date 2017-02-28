@@ -11,6 +11,7 @@ import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xapp.FileUtils;
+import com.sicao.smartwine.xuser.address.XAddressListActivity;
 
 import java.io.File;
 import java.util.List;
@@ -47,7 +48,7 @@ public class XSettingActivity extends SmartCabinetActivity implements View.OnCli
                 startActivity(new Intent(XSettingActivity.this, XUserInfoActivity.class));
                 break;
             case R.id.manage_address://管理收货地址
-//                startActivity(new Intent(XSettingActivity.this, AddressListActivity.class));
+                startActivity(new Intent(XSettingActivity.this, XAddressListActivity.class));
                 break;
             case R.id.lr_remove_cache://清理缓存
                 cleanCache();

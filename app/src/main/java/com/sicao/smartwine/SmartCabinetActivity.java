@@ -71,8 +71,10 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 777777) {
+                Toast("操作成功");
                 swipeRefreshLayout.setRefreshing(false);
             } else if (msg.what == 999999) {
+                Toast("操作成功");
                 swipeRefreshLayout.setLoading(false);
             }
             message(msg);

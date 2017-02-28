@@ -1,17 +1,11 @@
 package com.sicao.smartwine;
 
-import android.content.Context;
-import android.content.Intent;
-
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizUserAccountType;
 import com.gizwits.gizwifisdk.enumration.GizWifiConfigureMode;
 import com.gizwits.gizwifisdk.enumration.GizWifiGAgentType;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
-import com.sicao.smartwine.xhttp.XConfig;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
