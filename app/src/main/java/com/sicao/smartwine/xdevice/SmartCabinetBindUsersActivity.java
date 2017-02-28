@@ -3,7 +3,6 @@ package com.sicao.smartwine.xdevice;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.TypedValue;
-import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizDeviceSharing;
 import com.gizwits.gizwifisdk.api.GizUserInfo;
@@ -12,13 +11,12 @@ import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetUserAdapter;
+import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenu;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuCreator;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuItem;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuListView;
-import com.sicao.smartwine.xwidget.dialog.SmartCabinetSettingDialog;
 import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
-import com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,10 +78,8 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     }
     @Override
     public void message(Message msg) {
-        int what=msg.what;
-        if (what==777777){
+        if (msg.what== XConfig.BASE_UPDATE_ACTION){
             GizDeviceSharing.getBindingUsers(XUserData.getCabinetToken(this),mDevice.getDid());
-            Toast( "操作成功!");
         }
     }
     /***

@@ -18,6 +18,7 @@ import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xhttp.XConfig;
 
 import java.util.List;
 
@@ -171,7 +172,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
 
     @Override
     public void message(Message msg) {
-        if (msg.what!=777777&&msg.what!=999999){
+        if (msg.what!= XConfig.BASE_UPDATE_ACTION&&msg.what!=XConfig.BASE_LOAD_ACTION){
             ConfigStatus key=ConfigStatus.values()[msg.what];
             switch (key){
                 case START_CONFIG:

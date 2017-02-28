@@ -13,6 +13,7 @@ import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XApiException;
+import com.sicao.smartwine.xhttp.XConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,7 +115,7 @@ public class XUserInfoActivity extends SmartCabinetActivity implements View.OnCl
     @Override
     public void message(Message msg) {
         super.message(msg);
-        if (msg.what == 777777) {
+        if (msg.what == XConfig.BASE_UPDATE_ACTION) {
             getUserInfo();
         }
     }

@@ -14,6 +14,7 @@ import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XApiException;
 import com.sicao.smartwine.xhttp.XApisCallBack;
+import com.sicao.smartwine.xhttp.XConfig;
 
 import java.util.ArrayList;
 
@@ -159,7 +160,7 @@ public class XAddressListActivity extends SmartCabinetActivity {
     @Override
     public void message(Message msg) {
         super.message(msg);
-        if (msg.what == 7777777) {
+        if (msg.what == XConfig.BASE_UPDATE_ACTION) {
             getMyAddressList();
         }
     }

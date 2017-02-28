@@ -19,6 +19,7 @@ import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetDeviceAdapter;
+import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenu;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuCreator;
 import com.sicao.smartwine.xwidget.device.swipemenulistview.SwipeMenuItem;
@@ -180,9 +181,8 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     @Override
     public void message(Message msg) {
         int what=msg.what;
-        if (what==777777){
+        if (what== XConfig.BASE_UPDATE_ACTION){
             initDate(xCabinetApi.getCacheDeviceList());
-            Toast("操作成功");
         }
     }
     @Override

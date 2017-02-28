@@ -35,4 +35,13 @@ public class XConfig {
      *更新设备的设备灯开关action
      */
     public static int CONFIG_CABINET_SET_LIGHT_ACTION = 10017;
+
+    /*
+     *页面刷新
+     */
+    public static int BASE_UPDATE_ACTION=777777;
+    /*
+     *页面加载更多
+     */
+    public static int BASE_LOAD_ACTION=999999;
 }

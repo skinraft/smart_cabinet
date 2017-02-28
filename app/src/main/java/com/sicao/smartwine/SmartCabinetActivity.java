@@ -70,10 +70,10 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     protected Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == 777777) {
+            if (msg.what == XConfig.BASE_UPDATE_ACTION) {
                 Toast("操作成功");
                 swipeRefreshLayout.setRefreshing(false);
-            } else if (msg.what == 999999) {
+            } else if (msg.what == XConfig.BASE_LOAD_ACTION) {
                 Toast("操作成功");
                 swipeRefreshLayout.setLoading(false);
             }
@@ -136,13 +136,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                handler.sendEmptyMessageDelayed(777777, 2000);
+                handler.sendEmptyMessageDelayed(XConfig.BASE_UPDATE_ACTION, 2000);
             }
         });
         swipeRefreshLayout.setOnLoadListener(new SwipeRefreshLayout.OnLoadListener() {
             @Override
             public void onLoad() {
-                handler.sendEmptyMessageDelayed(999999, 2000);
+                handler.sendEmptyMessageDelayed(XConfig.BASE_LOAD_ACTION, 2000);
             }
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
