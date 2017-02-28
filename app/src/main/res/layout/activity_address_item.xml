@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/write"
+    android:orientation="vertical" >
+    <TextView 
+        android:id="@+id/tv_mata"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="省份"
+        android:textColor="#000000"
+        android:padding="10dp"
+        android:gravity="center_horizontal"
+        />
+    <TextView 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_color"
+        />
+    <TextView 
+        android:id="@+id/tv_private"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:padding="10dp"
+        android:visibility="gone"
+        />
+    <TextView 
+        android:visibility="gone"
+        android:id="@+id/tv_privince_lines"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_color"
+        />
+    <TextView 
+        android:id="@+id/tv_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:padding="10dp"
+        android:visibility="gone"
+        />
+    <TextView 
+        android:visibility="gone"
+        android:id="@+id/tv_city_lines"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_color"
+        />
+    <ListView
+        android:id="@+id/lv_address"
+        android:divider="@color/bg_color"
+        android:dividerHeight="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

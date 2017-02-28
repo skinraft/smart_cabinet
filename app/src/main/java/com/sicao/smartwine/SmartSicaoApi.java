@@ -1,6 +1,7 @@
 package com.sicao.smartwine;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -443,6 +444,48 @@ public class SmartSicaoApi implements XApiException {
                     exception.error(response);
             }
         });
+    }
 
+    /***
+     * 添加地址
+     * @param context  上下文对象
+     * @param name     收货人姓名
+     * @param phone    收货人电话
+     * @param address  收货人地址
+     * @param callBack    接口执行OK回调对象
+     * @param exception   接口执行失败回调对象
+     */
+    public void addAddress(final Context context,final String name, final String phone,
+                           final String address,final XApiCallBack callBack,final XApiException exception) {
+        String url = configParamsUrl("DealAddress/addaddress", context);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("user_token", XUserData.getToken(context));
+        params.put("realName", name);
+        params.put("address", address);
+        params.put("tel", phone);
+        params.put("userId", XUserData.getUID(context));
+        XHttpUtil httpUtil = new XHttpUtil(context);
+        httpUtil.post(url, params, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (object.getBoolean("status")) {
+                        if (null != callBack) {
+                            callBack.response(object);
+                        }
+                    } else {
+                        Toast.makeText(context, object.getString("message"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                }
+            }
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
     }
 }

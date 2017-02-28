@@ -170,6 +170,20 @@
             android:exported="false"
             android:screenOrientation="portrait"
             ></activity>
+        <!-- 添加地址 -->
+        <activity
+            android:name=".xuser.address.XAddAddressActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            ></activity>
+        <!-- 选择省市 -->
+        <activity
+            android:name=".xuser.address.XSelectedItemActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            ></activity>
     </application>
 
 </manifest>

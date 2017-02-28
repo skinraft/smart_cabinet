@@ -866,7 +866,6 @@ public class SwipeRefreshLayout extends ViewGroup {
 
         private int mIntValue;
 
-        // The modeInt values need to match those from attrs.xml
         Mode(int modeInt) {
             mIntValue = modeInt;
         }

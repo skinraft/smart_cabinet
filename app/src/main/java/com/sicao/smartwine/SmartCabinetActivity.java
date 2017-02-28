@@ -80,7 +80,6 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             message(msg);
         }
     };
-
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");

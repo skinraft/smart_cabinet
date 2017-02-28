@@ -1,5 +1,6 @@
 package com.sicao.smartwine.xuser.address;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -52,8 +53,8 @@ public class XAddressListActivity extends SmartCabinetActivity {
         mRightText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(AddressListActivity.this, AddAddressActivity.class);
-//                startActivityForResult(intent, Constants.ADD_USER_ADDRESS);
+                Intent intent = new Intent(XAddressListActivity.this, XAddAddressActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -143,13 +144,14 @@ public class XAddressListActivity extends SmartCabinetActivity {
             @Override
             public void response(Object object) {
                 swipeRefreshLayout.setRefreshing(false);
+                Toast("操作成功");
                 getMyAddressList();
             }
         }, new XApiException() {
             @Override
             public void error(String error) {
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(XAddressListActivity.this, "网络异常,请重试!", Toast.LENGTH_SHORT).show();
+                Toast("网络异常,请重试!");
             }
         });
     }

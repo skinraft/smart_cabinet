@@ -57,6 +57,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:support-v4:24.2.0'
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     compile 'com.nineoldandroids:library:2.4.0'
     compile files('libs/BLEasyConfig.jar')
     compile files('libs/easylink2.0.jar')
