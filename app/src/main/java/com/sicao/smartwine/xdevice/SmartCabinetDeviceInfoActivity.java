@@ -3,7 +3,6 @@ package com.sicao.smartwine.xdevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizWifiDeviceNetStatus;
-import com.sicao.smartwine.Main2Activity;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
@@ -79,6 +77,9 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         mSynText = (TextView) findViewById(R.id.syn_text);
         mBodys = (TextView) findViewById(R.id.tv_add_wine);
         mRingView.setAnimListener(this);
+        mRightText.setVisibility(View.VISIBLE);
+        mRightText.setText("EXIT");
+        mRightText.setOnClickListener(this);
     }
 
     @Override
@@ -161,30 +162,31 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                     Toast("请选择某一设备后重试!");
                 }
                 break;
-            case R.id.setting://退出
+            case R.id.setting://设置
                   startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, XSettingActivity.class));
-//                final XWarnDialog dialog = new XWarnDialog(this);
-//                dialog.setTitle("退出登录");
-//                dialog.setContent("您将要退出该帐号的登录,\n 注意:下次启用需要重新登录!");
-//                dialog.show();
-//                dialog.setOnListener(new XWarnDialog.OnClickListener() {
-//                    @Override
-//                    public void makeSure() {
-//                        dialog.dismiss();
-//                        mHintText.setVisibility(View.VISIBLE);
-//                        mHintText.setText("正在退出...");
-//                        showProgress(true);
-//                        handler.sendEmptyMessageDelayed(10094, 2000);
-//                    }
-//                    @Override
-//                    public void cancle() {
-//                        dialog.dismiss();
-//                    }
-//                });
+                break;
+            case R.id.base_top_right_icon://
+                final XWarnDialog dialog = new XWarnDialog(this);
+                dialog.setTitle("退出登录");
+                dialog.setContent("您将要退出该帐号的登录,\n 注意:下次启用需要重新登录!");
+                dialog.show();
+                dialog.setOnListener(new XWarnDialog.OnClickListener() {
+                    @Override
+                    public void makeSure() {
+                        dialog.dismiss();
+                        mHintText.setVisibility(View.VISIBLE);
+                        mHintText.setText("正在退出...");
+                        showProgress(true);
+                        handler.sendEmptyMessageDelayed(10094, 2000);
+                    }
+                    @Override
+                    public void cancle() {
+                        dialog.dismiss();
+                    }
+                });
                 break;
             case R.id.my_wines://酒柜内的酒款
                 Toast("正在开发中...");
-                startActivity(new Intent(this, Main2Activity.class));
                 break;
         }
     }

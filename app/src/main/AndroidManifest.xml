@@ -130,8 +130,6 @@
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".Main2Activity">
-        </activity>
         <!-- 个人资料页面 -->
         <activity
             android:name=".xuser.XUserInfoActivity"
