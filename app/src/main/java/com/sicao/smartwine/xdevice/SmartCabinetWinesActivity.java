@@ -1,5 +1,10 @@
 package com.sicao.smartwine.xdevice;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
@@ -17,10 +22,11 @@ import com.sicao.smartwine.xdevice.adapter.SmartCabinetWinesAdpter;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
 import com.sicao.smartwine.xhttp.XApisCallBack;
 import com.sicao.smartwine.xhttp.XConfig;
+import com.sicao.smartwine.xuser.XWebActivity;
 
 import java.util.ArrayList;
 
-public class SmartCabinetWinesActivity extends SmartCabinetActivity implements AdapterView.OnItemClickListener ,View.OnClickListener{
+public class SmartCabinetWinesActivity extends SmartCabinetActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
     //当前酒柜
     GizWifiDevice gizWifiDevice;
     //酒款列表数据
@@ -31,7 +37,8 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     ListView listView;
     //回到顶部按钮
     FloatingActionButton floatingActionButton;
-    int page=1;
+    int page = 1;
+
     @Override
     protected int setView() {
         return R.layout.activity_smart_cabinet_wines;
@@ -50,19 +57,30 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(this);
         /////////////////////////
-        smartCabinetWinesAdpter=new SmartCabinetWinesAdpter(this,mWins);
+        smartCabinetWinesAdpter = new SmartCabinetWinesAdpter(this, mWins);
         listView.setAdapter(smartCabinetWinesAdpter);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast("查看商品详情");
+        if (isInstalled("com.putaoji.android",this)){
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            ComponentName cn = new ComponentName("com.putaoji.android", "com.putaoji.android.xshop.XGoodsDetailsActivity");
+            intent.setComponent(cn);
+            intent.putExtra("id", mWins.get(position).getxGoodsEntity().getId());
+            startActivity(intent);
+        }else{
+            //下载页面
+            startActivity(new Intent(this, XWebActivity.class).putExtra("url","http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
+        }
     }
 
     @Override
     public void onClick(View v) {
-        int id=v.getId();
-        switch (id){
+        int id = v.getId();
+        switch (id) {
             case R.id.fab://回到顶部
                 listView.smoothScrollToPosition(0);
                 break;
@@ -79,7 +97,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     public void message(Message msg) {
         if (msg.what == XConfig.BASE_UPDATE_ACTION) {
             //刷新
-            page=1;
+            page = 1;
             getGoodsList(page);
         } else if (msg.what == XConfig.BASE_LOAD_ACTION) {
             //加载更多
@@ -87,6 +105,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
             getGoodsList(page);
         }
     }
+
     public void getGoodsList(final int page) {
         xSicaoApi.getGoodsByMac(this, gizWifiDevice.getMacAddress(), page, new XApisCallBack() {
             @Override
@@ -104,9 +123,9 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                     findViewById(R.id.no_wines_hint).setVisibility(View.GONE);
                     listView.setVisibility(View.VISIBLE);
                 }
-                if (mWins.size()>10){
+                if (mWins.size() > 10) {
                     floatingActionButton.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     floatingActionButton.setVisibility(View.GONE);
                 }
             }

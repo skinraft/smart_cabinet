@@ -1,8 +1,10 @@
 package com.sicao.smartwine.xdevice;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.RemoteException;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,6 +19,7 @@ import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xuser.XSettingActivity;
+import com.sicao.smartwine.xuser.XWebActivity;
 import com.sicao.smartwine.xwidget.device.RingView;
 import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 
@@ -187,15 +190,25 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 });
                 break;
             case R.id.my_wines://酒柜内的酒款
-                if (null != mDevice) {
-                    startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, SmartCabinetWinesActivity.class).putExtra("cabinet", mDevice));
-                } else {
-                    Toast("请选择某一设备后重试!");
+//                if (null != mDevice) {
+//                    startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, SmartCabinetWinesActivity.class).putExtra("cabinet", mDevice));
+//                } else {
+//                    Toast("请选择某一设备后重试!");
+//                }
+                if (isInstalled("com.putaoji.android",this)&&bindputaoji){
+                    //通过AIDL打开葡萄集商品详情页面
+                    try {
+                        xInterface.openActivity("1","1062");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    //下载页面
+                    startActivity(new Intent(this, XWebActivity.class).putExtra("url","http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
                 }
                 break;
         }
     }
-
     @Override
     public void setCustomInfoSuccess(GizWifiDevice device) {
         super.setCustomInfoSuccess(device);

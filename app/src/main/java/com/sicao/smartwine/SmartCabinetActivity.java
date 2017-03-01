@@ -4,20 +4,27 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,6 +39,7 @@ import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizDeviceSharingListener;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
+import com.putaoji.android.XInterface;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xhttp.XSmartCabinetListener;
@@ -57,7 +65,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     protected SwipeRefreshLayout swipeRefreshLayout;
     protected RelativeLayout mContent;
     //主页使用的内容布局
-    protected  RelativeLayout mContent2;
+    protected RelativeLayout mContent2;
     //进度框
     private View mProgressView;
     //顶部右侧按钮
@@ -80,6 +88,11 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             message(msg);
         }
     };
+    //AIDL通信葡萄集
+    protected XInterface xInterface;
+    //是否已经远程绑定葡萄集服务
+    protected  boolean bindputaoji=false;
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -118,19 +131,19 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mContent = (RelativeLayout) findViewById(R.id.base_content_layout);
-        mContent2= (RelativeLayout) findViewById(R.id.base_content_layout2);
+        mContent2 = (RelativeLayout) findViewById(R.id.base_content_layout2);
         mRightText = (TextView) findViewById(R.id.base_top_right_icon);
         mProgressView = findViewById(R.id.login_progress);
         mCenterTitle = (TextView) findViewById(R.id.base_top_center_text);
         mHintText = (TextView) findViewById(R.id.hint_text);
         //兼容首页单独动画加载刷新数据
-        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity")){
+        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XWebActivity")) {
             mContent2.addView(View.inflate(this, setView(), null));
-            mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
-            mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT));
-        }else{
-            mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
-            mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT));
+            mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+            mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+        } else {
+            mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+            mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
             mContent.addView(View.inflate(this, setView(), null));
         }
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -168,6 +181,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         //每次启动activity都要注册一次sdk监听器，保证sdk状态能正确回调
         GizWifiSDK.sharedInstance().setListener(mGizListener);
         GizDeviceSharing.setListener(mSharingListener);
+        if (null!=conn){
+            final Intent in = new Intent();
+            in.setPackage("com.putaoji.android");
+            in.setAction("com.putaoji.android.XService");
+            bindputaoji=bindService(in, conn, Context.BIND_AUTO_CREATE);
+            SmartSicaoApi.log("绑定服务----"+bindputaoji);
+        }
     }
 
     @Override
@@ -345,6 +365,28 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             }
         }
     }
+
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (null != conn) {
+            unbindService(conn);
+        }
+    }
+
+    ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            xInterface = XInterface.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            xInterface = null;
+        }
+    };
 
     /**
      * Shows the progress UI and hides the login form.
@@ -1068,4 +1110,23 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         return errorString;
     }
 
+    /**
+     * 判断某个应用是否安装
+     *
+     * @param pkName 应用包名
+     * @return
+     */
+    public boolean isInstalled(String pkName, Context context) {
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(pkName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            packageInfo = null;
+        }
+        if (packageInfo == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
