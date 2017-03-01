@@ -55,10 +55,6 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.2.0'
-    compile 'com.android.support:support-v4:24.2.0'
-    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
-    compile 'com.nineoldandroids:library:2.4.0'
     compile files('libs/BLEasyConfig.jar')
     compile files('libs/easylink2.0.jar')
     compile files('libs/GizWifiSDK.jar')
@@ -69,8 +65,14 @@ dependencies {
     compile files('libs/LSFSK_1.0.jar')
     compile files('libs/OneShotConfig.jar')
     compile files('libs/simpleconfigwizardlib.jar')
-    testCompile 'junit:junit:4.12'
     compile files('libs/zxing.jar')
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
+    compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.jrummyapps:animated-svg-view:1.0.1'
-    compile 'com.facebook.fresco:fresco:0.9.0+'
+    compile 'com.facebook.fresco:fresco:1.1.0'
+    compile 'com.android.support:design:24.2.1'
+    testCompile 'junit:junit:4.12'
+    compile files('libs/gson-2.2.1.jar')
 }

@@ -106,14 +106,14 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         for (GizWifiDevice device : deviceList) {
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
                 mCenterTitle.setText(!"".equals(device.getRemark()) ? device.getRemark() : device.getProductName());
-                if (device.getNetStatus()==GizWifiDeviceNetStatus.GizDeviceOnline||device.getNetStatus()==GizWifiDeviceNetStatus.GizDeviceControlled){
+                if (device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceControlled) {
                     mRingView.startAnim();
                     device.setListener(mBindListener);
                     device.setSubscribe(true);
                     mSynText.setText("正在同步...");
                     xCabinetApi.getDeviceStatus(device);
                     GizWifiSDK.sharedInstance().getDevicesToSetServerInfo();
-                }else{
+                } else {
                     Toast("目标设备处于不可监控状态");
                 }
             }
@@ -163,7 +163,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 }
                 break;
             case R.id.setting://设置
-                  startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, XSettingActivity.class));
+                startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, XSettingActivity.class));
                 break;
             case R.id.base_top_right_icon://
                 final XWarnDialog dialog = new XWarnDialog(this);
@@ -179,6 +179,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                         showProgress(true);
                         handler.sendEmptyMessageDelayed(10094, 2000);
                     }
+
                     @Override
                     public void cancle() {
                         dialog.dismiss();
@@ -186,7 +187,11 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 });
                 break;
             case R.id.my_wines://酒柜内的酒款
-                Toast("正在开发中...");
+                if (null != mDevice) {
+                    startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, SmartCabinetWinesActivity.class).putExtra("cabinet", mDevice));
+                } else {
+                    Toast("请选择某一设备后重试!");
+                }
                 break;
         }
     }
@@ -218,12 +223,12 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
 
     @Override
     public void message(Message msg) {
-        int what=msg.what;
-        if (what==10093){
+        int what = msg.what;
+        if (what == 10093) {
             mDeviceInfoLayout.setVisibility(View.VISIBLE);
             wineSetting.setVisibility(View.VISIBLE);
             mSynLayout.setVisibility(View.GONE);
-        }else if(what==10094){
+        } else if (what == 10094) {
             XUserData.setPassword(SmartCabinetDeviceInfoActivity.this, "");
             finish();
         }

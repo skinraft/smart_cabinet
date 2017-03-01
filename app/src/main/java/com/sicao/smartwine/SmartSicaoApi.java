@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xdevice.entity.XWineEntity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XApiException;
 import com.sicao.smartwine.xhttp.XApisCallBack;
@@ -488,4 +490,49 @@ public class SmartSicaoApi implements XApiException {
             }
         });
     }
+
+    /***
+     * 获取酒柜中的酒信息
+     *
+     * @param context   上下文对象
+     * @param mac       酒柜mac
+     * @param callback  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public void getGoodsByMac(Context context, String mac, int page, final XApisCallBack callback, final XApiException exception) {
+        String url = configParamsUrl("device/wineLists", context);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("jid", mac);
+        params.put("row", 10 + "");
+        params.put("page", page + "");
+        XHttpUtil httpUtil = new XHttpUtil(context);
+        httpUtil.post(url, params, new XCallBack() {
+            @Override
+            public void success(String response) {
+                log(response);
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        JSONArray array = object.getJSONObject("data").getJSONArray("rfid_product_items");
+                        ArrayList<XWineEntity> mList = new ArrayList<>();
+//                        for (int i = 0; i < array.length(); i++) {
+//                            XWineEntity goods = new Gson().fromJson(array.getJSONObject(i).toString(), XWineEntity.class);
+//                            mList.add(goods);
+//                        }
+                        if (null != callback) callback.response(mList);
+                    } else {
+                        log(object.getString("message"));
+                    }
+                } catch (JSONException e) {
+                }
+            }
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+
 }

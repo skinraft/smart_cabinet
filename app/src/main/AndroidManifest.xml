@@ -135,53 +135,51 @@
             android:name=".xuser.XUserInfoActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait">
         </activity>
         <!-- 设置页面 -->
         <activity
             android:name=".xuser.XSettingActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait">
         </activity>
         <!-- 意见反馈页面 -->
         <activity
             android:name=".xuser.XFeedBackActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:screenOrientation="portrait"
-            ></activity>
+            android:screenOrientation="portrait"/>
         <!-- 关于我们页面 -->
         <activity
             android:name=".xuser.XAboutActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:screenOrientation="portrait"
-            ></activity>
+            android:screenOrientation="portrait"/>
 
         <!-- 地址列表 -->
         <activity
             android:name=".xuser.address.XAddressListActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:screenOrientation="portrait"
-            ></activity>
+            android:screenOrientation="portrait"/>
         <!-- 添加地址 -->
         <activity
             android:name=".xuser.address.XAddAddressActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:screenOrientation="portrait"
-            ></activity>
+            android:screenOrientation="portrait"/>
         <!-- 选择省市 -->
         <activity
             android:name=".xuser.address.XSelectedItemActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:screenOrientation="portrait"
-            ></activity>
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".xdevice.SmartCabinetWinesActivity"
+            android:label="@string/title_activity_smart_cabinet_wines"
+            android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>

@@ -783,4 +783,5 @@ z m -37.5,9.875 0,0.5 0,2.5 0,2.5 0,0.5 0.5,0 24,0 24,0 0.5,0 0,-0.5 0,-2.5
 0.5625,-1.3125 z</item>
 
     </string-array>
+    <string name="title_activity_smart_cabinet_wines">SmartCabinetWinesActivity</string>
 </resources>

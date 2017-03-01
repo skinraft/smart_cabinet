@@ -18,6 +18,7 @@ import com.sicao.smartwine.xhttp.XConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 public class XUserInfoActivity extends SmartCabinetActivity implements View.OnClickListener {
 
     //个人头像

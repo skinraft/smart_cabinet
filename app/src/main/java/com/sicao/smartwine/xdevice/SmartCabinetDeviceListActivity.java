@@ -64,7 +64,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
 
     @Override
     public void refushDeviceList(List<GizWifiDevice> deviceList) {
-        initDate(xCabinetApi.getCacheDeviceList());
+        initDate(deviceList);
     }
 
     @Override
