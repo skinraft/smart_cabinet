@@ -37,6 +37,10 @@ public class XConfig {
     public static int CONFIG_CABINET_SET_LIGHT_ACTION = 10017;
 
     /*
+     *设置读写器的工作时间action
+     */
+     public static  int CONFIG_CABINET_SET_WORK_TIME=10097;
+    /*
      *页面刷新
      */
     public static int BASE_UPDATE_ACTION=777777;

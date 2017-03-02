@@ -57,6 +57,13 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     ImageView QRcode;
     //添加设备的菜单
     SmartCabinetSettingDialog smartCabinetSettingDialog = null;
+    //设置读写器工作时间
+    EditText scan_time;
+    //修改读写器工作时间的提交按钮
+    TextView mCommit2;
+    //读写器的工作时间
+    int serverTime = 0;
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -139,13 +146,18 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
 
     @Override
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
+        mDevice = device;
         swipeRefreshLayout.setRefreshing(false);
+        mCommit.setVisibility(View.GONE);
+        mContent2.setVisibility(View.GONE);
         try {
             SmartSicaoApi.log("current device is " + device.toString() + "\n" + object.toString());
             int model = object.getInt("model");
             mWorkName.setText(getResources().getStringArray(R.array.device_model_string)[model]);
             mWorkTemp.setText(object.getString("set_temp") + "℃");
             wineName.setText(!"".equals(device.getRemark()) ? device.getRemark() : "智能酒柜");
+            serverTime = object.getInt("scan_time");
+            scan_time.setText(serverTime + "");
         } catch (JSONException e) {
             SmartSicaoApi.log("the device update data json has error in " + (null == e ? getClass().getSimpleName() : e.getMessage()));
         }
@@ -170,16 +182,16 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     public void init() {
         String[] menu = null;
         //鉴定该用户是否有分享该设备的权限
-        if(mDevice.getSharingRole() == GizDeviceSharingUserRole.GizDeviceSharingOwner){
+        if (mDevice.getSharingRole() == GizDeviceSharingUserRole.GizDeviceSharingOwner) {
             //登录账号为设备的主账号
-            menu=new String[]{"分享给好友", "查看绑定账号"};
+            menu = new String[]{"分享给好友", "查看绑定账号"};
             mRightText.setVisibility(View.VISIBLE);
-        }else if(mDevice.getSharingRole() == GizDeviceSharingUserRole.GizDeviceSharingSpecial){
+        } else if (mDevice.getSharingRole() == GizDeviceSharingUserRole.GizDeviceSharingSpecial) {
             //还不是主账号，但是是第一个绑定设备的账号，分享该设备后即将成为主账号
-            menu=new String[]{"分享给好友"};
+            menu = new String[]{"分享给好友"};
             mRightText.setVisibility(View.VISIBLE);
-        }else{
-            menu=new String[]{};
+        } else {
+            menu = new String[]{};
             mRightText.setVisibility(View.GONE);
         }
         smartCabinetSettingDialog = new SmartCabinetSettingDialog(this);
@@ -197,18 +209,20 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                     GizDeviceSharing.getDeviceSharingInfos(XUserData.getCabinetToken(SmartCabinetSettingActivity.this),
                             GizDeviceSharingType.GizDeviceSharingByMe, mDevice.getDid());
                 } else {
-                      //查看设备所有绑定的账号
-                    startActivity(new Intent(SmartCabinetSettingActivity.this,SmartCabinetBindUsersActivity.class).putExtra("GizWifiDevice",mDevice));
+                    //查看设备所有绑定的账号
+                    startActivity(new Intent(SmartCabinetSettingActivity.this, SmartCabinetBindUsersActivity.class).putExtra("GizWifiDevice", mDevice));
                 }
             }
         });
-        QRcode= (ImageView) findViewById(R.id.qrcode);
+        QRcode = (ImageView) findViewById(R.id.qrcode);
         wineName = (EditText) findViewById(R.id.editText);
         mWorkName = (TextView) findViewById(R.id.work_mode_name);
         mWorkTemp = (TextView) findViewById(R.id.work_mode_temp_name);
+        scan_time = (EditText) findViewById(R.id.editText5);
         mWorkName.setOnClickListener(this);
         mWorkTemp.setOnClickListener(this);
         mCommit = (TextView) findViewById(R.id.commit);
+        mCommit2 = (TextView) findViewById(R.id.scantime_commit);
         //修改设备名称
         mCommit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,6 +230,20 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                 if (mDevice != null) {
                     swipeRefreshLayout.setRefreshing(true);
                     mDevice.setCustomInfo(wineName.getText().toString(), wineName.getText().toString());
+                }
+            }
+        });
+        //修改读写器工作时间
+        mCommit2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDevice != null) {
+                    if (!scan_time.getText().toString().trim().equals(serverTime + "")) {
+                        xCabinetApi.controlDevice(mDevice, "scan_time", Integer.parseInt(scan_time.getText().toString().trim()), XConfig.CONFIG_CABINET_SET_WORK_TIME);
+                        swipeRefreshLayout.setRefreshing(true);
+                    } else {
+                        Toast("您设置的时间与上次一样,请重试!");
+                    }
                 }
             }
         });
@@ -241,10 +269,37 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!TextUtils.isEmpty(s)) {
+                String cabinetname = "";
+                if (null == mDevice.getRemark()) {
+                    cabinetname = "智能酒柜";
+                } else {
+                    cabinetname = mDevice.getRemark();
+                }
+                SmartSicaoApi.log("cabinetname=" + cabinetname + ";winename=" + wineName.getText().toString().trim());
+                if (!TextUtils.isEmpty(s) && (!wineName.getText().toString().trim().equals(cabinetname))) {
                     mCommit.setVisibility(View.VISIBLE);
                 } else {
                     mCommit.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        //读写器工作时间的设定
+        scan_time.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!TextUtils.isEmpty(s) && (!scan_time.getText().toString().trim().equals(serverTime + ""))) {
+                    mCommit2.setVisibility(View.VISIBLE);
+                } else {
+                    mCommit2.setVisibility(View.GONE);
                 }
             }
         });
@@ -260,7 +315,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     @Override
     public void getSharingInfoSuccess(String deviceID, int sharingID, Bitmap QRCodeImage) {
         super.getSharingInfoSuccess(deviceID, sharingID, QRCodeImage);
-        if (deviceID.equals(mDevice.getDid())){
+        if (deviceID.equals(mDevice.getDid())) {
             //加载该二维码
             QRcode.setVisibility(View.VISIBLE);
             QRcode.setImageBitmap(QRCodeImage);

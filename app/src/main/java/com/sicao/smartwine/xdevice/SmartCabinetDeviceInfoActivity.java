@@ -2,6 +2,8 @@ package com.sicao.smartwine.xdevice;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.RemoteException;
@@ -136,7 +138,13 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 mSetTemp.setText(object.getString("set_temp") + "℃");
                 mRealTemp.setText(object.getString("real_temp") + "℃");
                 mWorkModel.setText(getResources().getStringArray(R.array.device_model_show)[object.getInt("model")]);
-                mOnLine.setText(object.getBoolean("isOnline") ? "在线" : "离线");
+                mOnLine.setText((mDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || mDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceControlled) ? "在线" : "离线");
+                if (object.getBoolean("door_open")) {
+                    Toast("酒柜门----开");
+                }
+                if (object.getBoolean("scanning")) {
+                    Toast("读写器正在扫描...");
+                }
             }
         } catch (JSONException e) {
             Toast("数据异常,请检查!");
@@ -195,20 +203,21 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
 //                } else {
 //                    Toast("请选择某一设备后重试!");
 //                }
-                if (isInstalled("com.putaoji.android",this)&&bindputaoji){
+                if (isInstalled("com.putaoji.android", this) && bindputaoji) {
                     //通过AIDL打开葡萄集商品详情页面
                     try {
-                        xInterface.openActivity("1","1062");
+                        xInterface.openActivity("1", "1062");
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-                }else{
+                } else {
                     //下载页面
-                    startActivity(new Intent(this, XWebActivity.class).putExtra("url","http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
+                    startActivity(new Intent(this, XWebActivity.class).putExtra("url", "http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
                 }
                 break;
         }
     }
+
     @Override
     public void setCustomInfoSuccess(GizWifiDevice device) {
         super.setCustomInfoSuccess(device);

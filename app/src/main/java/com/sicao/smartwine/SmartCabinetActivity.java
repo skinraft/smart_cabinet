@@ -186,7 +186,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             in.setPackage("com.putaoji.android");
             in.setAction("com.putaoji.android.XService");
             bindputaoji=bindService(in, conn, Context.BIND_AUTO_CREATE);
-            SmartSicaoApi.log("绑定服务----"+bindputaoji);
+            SmartSicaoApi.log("关联绑定葡萄集业务----"+bindputaoji);
         }
     }
 
@@ -327,7 +327,8 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             //接收设备状态结果
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 if (action == XConfig.CONFIG_CABINET_MODEL_TEMP_ACTION || action == XConfig.CONFIG_CABINET_SET_LIGHT_ACTION
-                        || action == XConfig.CONFIG_CABINET_SET_TEMP_ACTION || action == XConfig.CONFIG_CABINET_WORK_MODEL_ACTION) {
+                        || action == XConfig.CONFIG_CABINET_SET_TEMP_ACTION || action == XConfig.CONFIG_CABINET_WORK_MODEL_ACTION
+                        ||action==XConfig.CONFIG_CABINET_SET_WORK_TIME) {
                     //设备属性修改结果回调
                     setCustomInfoSuccess(device);
                     return;
@@ -350,6 +351,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 }
             } else {
                 showProgress(false);
+                swipeRefreshLayout.setRefreshing(false);
                 SmartSicaoApi.log(result.toString());
             }
         }
