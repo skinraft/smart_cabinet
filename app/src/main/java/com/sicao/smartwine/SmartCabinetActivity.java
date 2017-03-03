@@ -40,6 +40,7 @@ import com.gizwits.gizwifisdk.listener.GizDeviceSharingListener;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.putaoji.android.XInterface;
+import com.sicao.smartwine.xdata.XRfidDataUtil;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xhttp.XSmartCabinetListener;
@@ -91,7 +92,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     //AIDL通信葡萄集
     protected XInterface xInterface;
     //是否已经远程绑定葡萄集服务
-    protected  boolean bindputaoji=false;
+    protected boolean bindputaoji = false;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -137,7 +138,8 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         mCenterTitle = (TextView) findViewById(R.id.base_top_center_text);
         mHintText = (TextView) findViewById(R.id.hint_text);
         //兼容首页单独动画加载刷新数据
-        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XWebActivity")) {
+        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XWebActivity")
+                || this.getClass().getSimpleName().contains("SmartCabinetRFIDActivity")) {
             mContent2.addView(View.inflate(this, setView(), null));
             mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
@@ -181,12 +183,12 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         //每次启动activity都要注册一次sdk监听器，保证sdk状态能正确回调
         GizWifiSDK.sharedInstance().setListener(mGizListener);
         GizDeviceSharing.setListener(mSharingListener);
-        if (null!=conn){
+        if (null != conn) {
             final Intent in = new Intent();
             in.setPackage("com.putaoji.android");
             in.setAction("com.putaoji.android.XService");
-            bindputaoji=bindService(in, conn, Context.BIND_AUTO_CREATE);
-            SmartSicaoApi.log("关联绑定葡萄集业务----"+bindputaoji);
+            bindputaoji = bindService(in, conn, Context.BIND_AUTO_CREATE);
+            SmartSicaoApi.log("关联绑定葡萄集业务----" + bindputaoji);
         }
     }
 
@@ -328,7 +330,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 if (action == XConfig.CONFIG_CABINET_MODEL_TEMP_ACTION || action == XConfig.CONFIG_CABINET_SET_LIGHT_ACTION
                         || action == XConfig.CONFIG_CABINET_SET_TEMP_ACTION || action == XConfig.CONFIG_CABINET_WORK_MODEL_ACTION
-                        ||action==XConfig.CONFIG_CABINET_SET_WORK_TIME) {
+                        || action == XConfig.CONFIG_CABINET_SET_WORK_TIME) {
                     //设备属性修改结果回调
                     setCustomInfoSuccess(device);
                     return;
@@ -348,6 +350,20 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                     //更新设备信息
                     SmartSicaoApi.log("the device info will update " + device.getDid());
                     refushDeviceInfo(device, jsonObject);
+                    rfid(jsonObject.toString());
+                }
+                // 透传数据，无数据点定义，适合开发者自行定义协议自行解析
+                if (dataMap.get("binary") != null) {
+                    byte[] binary = (byte[]) dataMap.get("binary");
+                    // 解析RFID数据
+                    String content=XRfidDataUtil.bytesToHexString(binary);
+                    rfid(content);
+//                    int[] rfids = XRfidDataUtil.parser(binary);
+//                    StringBuilder stringBuilder=new StringBuilder();
+//                    for (int i=0;i<rfids.length;i++) {
+//                        stringBuilder.append("["+i+"]"+rfids[i]+",");
+//                    }
+                    SmartSicaoApi.log("透传数据-----" +content);
                 }
             } else {
                 showProgress(false);
@@ -368,7 +384,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         }
     }
 
-
+    public  void rfid(String rfid){}
 
     @Override
     protected void onStop() {

@@ -203,16 +203,11 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
 //                } else {
 //                    Toast("请选择某一设备后重试!");
 //                }
-                if (isInstalled("com.putaoji.android", this) && bindputaoji) {
-                    //通过AIDL打开葡萄集商品详情页面
-                    try {
-                        xInterface.openActivity("1", "1062");
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                //测试使用
+                if (null != mDevice) {
+                    startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, SmartCabinetRFIDActivity.class).putExtra("cabinet", mDevice));
                 } else {
-                    //下载页面
-                    startActivity(new Intent(this, XWebActivity.class).putExtra("url", "http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
+                    Toast("请选择某一设备后重试!");
                 }
                 break;
         }

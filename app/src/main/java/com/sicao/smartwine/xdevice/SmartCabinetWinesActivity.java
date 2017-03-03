@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.RemoteException;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -64,16 +65,16 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast("查看商品详情");
-        if (isInstalled("com.putaoji.android",this)){
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            ComponentName cn = new ComponentName("com.putaoji.android", "com.putaoji.android.xshop.XGoodsDetailsActivity");
-            intent.setComponent(cn);
-            intent.putExtra("id", mWins.get(position).getxGoodsEntity().getId());
-            startActivity(intent);
-        }else{
+        if (isInstalled("com.putaoji.android", this) && bindputaoji) {
+            //通过AIDL打开葡萄集商品详情页面
+            try {
+                xInterface.openActivity("1", mWins.get(position).getxGoodsEntity().getId());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
             //下载页面
-            startActivity(new Intent(this, XWebActivity.class).putExtra("url","http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
+            startActivity(new Intent(this, XWebActivity.class).putExtra("url", "http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
         }
     }
 
