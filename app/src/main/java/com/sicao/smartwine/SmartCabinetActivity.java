@@ -385,6 +385,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 showProgress(false);
                 swipeRefreshLayout.setRefreshing(false);
                 SmartSicaoApi.log("didReceiveData--"+result.toString());
+                GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), getAppID());
             }
         }
 
