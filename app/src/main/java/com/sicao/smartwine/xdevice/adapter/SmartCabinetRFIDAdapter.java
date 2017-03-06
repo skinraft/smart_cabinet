@@ -68,7 +68,7 @@ public class SmartCabinetRFIDAdapter extends BaseAdapter {
         XRfidEntity entity = mList.get(position);
         holder.name.setText("标签：" + entity.getRfid());
         if (entity.getTag().equals("current")) {
-            holder.tv_equipment.setText("[上次]");
+            holder.tv_equipment.setText("[当前]");
         } else if (entity.getTag().equals("add")) {
             holder.tv_equipment.setText("[增加]");
         } else if (entity.getTag().equals("add")) {

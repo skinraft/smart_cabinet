@@ -242,7 +242,7 @@ public class AppManager {
     public static void noti(Context context, GizWifiDevice device,String content,int notifyid) {
         // Instantiate a Builder object.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        String title=device.getRemark().equals("")?"智能酒柜"+device.getMacAddress():device.getRemark()+device.getMacAddress();
+        String title=device.getRemark().equals("")?"智能酒柜":device.getRemark();
         builder.setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(R.mipmap.ic_launcher);
