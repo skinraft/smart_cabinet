@@ -65,33 +65,15 @@ public class SmartCabinetRFIDActivity extends SmartCabinetActivity {
             }
         }.start();
     }
-
     @Override
-    public void rfid(GizWifiDevice device,HashMap<String, ArrayList<XRfidEntity>> map) {
-        StringBuilder str = new StringBuilder();
+    public void rfid(GizWifiDevice device, ArrayList<XRfidEntity> current, ArrayList<XRfidEntity> add, ArrayList<XRfidEntity> remove) {
         ArrayList<XRfidEntity>list=new ArrayList<>();
-        if (map.containsKey("add")) {
-            //增加的标签
-            ArrayList<XRfidEntity> adds = map.get("add");
-            str.append("增加"+map.get("add").size());
-            list.addAll(adds);
-        }
-        if (map.containsKey("remove")) {
-            //减少的标签
-            ArrayList<XRfidEntity> remov = map.get("remove");
-            str.append("减少"+map.get("remove").size());
-            list.addAll(remov);
-        }
-        if (map.containsKey("current")) {
-            //当前的标签
-            ArrayList<XRfidEntity> c = map.get("current");
-            str.append("当前"+map.get("current").size());
-            list.addAll(c);
-        }
-        rfids.setText("酒柜内标签:"+str.toString());
+        list.addAll(current);
+        list.addAll(add);
+        list.addAll(remove);
+        rfids.setText("酒柜内标签:当前"+current.size()+"个,增加"+add.size()+"个,减少"+remove.size()+"个");
         adapter.update(list);
     }
-
     @Override
     public void message(Message msg) {
         if (msg.what == 10101010) {

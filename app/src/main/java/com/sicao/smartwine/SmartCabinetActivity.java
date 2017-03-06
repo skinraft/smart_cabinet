@@ -3,6 +3,7 @@ package com.sicao.smartwine;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -37,6 +39,7 @@ import com.gizwits.gizwifisdk.listener.GizDeviceSharingListener;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.putaoji.android.XInterface;
+import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XRfidDataUtil;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
@@ -399,6 +402,29 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     HashMap<String, ArrayList<XRfidEntity>> map=new HashMap<>();
     //rfid读取完毕后回调更新部分
     public void rfid(GizWifiDevice device,HashMap<String, ArrayList<XRfidEntity>> map) {
+        ArrayList<XRfidEntity>current=new ArrayList<>();
+        ArrayList<XRfidEntity>add=new ArrayList<>();
+        ArrayList<XRfidEntity>remove=new ArrayList<>();
+        if (map.containsKey("add")) {
+            //增加的标签
+            add = map.get("add");
+            AppManager.noti(this,device,"标签增加"+add.size()+"个",100);
+        }
+        if (map.containsKey("remove")) {
+            //减少的标签
+            remove = map.get("remove");
+            AppManager.noti(this,device,"标签减少"+remove.size()+"个",101);
+        }
+        if (map.containsKey("current")) {
+            //当前的标签
+            current = map.get("current");
+        }
+        rfid(device,current,add,remove);
+        //通知栏通知
+
+    }
+    //rfid读取完毕后回调更新部分
+    public void rfid(GizWifiDevice device,ArrayList<XRfidEntity>current,ArrayList<XRfidEntity>add,ArrayList<XRfidEntity>remove){
 
     }
 
