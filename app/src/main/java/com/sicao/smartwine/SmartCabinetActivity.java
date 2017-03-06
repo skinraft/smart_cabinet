@@ -1,6 +1,5 @@
 package com.sicao.smartwine;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -18,13 +17,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,6 +39,7 @@ import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.putaoji.android.XInterface;
 import com.sicao.smartwine.xdata.XRfidDataUtil;
 import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xhttp.XSmartCabinetListener;
 import com.sicao.smartwine.xhttp.XSmartCabinetReceiver;
@@ -50,6 +48,8 @@ import com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -338,37 +338,50 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 // 已定义的设备数据点，有布尔、数值和枚举型数据
                 if (dataMap.get("data") != null) {
                     ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) dataMap.get("data");
-                    // 普通数据点，打印对应的key和value
-                    JSONObject jsonObject = new JSONObject();
-                    for (String key : map.keySet()) {
-                        try {
-                            jsonObject.put(key, map.get(key));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    if (map.size() > 0) {
+                        // 普通数据点，打印对应的key和value
+                        JSONObject jsonObject = new JSONObject();
+                        for (String key : map.keySet()) {
+                            try {
+                                jsonObject.put(key, map.get(key));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        //更新设备信息
+                        SmartSicaoApi.log("the device info will update " + device.getDid() + ";" + jsonObject.toString());
+                        refushDeviceInfo(device, jsonObject);
+                    } else {
+                        SmartSicaoApi.log("返回设备信息为空...");
                     }
-                    //更新设备信息
-                    SmartSicaoApi.log("the device info will update " + device.getDid());
-                    refushDeviceInfo(device, jsonObject);
-                    rfid(jsonObject.toString());
                 }
-                // 透传数据，无数据点定义，适合开发者自行定义协议自行解析
+                // 透传数据，自行解析
                 if (dataMap.get("binary") != null) {
                     byte[] binary = (byte[]) dataMap.get("binary");
-                    // 解析RFID数据
-                    String content=XRfidDataUtil.bytesToHexString(binary);
-                    rfid(content);
-//                    int[] rfids = XRfidDataUtil.parser(binary);
-//                    StringBuilder stringBuilder=new StringBuilder();
-//                    for (int i=0;i<rfids.length;i++) {
-//                        stringBuilder.append("["+i+"]"+rfids[i]+",");
-//                    }
-                    SmartSicaoApi.log("透传数据-----" +content);
+                    if (binary.length > 0) {
+                        // 解析RFID数据
+                        String content = XRfidDataUtil.bytesToHexString(binary);
+                        if (content.equals("01010101010101010101")) {
+                            rfidstart();
+                        } else if (content.equals("02020202020202020202")) {
+                            rfidend();
+                            rfid(device,map);
+                            map.clear();
+                        } else if (content.equals("03030303030303030303")) {
+                            rfidbreak();
+                            map.clear();
+                        }else{
+                            map.putAll(XRfidDataUtil.parser(map,content));
+                        }
+                        SmartSicaoApi.log("透传数据-----" + content);
+                    } else {
+                        SmartSicaoApi.log("透传数据为空");
+                    }
                 }
             } else {
                 showProgress(false);
                 swipeRefreshLayout.setRefreshing(false);
-                SmartSicaoApi.log(result.toString());
+                SmartSicaoApi.log("didReceiveData--"+result.toString());
             }
         }
 
@@ -383,8 +396,26 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             }
         }
     }
+    HashMap<String, ArrayList<XRfidEntity>> map=new HashMap<>();
+    //rfid读取完毕后回调更新部分
+    public void rfid(GizWifiDevice device,HashMap<String, ArrayList<XRfidEntity>> map) {
 
-    public  void rfid(String rfid){}
+    }
+
+    //rfid开始读取
+    public void rfidstart() {
+        Toast("开始读取标签");
+    }
+
+    //rfid读取结束
+    public void rfidend() {
+        Toast("读取标签结束");
+    }
+
+    //rfid读取中断
+    public void rfidbreak() {
+        Toast("读取标签中断");
+    }
 
     @Override
     protected void onStop() {

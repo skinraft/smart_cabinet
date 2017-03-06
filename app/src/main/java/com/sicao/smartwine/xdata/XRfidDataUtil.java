@@ -1,5 +1,12 @@
 package com.sicao.smartwine.xdata;
 
+import com.sicao.smartwine.SmartCabinetApi;
+import com.sicao.smartwine.SmartSicaoApi;
+import com.sicao.smartwine.xdevice.entity.XRfidEntity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * RFID数据解析
  */
@@ -7,14 +14,59 @@ package com.sicao.smartwine.xdata;
 public class XRfidDataUtil {
 
 
-    public static int[] parser(byte[] binary) {
-        String str = bytesToHexString(binary);
-        String[] data = str.split("a0");
-        int[] r = new int[data.length];
-        for (int i = 0; i < data.length; i++) {
-            r[i] = HexToInt(data[i]);
+    public static HashMap<String,ArrayList<XRfidEntity>> parser(HashMap<String,ArrayList<XRfidEntity>>map , String str) {
+        ArrayList<XRfidEntity>current=new ArrayList<>();
+        ArrayList<XRfidEntity>add=new ArrayList<>();
+        ArrayList<XRfidEntity>remove=new ArrayList<>();
+        if (map.containsKey("add")){
+            add=map.get("add");
         }
-        return r;
+        if (map.containsKey("remove")){
+            remove=map.get("remove");
+        }
+        if (map.containsKey("current")){
+            current=map.get("current");
+        }
+        String s=str.substring(0, 2);
+        if (s.contains("a0")||s.contains("b0")||s.contains("c0")){
+            XRfidEntity entity=new XRfidEntity();
+            while(str.length()>0){
+                String start=str.substring(0, 2);
+                if(start.equals("a0")){
+                    String l=str.substring(2, 4);
+                    int lenght=HexToInt(l);
+                    str=str.substring(4,str.length());
+                    String rfid=str.substring(0, lenght*2);
+                    str=str.substring(lenght*2,str.length());
+                    entity.setRfid(rfid);
+                    entity.setTag("current");
+                    current.add(entity);
+                }
+                else if(start.equals("b0")){
+                    String l=str.substring(2, 4);
+                    int lenght=HexToInt(l);
+                    str=str.substring(4,str.length());
+                    String rfid=str.substring(0, lenght*2);
+                    str=str.substring(lenght*2,str.length());
+                    entity.setRfid(rfid);
+                    entity.setTag("add");
+                    add.add(entity);
+                }else if(start.equals("c0")){
+                    String l=str.substring(2, 4);
+                    int lenght=HexToInt(l);
+                    str=str.substring(4,str.length());
+                    String rfid=str.substring(0, lenght*2);
+                    str=str.substring(lenght*2,str.length());
+                    entity.setRfid(rfid);
+                    entity.setTag("remove");
+                    remove.add(entity);
+                }
+            }
+            map.put("current",current);
+            map.put("add",add);
+            map.put("remove",remove);
+        }
+        return map;
     }
     //16进制转10进制
     public static int HexToInt(String strHex) {

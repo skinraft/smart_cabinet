@@ -309,12 +309,13 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     public void getSharingInfoError(String result) {
         super.getSharingInfoError(result);
         QRcode.setVisibility(View.GONE);
-        Toast(result.toString());
+        Toast("获取分享信息失败---"+result.toString());
     }
 
     @Override
     public void getSharingInfoSuccess(String deviceID, int sharingID, Bitmap QRCodeImage) {
         super.getSharingInfoSuccess(deviceID, sharingID, QRCodeImage);
+        Toast("获取分享信息OK--"+sharingID);
         if (deviceID.equals(mDevice.getDid())) {
             //加载该二维码
             QRcode.setVisibility(View.VISIBLE);
