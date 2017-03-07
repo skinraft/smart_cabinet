@@ -58,7 +58,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         /////////////////////////
         smartCabinetWinesAdpter = new SmartCabinetWinesAdpter(this, mWins);
         listView.setAdapter(smartCabinetWinesAdpter);
-        ////////////////////
+        ////////////////////////
         new Thread() {
             @Override
             public void run() {
