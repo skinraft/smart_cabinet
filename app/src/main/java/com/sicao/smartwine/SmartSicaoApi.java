@@ -515,10 +515,10 @@ public class SmartSicaoApi implements XApiException {
                     if (status(object)) {
                         JSONArray array = object.getJSONObject("data").getJSONArray("rfid_product_items");
                         ArrayList<XWineEntity> mList = new ArrayList<>();
-//                        for (int i = 0; i < array.length(); i++) {
-//                            XWineEntity goods = new Gson().fromJson(array.getJSONObject(i).toString(), XWineEntity.class);
-//                            mList.add(goods);
-//                        }
+                        for (int i = 0; i < array.length(); i++) {
+                            XWineEntity goods = new Gson().fromJson(array.getJSONObject(i).toString(), XWineEntity.class);
+                            mList.add(goods);
+                        }
                         if (null != callback) callback.response(mList);
                     } else {
                         log(object.getString("message"));

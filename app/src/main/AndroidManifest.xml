@@ -175,7 +175,7 @@
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        <!--酒柜内的存储的酒列表信息-->
+        <!-- 酒柜内的存储的酒列表信息 -->
         <activity
             android:name=".xdevice.SmartCabinetWinesActivity"
             android:configChanges="orientation|keyboard"
@@ -184,19 +184,21 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
         </activity>
-        <!--web页面-->
+        <!-- web页面 -->
         <activity
             android:name=".xuser.XWebActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
-        <!--测试使用-->
-        <activity android:name=".xdevice.SmartCabinetRFIDActivity"
-                  android:configChanges="orientation|keyboard"
-                  android:exported="false"
-                  android:screenOrientation="portrait">
+        <!-- 测试使用 -->
+        <activity
+            android:name=".xdevice.SmartCabinetRFIDActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait">
         </activity>
+        <!-- 商品详情 -->
     </application>
 
 </manifest>

@@ -16,29 +16,42 @@ public class XWineEntity implements Serializable {
     //酒柜信息
     GizWifiDevice gizWifiDevice;
     //酒款信息
-    XGoodsEntity xGoodsEntity;
+    XProductEntity product;
+    //标签数量
+    String rfidnum;
+    //增加的还是减少的又或者是上次存留的(add,remove,current),也有可能是无法识别的
+    String tag;
+
+
+    public void setRfidnum(String rfidnum) {
+        this.rfidnum = rfidnum;
+    }
+
+    public String getRfidnum() {
+        return rfidnum;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+    public String getTag() {
+        return tag;
+    }
 
     public void setGizWifiDevice(GizWifiDevice gizWifiDevice) {
         this.gizWifiDevice = gizWifiDevice;
     }
 
-    public void setxGoodsEntity(XGoodsEntity xGoodsEntity) {
-        this.xGoodsEntity = xGoodsEntity;
+    public void setProduct(XProductEntity product) {
+        this.product = product;
     }
 
-    public XGoodsEntity getxGoodsEntity() {
-        return xGoodsEntity;
+    public XProductEntity getProduct() {
+        return product;
     }
 
     public GizWifiDevice getGizWifiDevice() {
         return gizWifiDevice;
     }
 
-    @Override
-    public String toString() {
-        return "XWineEntity{" +
-                "gizWifiDevice=" + gizWifiDevice +
-                ", xGoodsEntity=" + xGoodsEntity +
-                '}';
-    }
 }

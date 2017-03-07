@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,7 +17,7 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetApplication;
-import com.sicao.smartwine.xdevice.entity.XGoodsEntity;
+import com.sicao.smartwine.xdevice.entity.XProductEntity;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
 
 import java.text.DecimalFormat;
@@ -85,7 +84,7 @@ public class SmartCabinetWinesAdpter extends BaseAdapter {
             mView = (HoldView) convertView.getTag();
         }
         final XWineEntity wineEntity = mlist.get(position);
-        final XGoodsEntity  entity=wineEntity.getxGoodsEntity();
+        final XProductEntity entity=wineEntity.getProduct();
         if (null == mView.iv_mycellarimage.getTag()) {
             mView.iv_mycellarimage.setLayoutParams(params);
             mView.iv_mycellarimage.setTag(entity);
