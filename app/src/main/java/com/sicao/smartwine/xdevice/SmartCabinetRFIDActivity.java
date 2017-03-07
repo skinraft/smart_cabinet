@@ -71,13 +71,16 @@ public class SmartCabinetRFIDActivity extends SmartCabinetActivity {
         list.addAll(current);
         list.addAll(add);
         list.addAll(remove);
-        rfids.setText("酒柜内标签:当前"+current.size()+"个,增加"+add.size()+"个,减少"+remove.size()+"个");
+        rfids.setText("酒柜内标签:总共"+(current.size()+add.size())+"个,增加"+add.size()+"个,减少"+remove.size()+"个");
         adapter.update(list);
     }
     @Override
     public void message(Message msg) {
         if (msg.what == 10101010) {
             rfids.setText("监控中" + rfids.getText().toString().trim().replace("监控中", "") + ".");
+            if (rfids.getText().toString().trim().contains(".......")){
+                 rfids.setText(rfids.getText().toString().trim().replace(".......","."));
+            }
         }
     }
 }

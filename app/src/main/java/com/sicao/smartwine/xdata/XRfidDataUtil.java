@@ -29,7 +29,6 @@ public class XRfidDataUtil {
         }
         String s=str.substring(0, 2);
         if (s.contains("a0")||s.contains("b0")||s.contains("c0")){
-            XRfidEntity entity=new XRfidEntity();
             while(str.length()>0){
                 String start=str.substring(0, 2);
                 if(start.equals("a0")){
@@ -38,6 +37,7 @@ public class XRfidDataUtil {
                     str=str.substring(4,str.length());
                     String rfid=str.substring(0, lenght*2);
                     str=str.substring(lenght*2,str.length());
+                    XRfidEntity entity=new XRfidEntity();
                     entity.setRfid(rfid);
                     entity.setTag("current");
                     current.add(entity);
@@ -48,6 +48,7 @@ public class XRfidDataUtil {
                     str=str.substring(4,str.length());
                     String rfid=str.substring(0, lenght*2);
                     str=str.substring(lenght*2,str.length());
+                    XRfidEntity entity=new XRfidEntity();
                     entity.setRfid(rfid);
                     entity.setTag("add");
                     add.add(entity);
@@ -57,6 +58,7 @@ public class XRfidDataUtil {
                     str=str.substring(4,str.length());
                     String rfid=str.substring(0, lenght*2);
                     str=str.substring(lenght*2,str.length());
+                    XRfidEntity entity=new XRfidEntity();
                     entity.setRfid(rfid);
                     entity.setTag("remove");
                     remove.add(entity);

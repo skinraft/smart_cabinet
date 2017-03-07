@@ -3,7 +3,6 @@ package com.sicao.smartwine;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +19,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -370,7 +368,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                             rfidend();
                             rfid(device,map);
                             map.clear();
-                        } else if (content.equals("03030303030303030303")) {
+                        } else if (content.equals("0")) {
                             rfidbreak();
                             map.clear();
                         }else{
@@ -409,11 +407,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         if (map.containsKey("add")) {
             //增加的标签
             add = map.get("add");
+            if (add.size()>0)
             AppManager.noti(this,device,"标签增加"+add.size()+"个",100);
         }
         if (map.containsKey("remove")) {
             //减少的标签
             remove = map.get("remove");
+            if (remove.size()>0)
             AppManager.noti(this,device,"标签减少"+remove.size()+"个",101);
         }
         if (map.containsKey("current")) {
@@ -510,6 +510,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 // 设备连接断开时可能产生的通知
                 GizWifiDevice mDevice = (GizWifiDevice) eventSource;
                 SmartSicaoApi.log("device mac: " + mDevice.getMacAddress() + " disconnect caused by eventID: " + eventID + ", eventMessage: " + eventMessage);
+                AppManager.noti(SmartCabinetActivity.this,mDevice,"您的设备已经离线，请检查该设备网络异常",103);
             } else if (eventType == GizEventType.GizEventM2MService) {
                 // M2M服务返回的异常通知
                 SmartSicaoApi.log("M2M domain " + eventSource + " exception happened, eventID: " + eventID + ", eventMessage: " + eventMessage);

@@ -71,7 +71,7 @@ public class SmartCabinetRFIDAdapter extends BaseAdapter {
             holder.tv_equipment.setText("[当前]");
         } else if (entity.getTag().equals("add")) {
             holder.tv_equipment.setText("[增加]");
-        } else if (entity.getTag().equals("add")) {
+        } else if (entity.getTag().equals("remove")) {
             holder.tv_equipment.setText("[移除]");
         }
         return convertView;
