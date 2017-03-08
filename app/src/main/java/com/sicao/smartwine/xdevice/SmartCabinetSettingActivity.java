@@ -17,10 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizDeviceSharing;
+import com.gizwits.gizwifisdk.api.GizDeviceSharingInfo;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.enumration.GizDeviceSharingType;
 import com.gizwits.gizwifisdk.enumration.GizDeviceSharingUserRole;
 import com.gizwits.gizwifisdk.enumration.GizDeviceSharingWay;
+import com.gizwits.gizwifisdk.enumration.GizUserAccountType;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
@@ -206,8 +208,8 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                 smartCabinetSettingDialog.dismiss();
                 if (position == 0) {
                     //获取该设备的分享信息
-                    GizDeviceSharing.getDeviceSharingInfos(XUserData.getCabinetToken(SmartCabinetSettingActivity.this),
-                            GizDeviceSharingType.GizDeviceSharingByMe, mDevice.getDid());
+                    GizDeviceSharing.sharingDevice(XUserData.getCabinetToken(SmartCabinetSettingActivity.this),mDevice.getDid(),GizDeviceSharingWay.GizDeviceSharingByQRCode,
+                            null, GizUserAccountType.GizUserNormal);
                 } else {
                     //查看设备所有绑定的账号
                     startActivity(new Intent(SmartCabinetSettingActivity.this, SmartCabinetBindUsersActivity.class).putExtra("GizWifiDevice", mDevice));

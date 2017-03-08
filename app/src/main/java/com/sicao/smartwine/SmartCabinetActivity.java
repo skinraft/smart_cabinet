@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizDeviceSharing;
+import com.gizwits.gizwifisdk.api.GizDeviceSharingInfo;
 import com.gizwits.gizwifisdk.api.GizUserInfo;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
@@ -658,6 +659,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         // 实现设备分享的回调
         @Override
         public void didSharingDevice(GizWifiErrorCode result, String deviceID, int sharingID, Bitmap QRCodeImage) {
+            SmartSicaoApi.log("didSharingDevice,"+(result == GizWifiErrorCode.GIZ_SDK_SUCCESS?"OK":"ERROR"+errorCodeToString(result)));
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 // 分享成功
                 getSharingInfoSuccess(deviceID, sharingID, QRCodeImage);
@@ -667,10 +669,35 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             }
         }
 
+        @Override
+        public void didGetDeviceSharingInfos(GizWifiErrorCode result, String deviceID, List<GizDeviceSharingInfo> deviceSharingInfos) {
+            super.didGetDeviceSharingInfos(result, deviceID, deviceSharingInfos);
+            SmartSicaoApi.log("didGetDeviceSharingInfos,"+(result == GizWifiErrorCode.GIZ_SDK_SUCCESS?"OK":"ERROR"+errorCodeToString(result)));
+        }
+
+        @Override
+        public void didAcceptDeviceSharing(GizWifiErrorCode result, int sharingID) {
+            super.didAcceptDeviceSharing(result, sharingID);
+            SmartSicaoApi.log("didAcceptDeviceSharing,"+(result == GizWifiErrorCode.GIZ_SDK_SUCCESS?"OK":"ERROR"+errorCodeToString(result)));
+        }
+
+        @Override
+        public void didCheckDeviceSharingInfoByQRCode(GizWifiErrorCode result, String userName, String productName, String deviceAlias, String expiredAt) {
+            super.didCheckDeviceSharingInfoByQRCode(result, userName, productName, deviceAlias, expiredAt);
+            SmartSicaoApi.log("didCheckDeviceSharingInfoByQRCode,"+(result == GizWifiErrorCode.GIZ_SDK_SUCCESS?"OK":"ERROR"+errorCodeToString(result)));
+        }
+
+        @Override
+        public void didAcceptDeviceSharingByQRCode(GizWifiErrorCode result) {
+            super.didAcceptDeviceSharingByQRCode(result);
+            SmartSicaoApi.log("didAcceptDeviceSharingByQRCode,"+(result == GizWifiErrorCode.GIZ_SDK_SUCCESS?"OK":"ERROR"+errorCodeToString(result)));
+        }
+
         //获取设备的绑定用户
         @Override
         public void didGetBindingUsers(GizWifiErrorCode result, String deviceID, List<GizUserInfo> bindUsers) {
             super.didGetBindingUsers(result, deviceID, bindUsers);
+            SmartSicaoApi.log("didGetBindingUsers,"+(result == GizWifiErrorCode.GIZ_SDK_SUCCESS?"OK":"ERROR"+errorCodeToString(result)));
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 getBindingUsersSuccess(deviceID, bindUsers);
             } else {
@@ -706,9 +733,11 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     }
 
     public void getSharingInfoError(String result) {
+
     }
 
     public void getSharingInfoSuccess(String deviceID, int sharingID, Bitmap QRCodeImage) {
+
     }
 
 

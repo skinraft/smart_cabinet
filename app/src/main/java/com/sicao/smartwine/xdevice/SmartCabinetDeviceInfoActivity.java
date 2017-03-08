@@ -198,14 +198,9 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 });
                 break;
             case R.id.my_wines://酒柜内的酒款
-//                if (null != mDevice) {
-//                    startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, SmartCabinetWinesActivity.class).putExtra("cabinet", mDevice));
-//                } else {
-//                    Toast("请选择某一设备后重试!");
-//                }
                 //测试使用
                 if (null != mDevice) {
-                    startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, SmartCabinetWinesActivity.class).putExtra("cabinet", mDevice));
+                    startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, SmartCabinetRFIDActivity.class).putExtra("cabinet", mDevice));
                 } else {
                     Toast("请选择某一设备后重试!");
                 }

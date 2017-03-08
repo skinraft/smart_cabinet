@@ -20,6 +20,7 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import com.gizwits.gizwifisdk.api.GizDeviceSharing;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
@@ -292,7 +293,12 @@ public class ActivityCapture extends SmartCabinetActivity implements Callback {
             showProgress(true);
             GizWifiSDK.sharedInstance().bindDevice(XUserData.getCabinetUid(this), XUserData.getCabinetToken(this), getParamFomeUrl(resultString, "did"),
                     getParamFomeUrl(resultString, "passcode"), null);
-        } else {
+        } else if(resultString.contains("type=share")&&resultString.contains("code=")){
+            //分享过来的
+            //type=share&code=5c5829aea65f4ced98b9a73a0668683e
+            GizDeviceSharing.checkDeviceSharingInfoByQRCode(XUserData.getCabinetToken(this),getParamFomeUrl(resultString, "code"));
+            GizDeviceSharing.acceptDeviceSharingByQRCode(XUserData.getCabinetToken(this),getParamFomeUrl(resultString, "code"));
+        }else{
             finish();
             Toast.makeText(this, "抱歉,无法识别该二维码", Toast.LENGTH_LONG).show();
         }
