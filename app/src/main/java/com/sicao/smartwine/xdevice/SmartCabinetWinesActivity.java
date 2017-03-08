@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
+import com.sicao.smartwine.SmartSicaoApi;
+import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetWinesAdpter;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
@@ -77,13 +79,30 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                 }
             }
         }.start();
-//        mRightText.setText("详情");
-//        mRightText.setVisibility(View.VISIBLE);
-//        mRightText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//            }
-//        });
+        mRightText.setText("详情");
+        mRightText.setVisibility(View.VISIBLE);
+        mRightText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isInstalled("com.putaoji.android", SmartCabinetWinesActivity.this) && bindputaoji) {
+                    if (bindputaoji){
+                        //通过AIDL打开葡萄集商品详情页面
+                        try {
+                            xInterface.openActivity("1", "1062");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                            SmartSicaoApi.log("关联葡萄集异常------"+e.getMessage());
+                        }
+                    }else{
+                        //绑定服务失败,启动该应用
+                         AppManager.openApp(SmartCabinetWinesActivity.this,"com.putaoji.android","com.putaoji.android.XIndexActivity");
+                    }
+                } else {
+                    //下载页面
+                    startActivity(new Intent(SmartCabinetWinesActivity.this, XWebActivity.class).putExtra("url", "http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
+                }
+            }
+        });
     }
 
     @Override

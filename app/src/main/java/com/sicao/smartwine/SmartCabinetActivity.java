@@ -175,7 +175,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         //时间广播
         filter.addAction(Intent.ACTION_TIME_TICK);
         registerReceiver(xUpdateSmartCabinetReceiver, filter);
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }
 
     @Override
@@ -184,6 +184,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         //每次启动activity都要注册一次sdk监听器，保证sdk状态能正确回调
         GizWifiSDK.sharedInstance().setListener(mGizListener);
         GizDeviceSharing.setListener(mSharingListener);
+        /////////////////////////////////////////////////////关联绑定葡萄集业务/////////////////////////////////////////////////////////////////
         if (null != conn) {
             final Intent in = new Intent();
             in.setPackage("com.putaoji.android");
@@ -192,7 +193,6 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             SmartSicaoApi.log("关联绑定葡萄集业务----" + bindputaoji);
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -456,11 +456,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             xInterface = XInterface.Stub.asInterface(service);
+            SmartSicaoApi.log("绑定葡萄集业务OK---"+name+"---"+service.toString());
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             xInterface = null;
+            SmartSicaoApi.log("绑定葡萄集业务异常---"+name);
         }
     };
 

@@ -199,6 +199,14 @@
             android:screenOrientation="portrait">
         </activity>
         <!-- 商品详情 -->
+        <service
+            android:name=".SmartOpenService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.sicao.smartwine.SmartService"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

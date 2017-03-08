@@ -4,12 +4,14 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
@@ -239,17 +241,17 @@ public class AppManager {
         return macSerial;
     }
 
-    public static void noti(Context context, GizWifiDevice device,String content,int notifyid) {
+    public static void noti(Context context, GizWifiDevice device, String content, int notifyid) {
         // Instantiate a Builder object.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        String title=device.getRemark().equals("")?"智能酒柜":device.getRemark();
+        String title = device.getRemark().equals("") ? "智能酒柜" : device.getRemark();
         builder.setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(R.mipmap.ic_launcher);
 // Creates an Intent for the Activity
         Intent notifyIntent =
                 new Intent(context, SmartCabinetRFIDActivity.class);
-        notifyIntent.putExtra("cabinet",device);
+        notifyIntent.putExtra("cabinet", device);
 // Sets the Activity to start in a new, empty task
         notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -270,5 +272,19 @@ public class AppManager {
 // Builds an anonymous Notification object from the builder, and
 // passes it to the NotificationManager
         mNotificationManager.notify(notifyid, builder.build());
+    }
+
+    /***
+     * 启动某一个应用
+     * @param context
+     * @param packageName
+     * @param className
+     */
+    public static void openApp(Context context, String packageName, String className) {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        ComponentName cn = new ComponentName(packageName, className);
+        intent.setComponent(cn);
+        context.startActivity(intent);
     }
 }
