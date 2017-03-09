@@ -269,7 +269,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         } else if (what == 10094) {
             XUserData.setPassword(SmartCabinetDeviceInfoActivity.this, "");
             finish();
-        } else if (what == XConfig.CABINET_HAS_EXCEPTION || what == XConfig.CURRENT_NO_CABINET) {
+        } else if ( what == XConfig.CURRENT_NO_CABINET) {
             mDevice = null;
             mLight.setImageResource(R.drawable.ic_bulb_off);
             mSetTemp.setText("0℃");
@@ -280,6 +280,9 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         } else if (what == XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER) {
             //
             mBodys.setText("酒柜内放置" + msg.arg1 + "瓶酒");
+        }else if(what == XConfig.CABINET_HAS_EXCEPTION ){
+            //设备异常状态
+
         }
     }
 
