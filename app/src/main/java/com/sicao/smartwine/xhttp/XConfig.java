@@ -45,6 +45,10 @@ public class XConfig {
      */
     public static int CURRENT_NO_CABINET = 10019;
     /*
+     *更新首页的RFID数量
+     */
+    public static int CABINET_INFO_UPDATE_RFIDS_NUMBER=10020;
+    /*
      *设置读写器的工作时间action
      */
     public static int CONFIG_CABINET_SET_WORK_TIME = 10097;

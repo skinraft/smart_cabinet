@@ -36,6 +36,7 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        swipeRefreshLayout.setRefreshing(true);
         mDevice= (GizWifiDevice) getIntent().getExtras().get("GizWifiDevice");
         GizDeviceSharing.getBindingUsers(XUserData.getCabinetToken(this),mDevice.getDid());
         init();
@@ -116,12 +117,14 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     @Override
     public void getBindingUsersSuccess(String deviceID, List<GizUserInfo> bindUsers) {
         super.getBindingUsersSuccess(deviceID, bindUsers);
+        swipeRefreshLayout.setRefreshing(false);
         initDate(bindUsers);
     }
 
     @Override
     public void getBindingUsersError(String result) {
         super.getBindingUsersError(result);
+        swipeRefreshLayout.setRefreshing(false);
         Toast( "操作失败,请刷新重试"+result);
     }
 

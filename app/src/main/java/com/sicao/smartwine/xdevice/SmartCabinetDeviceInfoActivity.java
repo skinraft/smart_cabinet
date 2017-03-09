@@ -19,6 +19,7 @@ import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xuser.XSettingActivity;
 import com.sicao.smartwine.xuser.XWebActivity;
@@ -28,6 +29,7 @@ import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /***
@@ -104,6 +106,30 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
             mOnLine.setText("离线");
             mSynText.setText("没有设备");
         }
+    }
+
+    @Override
+    public void rfidstart() {
+        mBodys.setText("正在扫描酒柜...");
+    }
+
+    @Override
+    public void rfidend() {
+        mBodys.setText("酒柜扫描完毕...");
+    }
+
+    @Override
+    public void rfidbreak() {
+        mBodys.setText("酒柜扫描中断...");
+    }
+
+    @Override
+    public void rfid(GizWifiDevice device, ArrayList<XRfidEntity> current, ArrayList<XRfidEntity> add, ArrayList<XRfidEntity> remove) {
+        //1秒后更新RFID数量
+        Message msg = handler.obtainMessage();
+        msg.what = XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER;
+        msg.arg1 = (current.size() + add.size());
+        handler.sendMessageDelayed(msg, 1000);
     }
 
     @Override
@@ -243,7 +269,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         } else if (what == 10094) {
             XUserData.setPassword(SmartCabinetDeviceInfoActivity.this, "");
             finish();
-        }else if(what==XConfig.CABINET_HAS_EXCEPTION||what==XConfig.CURRENT_NO_CABINET){
+        } else if (what == XConfig.CABINET_HAS_EXCEPTION || what == XConfig.CURRENT_NO_CABINET) {
             mDevice = null;
             mLight.setImageResource(R.drawable.ic_bulb_off);
             mSetTemp.setText("0℃");
@@ -251,14 +277,17 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
             mWorkModel.setText("未设置");
             mOnLine.setText("离线");
             mSynText.setText("没有设备");
+        } else if (what == XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER) {
+            //
+            mBodys.setText("酒柜内放置" + msg.arg1 + "瓶酒");
         }
     }
 
     @Override
     public void deviceError(GizWifiDevice device) {
-       //设备异常,有可能是设备离线了，或者当前用户是该设备的子帐号，被主帐号远程解绑了,也有可能是设备准备工作异常
-        if (null!=mDevice&&null!=device){
-            if (mDevice.getDid().equals(device.getDid())){
+        //设备异常,有可能是设备离线了，或者当前用户是该设备的子帐号，被主帐号远程解绑了,也有可能是设备准备工作异常
+        if (null != mDevice && null != device) {
+            if (mDevice.getDid().equals(device.getDid())) {
                 //当前没有设备进行监控
                 handler.sendEmptyMessage(XConfig.CABINET_HAS_EXCEPTION);
             }
