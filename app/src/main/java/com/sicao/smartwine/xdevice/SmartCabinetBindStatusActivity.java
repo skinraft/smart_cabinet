@@ -35,14 +35,14 @@ public class SmartCabinetBindStatusActivity extends SmartCabinetActivity {
         tv_status_prompt = (TextView) findViewById(R.id.tv_status_prompt);
         tv_complete = (TextView) findViewById(R.id.tv_complete);
         if (status.equals("1")) {
-            tv_status.setText("连接成功");
+            tv_status.setText("绑定成功");
             tv_complete.setText("完成");
             tv_status_prompt.setText("现在您可以使用手机控制您的设备");
             tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_success));
         } else if (status.equals("2")) {
             tv_status.setText("连接失败");
             tv_complete.setText("确认");
-            tv_status_prompt.setText("请检查设备是否运行正常，指示灯是否闪烁");
+            tv_status_prompt.setText("请检查设备是否运行正常，指示灯是否指示待配置状态");
             tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_success));
         } else if (status.equals("3")) {
             tv_status.setText("解绑成功");

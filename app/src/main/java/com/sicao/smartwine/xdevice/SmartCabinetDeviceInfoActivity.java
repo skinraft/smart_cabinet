@@ -243,7 +243,25 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         } else if (what == 10094) {
             XUserData.setPassword(SmartCabinetDeviceInfoActivity.this, "");
             finish();
+        }else if(what==XConfig.CABINET_HAS_EXCEPTION||what==XConfig.CURRENT_NO_CABINET){
+            mDevice = null;
+            mLight.setImageResource(R.drawable.ic_bulb_off);
+            mSetTemp.setText("0℃");
+            mRealTemp.setText("0℃");
+            mWorkModel.setText("未设置");
+            mOnLine.setText("离线");
+            mSynText.setText("没有设备");
         }
     }
 
+    @Override
+    public void deviceError(GizWifiDevice device) {
+       //设备异常,有可能是设备离线了，或者当前用户是该设备的子帐号，被主帐号远程解绑了,也有可能是设备准备工作异常
+        if (null!=mDevice&&null!=device){
+            if (mDevice.getDid().equals(device.getDid())){
+                //当前没有设备进行监控
+                handler.sendEmptyMessage(XConfig.CABINET_HAS_EXCEPTION);
+            }
+        }
+    }
 }

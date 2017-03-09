@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizDeviceSharing;
@@ -294,16 +295,56 @@ public class ActivityCapture extends SmartCabinetActivity implements Callback {
             GizWifiSDK.sharedInstance().bindDevice(XUserData.getCabinetUid(this), XUserData.getCabinetToken(this), getParamFomeUrl(resultString, "did"),
                     getParamFomeUrl(resultString, "passcode"), null);
         } else if(resultString.contains("type=share")&&resultString.contains("code=")){
-            //分享过来的
+            //分享过来的二維碼
             //type=share&code=5c5829aea65f4ced98b9a73a0668683e
-            GizDeviceSharing.checkDeviceSharingInfoByQRCode(XUserData.getCabinetToken(this),getParamFomeUrl(resultString, "code"));
-            GizDeviceSharing.acceptDeviceSharingByQRCode(XUserData.getCabinetToken(this),getParamFomeUrl(resultString, "code"));
+            code=getParamFomeUrl(resultString, "code");
+            GizDeviceSharing.checkDeviceSharingInfoByQRCode(XUserData.getCabinetToken(this),code);
+            showProgress(true);
+            mHintText.setVisibility(View.VISIBLE);
+            mHintText.setText("正在识别二维码...");
         }else{
             finish();
             Toast.makeText(this, "抱歉,无法识别该二维码", Toast.LENGTH_LONG).show();
         }
     }
 
+    String code="";
+    /***
+     * 检测二维码OK
+     */
+    @Override
+    public void checkShareingCodeSuccess() {
+        GizDeviceSharing.acceptDeviceSharingByQRCode(XUserData.getCabinetToken(this),code);
+        showProgress(true);
+        mHintText.setText("二维码识别成功，正在绑定设备...");
+    }
+    /***
+     * 检测二维码失败
+     */
+    @Override
+    public void checkShareIngCodeError(String result) {
+        showProgress(false);
+        startActivity(new Intent(this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
+        finish();
+    }
+    /***
+     * 绑定二维码分享的设备OK
+     */
+    @Override
+    public void acceptShareingByCodeSuccess() {
+        showProgress(false);
+        startActivity(new Intent(this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
+        finish();
+    }
+    /***
+     * 绑定二维码分享的设备失败
+     */
+    @Override
+    public void acceptShareIngByCodeError(String result) {
+        showProgress(false);
+        startActivity(new Intent(this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
+        finish();
+    }
     @Override
     public void bindSuccess(String did) {
         super.bindSuccess(did);

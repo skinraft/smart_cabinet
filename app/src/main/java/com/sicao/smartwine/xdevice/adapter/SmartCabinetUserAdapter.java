@@ -67,7 +67,7 @@ public class SmartCabinetUserAdapter extends BaseAdapter {
         }
         final GizUserInfo device = mList.get(position);
         holder.name.setText(device.getUsername());
-        holder.tv_equipment.setText("位置:"+device.getAddress()+",绑定时间:"+device.getDeviceBindTime());
+        holder.tv_equipment.setText("ID:"+device.getUid()+",绑定时间:"+device.getDeviceBindTime());
         return convertView;
     }
 

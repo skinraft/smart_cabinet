@@ -35,17 +35,25 @@ public class XConfig {
      *更新设备的设备灯开关action
      */
     public static int CONFIG_CABINET_SET_LIGHT_ACTION = 10017;
+    /*
+     *设备异常
+     */
+    public static int CABINET_HAS_EXCEPTION = 10018;
 
+    /*
+     *当前帐号没有绑定设备
+     */
+    public static int CURRENT_NO_CABINET = 10019;
     /*
      *设置读写器的工作时间action
      */
-     public static  int CONFIG_CABINET_SET_WORK_TIME=10097;
+    public static int CONFIG_CABINET_SET_WORK_TIME = 10097;
     /*
      *页面刷新
      */
-    public static int BASE_UPDATE_ACTION=777777;
+    public static int BASE_UPDATE_ACTION = 777777;
     /*
      *页面加载更多
      */
-    public static int BASE_LOAD_ACTION=999999;
+    public static int BASE_LOAD_ACTION = 999999;
 }

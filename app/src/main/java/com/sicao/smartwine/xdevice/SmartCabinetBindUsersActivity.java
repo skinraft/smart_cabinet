@@ -109,6 +109,8 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     public void unBindGuestUserSuccess(String deviceID, String guestUID) {
         super.unBindGuestUserSuccess(deviceID, guestUID);
         Toast( "操作成功!");
+        showProgress(false);
+        handler.sendEmptyMessage(XConfig.BASE_UPDATE_ACTION);
     }
 
     @Override
@@ -126,6 +128,7 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     @Override
     public void unBindGuestUserError(String result) {
         super.unBindGuestUserError(result);
+        showProgress(false);
         Toast("操作失败,请重试"+result);
     }
 
