@@ -312,7 +312,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/iv_two"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayout">
 
                     <TextView
                         android:id="@+id/tv_wines"
@@ -336,6 +337,17 @@
                     android:layout_centerVertical="true"
                     android:padding="15dp"
                     android:src="@drawable/ic_back" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:visibility="gone"
+                    android:layout_toEndOf="@+id/linearLayout"
+                    android:layout_toRightOf="@+id/linearLayout"/>
             </RelativeLayout>
 
             <TextView

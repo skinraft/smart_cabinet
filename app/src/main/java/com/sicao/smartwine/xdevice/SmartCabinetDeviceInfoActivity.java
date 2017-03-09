@@ -9,6 +9,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -62,6 +63,8 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     boolean isLight = false;
     //正在同步...控件
     TextView mSynText;
+    //正在扫描酒款的进度框
+    ProgressBar progressBar;
 
     @Override
     protected int setView() {
@@ -87,6 +90,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         mRightText.setVisibility(View.VISIBLE);
         mRightText.setText("EXIT");
         mRightText.setOnClickListener(this);
+        progressBar= (ProgressBar) findViewById(R.id.progressBar);
     }
 
     @Override
@@ -130,6 +134,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         msg.what = XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER;
         msg.arg1 = (current.size() + add.size());
         handler.sendMessageDelayed(msg, 1000);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -170,6 +175,10 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 }
                 if (object.getBoolean("scanning")) {
                     Toast("读写器正在扫描...");
+                    mBodys.setText("正在扫描酒款...");
+                    progressBar.setVisibility(View.VISIBLE);
+                }else{
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         } catch (JSONException e) {
