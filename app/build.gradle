@@ -28,6 +28,9 @@ android {
                 cppFlags ""
             }
         }
+        ndk {
+            abiFilters "armeabi"
+        }
         signingConfig signingConfigs.config
     }
     buildTypes {
@@ -35,9 +38,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
+            ndk {
+                abiFilters "armeabi"
+            }
         }
         debug {
             signingConfig signingConfigs.config
+            ndk {
+                abiFilters "armeabi"
+            }
         }
     }
     externalNativeBuild {
