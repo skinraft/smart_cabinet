@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.RequiresApi;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -38,6 +39,9 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+
 /***
  * 酒柜设置
  */
@@ -56,7 +60,10 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     TextView mCommit;
     //将要控制的设备对象
     GizWifiDevice mDevice;
+    //分享的二维码图片控件
     ImageView QRcode;
+    //分享的二维码图片提示
+    TextView mQRcodeHint;
     //添加设备的菜单
     SmartCabinetSettingDialog smartCabinetSettingDialog = null;
     //设置读写器工作时间
@@ -147,6 +154,26 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        if (null!=mDevice){
+            outState.putParcelable("smart_cabinet_set",mDevice);
+        }
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState);
+        if (null!=savedInstanceState){
+            if (savedInstanceState.containsKey("smart_cabinet_set")){
+                mDevice= (GizWifiDevice) savedInstanceState.get("smart_cabinet_set");
+                init();
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        }
+    }
+
+    @Override
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
         mDevice = device;
         swipeRefreshLayout.setRefreshing(false);
@@ -217,6 +244,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
             }
         });
         QRcode = (ImageView) findViewById(R.id.qrcode);
+        mQRcodeHint= (TextView) findViewById(R.id.qrcode_hint);
         wineName = (EditText) findViewById(R.id.editText);
         mWorkName = (TextView) findViewById(R.id.work_mode_name);
         mWorkTemp = (TextView) findViewById(R.id.work_mode_temp_name);
@@ -311,17 +339,34 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     public void getSharingInfoError(String result) {
         super.getSharingInfoError(result);
         QRcode.setVisibility(View.GONE);
+        mQRcodeHint.setVisibility(View.GONE);
         Toast("获取分享信息失败---"+result.toString());
     }
 
     @Override
     public void getSharingInfoSuccess(String deviceID, int sharingID, Bitmap QRCodeImage) {
-        super.getSharingInfoSuccess(deviceID, sharingID, QRCodeImage);
-        Toast("获取分享信息OK--"+sharingID);
         if (deviceID.equals(mDevice.getDid())) {
             //加载该二维码
             QRcode.setVisibility(View.VISIBLE);
+            mQRcodeHint.setVisibility(View.VISIBLE);
             QRcode.setImageBitmap(QRCodeImage);
+            //调用分享
+            xCabinetApi.shareGizWifiDevice(new PlatformActionListener() {
+                @Override
+                public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+                    Toast("分享成功");
+                }
+
+                @Override
+                public void onError(Platform platform, int i, Throwable throwable) {
+                    Toast("分享中断，请重试");
+                }
+
+                @Override
+                public void onCancel(Platform platform, int i) {
+                    Toast("您已取消分享");
+                }
+            },QRCodeImage);
         }
     }
 }

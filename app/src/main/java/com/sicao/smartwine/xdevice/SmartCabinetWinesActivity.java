@@ -1,9 +1,7 @@
 package com.sicao.smartwine.xdevice;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.os.RemoteException;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,14 +11,11 @@ import android.widget.TextView;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
-import com.sicao.smartwine.SmartSicaoApi;
-import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetWinesAdpter;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
 import com.sicao.smartwine.xhttp.XApisCallBack;
 import com.sicao.smartwine.xhttp.XConfig;
-import com.sicao.smartwine.xuser.XWebActivity;
 
 import java.util.ArrayList;
 
@@ -79,46 +74,11 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                 }
             }
         }.start();
-        mRightText.setText("详情");
-        mRightText.setVisibility(View.VISIBLE);
-        mRightText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isInstalled("com.putaoji.android", SmartCabinetWinesActivity.this) && bindputaoji) {
-                    if (bindputaoji){
-                        //通过AIDL打开葡萄集商品详情页面
-                        try {
-                            xInterface.openActivity("1", "1062");
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                            SmartSicaoApi.log("关联葡萄集异常------"+e.getMessage());
-                        }
-                    }else{
-                        //绑定服务失败,启动该应用
-                         AppManager.openApp(SmartCabinetWinesActivity.this,"com.putaoji.android","com.putaoji.android.XIndexActivity");
-                    }
-                } else {
-                    //下载页面
-                    startActivity(new Intent(SmartCabinetWinesActivity.this, XWebActivity.class).putExtra("url", "http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
-                }
-            }
-        });
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast("查看商品详情");
-        if (isInstalled("com.putaoji.android", this) && bindputaoji) {
-            //通过AIDL打开葡萄集商品详情页面
-            try {
-                xInterface.openActivity("1", mWins.get(position).getProduct().getId());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //下载页面
-            startActivity(new Intent(this, XWebActivity.class).putExtra("url", "http://a.app.qq.com/o/simple.jsp?pkgname=com.putaoji.android"));
-        }
     }
 
     @Override

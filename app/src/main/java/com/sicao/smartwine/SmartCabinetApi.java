@@ -1,5 +1,8 @@
 package com.sicao.smartwine;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizUserAccountType;
@@ -11,6 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+import cn.sharesdk.wechat.friends.Wechat;
 
 /**
  * Created by techssd on 2016/11/28.
@@ -232,11 +241,25 @@ public class SmartCabinetApi {
      * @param map
      * @param action
      */
-    public void controlDevice(GizWifiDevice device, HashMap<String,Object> map, int action) {
+    public void controlDevice(GizWifiDevice device, HashMap<String, Object> map, int action) {
         ConcurrentHashMap<String, Object> command = new ConcurrentHashMap<String, Object>();
         for (String key : map.keySet()) {
             command.put(key, map.get(key));
         }
         device.write(command, action);
+    }
+
+    /***
+     * 分享设备到微信好友
+     * @param platformActionListener
+     * @param QRCodeImage   分享设备时生成的二维码
+     */
+    public void shareGizWifiDevice(PlatformActionListener platformActionListener, Bitmap QRCodeImage) {
+        Wechat.ShareParams shareParams = new Wechat.ShareParams();
+        shareParams.setImageData(QRCodeImage);
+        shareParams.setShareType(Platform.SHARE_IMAGE);
+        Platform platform = ShareSDK.getPlatform(Wechat.NAME);
+        platform.setPlatformActionListener(platformActionListener);
+        platform.share(shareParams);
     }
 }

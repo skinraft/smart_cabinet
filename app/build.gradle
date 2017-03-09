@@ -5,6 +5,14 @@ repositories {
     jcenter()
 }
 android {
+    signingConfigs {
+        config {
+            keyAlias 'sicao'
+            keyPassword 'smartwine2016'
+            storeFile file('D:/smartwine.keystore.jks')
+            storePassword 'smartptj2016'
+        }
+    }
     compileSdkVersion 24
     buildToolsVersion "25.0.0"
     defaultConfig {
@@ -20,11 +28,16 @@ android {
                 cppFlags ""
             }
         }
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
     externalNativeBuild {
@@ -77,4 +90,5 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     testCompile 'junit:junit:4.12'
     compile files('libs/MobCommons-2017.0216.1054.jar')
+    compile files('libs/ShareSDK-SinaWeibo-2.8.1.jar')
 }

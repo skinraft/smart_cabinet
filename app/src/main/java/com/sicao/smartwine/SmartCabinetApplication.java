@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cn.sharesdk.framework.ShareSDK;
+
 public class SmartCabinetApplication extends Application {
     /**
      * 接口使用的线程池

@@ -97,6 +97,19 @@ public class ActivityCapture extends SmartCabinetActivity implements Callback {
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
+        //相册
+        mRightText.setVisibility(View.VISIBLE);
+        mRightText.setText("相册");
+        mRightText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                innerIntent.setType("image/*");
+                Intent wrapperIntent = Intent.createChooser(innerIntent, "选择二维码图片");
+                ActivityCapture.this.startActivityForResult(wrapperIntent,
+                        REQUEST_CODE);
+            }
+        });
     }
 
     @SuppressLint("HandlerLeak")

@@ -202,16 +202,27 @@
             android:textSize="16sp"/>
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
         android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/qrcode"
             android:layout_width="200dp"
             android:layout_height="200dp"
+            android:layout_gravity="center"
             android:visibility="gone"
             android:layout_centerInParent="true"/>
+         <TextView
+             android:id="@+id/qrcode_hint"
+             android:layout_width="match_parent"
+             android:layout_below="@id/qrcode"
+             android:gravity="center_horizontal"
+             android:text="二维码将于15分钟后失效"
+             android:visibility="gone"
+             android:layout_height="wrap_content"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

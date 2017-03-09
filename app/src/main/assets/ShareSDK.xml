@@ -54,17 +54,17 @@
     -->
     
     <ShareSDK 
-        AppKey = "androidv1101"/> <!-- 修改成你在sharesdk后台注册的应用的appkey"-->
+        AppKey = "e6f1c7c644ce"/> <!-- 修改成你在sharesdk后台注册的应用的appkey"-->
     
     <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
-    <SinaWeibo
-        Id="1"
-        SortId="1"
-        AppKey="568898243"
-        AppSecret="38a4f8204cc784f81f9f0daaf31e02e3"
-        RedirectUrl="http://www.sharesdk.cn"
-        ShareByAppClient="true"
-        Enable="true" />
+	<SinaWeibo
+		Id="5"
+		SortId="5"
+		AppKey="499710611"
+		AppSecret="cc0beb9325d0a9b426080b935e90bb6f"
+		RedirectUrl="http://www.putaoji.com"
+		ShareByAppClient="true"
+		Enable="true" />
 
     <TencentWeibo
         Id="2" 
@@ -96,8 +96,8 @@
     <Wechat
         Id="4"
         SortId="4"
-        AppId="wx4868b35061f87885"
-        AppSecret="64020361b8ec4c99936c0e3999a9f249"
+        AppId="wxa122dab5e931bf30"
+        AppSecret="5296c349fc32408768c5cef33e68fddb"
         BypassApproval="false"
         Enable="true" />
     

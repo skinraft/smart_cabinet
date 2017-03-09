@@ -55,6 +55,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.sharesdk.framework.ShareSDK;
+
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_OPENAPI_USERNAME_UNAVALIABLE;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_SDK_DEVICE_CONFIG_IS_RUNNING;
 
@@ -91,11 +93,6 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             message(msg);
         }
     };
-    //AIDL通信葡萄集
-    protected XInterface xInterface;
-    //是否已经远程绑定葡萄集服务
-    protected boolean bindputaoji = false;
-
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -185,14 +182,8 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         //每次启动activity都要注册一次sdk监听器，保证sdk状态能正确回调
         GizWifiSDK.sharedInstance().setListener(mGizListener);
         GizDeviceSharing.setListener(mSharingListener);
-        /////////////////////////////////////////////////////关联绑定葡萄集业务/////////////////////////////////////////////////////////////////
-        if (null != conn) {
-            final Intent in = new Intent();
-            in.setPackage("com.putaoji.android");
-            in.setAction("com.putaoji.android.XService");
-            bindputaoji = bindService(in, conn, Context.BIND_AUTO_CREATE);
-            SmartSicaoApi.log("关联绑定葡萄集业务----" + bindputaoji);
-        }
+        //初始化分享部分
+        ShareSDK.initSDK(this,"e6f1c7c644ce");
     }
     @Override
     protected void onDestroy() {
@@ -447,27 +438,6 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         Toast("读取标签中断");
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (null != conn) {
-            unbindService(conn);
-        }
-    }
-
-    ServiceConnection conn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            xInterface = XInterface.Stub.asInterface(service);
-            SmartSicaoApi.log("绑定葡萄集业务OK---"+name+"---"+service.toString());
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            xInterface = null;
-            SmartSicaoApi.log("绑定葡萄集业务异常---"+name);
-        }
-    };
 
     /**
      * Shows the progress UI and hides the login form.
