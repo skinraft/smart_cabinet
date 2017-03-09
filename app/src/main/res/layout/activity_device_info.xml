@@ -271,7 +271,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/iv_one"
-                    android:text="设备连接"
+                    android:text="我的设备"
                     android:textSize="15sp" />
 
                 <TextView
