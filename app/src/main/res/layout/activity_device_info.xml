@@ -1,11 +1,13 @@
-<com.sicao.smartwine.xwidget.device.PullLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
         <RelativeLayout
             android:id="@+id/rl_top"
             android:layout_width="match_parent"
@@ -26,25 +28,26 @@
                     <RelativeLayout
                         android:id="@+id/syn_layout"
                         android:layout_width="match_parent"
-                        android:gravity="center"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
 
                         <com.sicao.smartwine.xwidget.device.RingView
                             android:id="@+id/anim_start"
                             android:layout_width="170dp"
                             android:layout_height="170dp"
                             android:layout_centerHorizontal="true"></com.sicao.smartwine.xwidget.device.RingView>
-                          <TextView
-                              android:id="@+id/syn_text"
-                              android:layout_width="wrap_content"
-                              android:layout_height="wrap_content"
-                              android:layout_centerHorizontal="true"
-                              android:text="没有设备"
-                              android:textSize="25sp"
-                              android:layout_centerVertical="true"
-                              android:textColor="@color/write"
-                              android:gravity="center"
-                              />
+
+                        <TextView
+                            android:id="@+id/syn_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="没有设备"
+                            android:textColor="@color/write"
+                            android:textSize="25sp"
+                            />
                     </RelativeLayout>
 
 
@@ -52,8 +55,8 @@
                         android:id="@+id/lr_setting"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:paddingBottom="15dp">
+                        android:paddingBottom="15dp"
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:id="@+id/top"
@@ -75,7 +78,7 @@
                                 android:text="0℃"
                                 android:textAppearance="?android:attr/textAppearanceLarge"
                                 android:textColor="#FFFFFF"
-                                android:textSize="35sp" />
+                                android:textSize="35sp"/>
 
                             <TextView
                                 android:id="@+id/textView12"
@@ -85,7 +88,7 @@
                                 android:text="酒柜内温度"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:textColor="#EDEDED"
-                                android:textSize="14sp" />
+                                android:textSize="14sp"/>
                         </LinearLayout>
                     </RelativeLayout>
 
@@ -99,8 +102,8 @@
                         android:background="@drawable/device_info_setting"
                         android:gravity="center"
                         android:text="酒柜设置"
-                        android:visibility="gone"
-                        android:textColor="#FFFFFF" />
+                        android:textColor="#FFFFFF"
+                        android:visibility="gone"/>
                 </RelativeLayout>
 
                 <LinearLayout
@@ -125,13 +128,13 @@
                             android:text="0°C"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#FFFFFF"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"/>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="#FFFFFF"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -140,7 +143,7 @@
                             android:text="设置温度"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#EDEDED"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                     </LinearLayout>
 
@@ -160,13 +163,13 @@
                             android:text="未连接"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#FFFFFF"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"/>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="#FFFFFF"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -175,7 +178,7 @@
                             android:text="当前状态"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#EDEDED"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                     </LinearLayout>
 
@@ -196,13 +199,13 @@
                             android:text="未设置"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#FFFFFF"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"/>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="#FFFFFF"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -211,7 +214,7 @@
                             android:text="当前模式"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#EDEDED"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                     </LinearLayout>
 
@@ -219,33 +222,12 @@
 
             </LinearLayout>
 
-            <com.sicao.smartwine.xwidget.device.EyeView
-                android:id="@+id/ev"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_bulb_off">
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:padding="10dp"
-                    android:clickable="true"
-                    android:onClick="onClick"
-                    android:src="@drawable/ic_bulb_off" />
-            </com.sicao.smartwine.xwidget.device.EyeView>
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/content_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/rl_top"
+            android:layout_height="wrap_content"
             android:background="#F9F6F7"
             android:orientation="vertical">
 
@@ -253,9 +235,9 @@
                 android:id="@+id/setting_connect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/write"
                 android:clickable="true"
-                android:onClick="onClick"
-                android:background="@color/write">
+                android:onClick="onClick">
 
                 <ImageView
                     android:id="@+id/iv_one"
@@ -263,7 +245,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:padding="15dp"
-                    android:src="@drawable/ic_connect" />
+                    android:src="@drawable/ic_connect"/>
 
                 <TextView
                     android:id="@+id/tv_wifi_setting"
@@ -272,14 +254,13 @@
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/iv_one"
                     android:text="我的设备"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/bg_color"
                     android:layout_alignLeft="@id/tv_wifi_setting"
-                    android:layout_alignParentBottom="true"></TextView>
+                    android:background="@color/bg_color"></TextView>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -287,16 +268,16 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:padding="15dp"
-                    android:src="@drawable/ic_back" />
+                    android:src="@drawable/ic_back"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/my_wines"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/write"
                 android:clickable="true"
-                android:onClick="onClick"
-                android:background="@color/write">
+                android:onClick="onClick">
 
                 <ImageView
                     android:id="@+id/iv_two"
@@ -305,15 +286,15 @@
                     android:layout_centerVertical="true"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
-                    android:src="@drawable/ic_wine" />
+                    android:src="@drawable/ic_wine"/>
 
                 <LinearLayout
+                    android:id="@+id/linearLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/iv_two"
-                    android:orientation="vertical"
-                    android:id="@+id/linearLayout">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_wines"
@@ -321,13 +302,13 @@
                         android:layout_height="wrap_content"
                         android:text="我的酒柜"
                         android:textColor="@color/actionBarColor"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"/>
 
                     <TextView
                         android:id="@+id/tv_add_wine"
                         android:layout_width="wrap_content"
-                        android:text="酒柜内未放置酒款"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="酒柜内未放置酒款"/>
                 </LinearLayout>
 
                 <ImageView
@@ -336,7 +317,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:padding="15dp"
-                    android:src="@drawable/ic_back" />
+                    android:src="@drawable/ic_back"/>
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -345,22 +326,22 @@
                     android:layout_height="20dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:visibility="gone"
                     android:layout_toEndOf="@+id/linearLayout"
-                    android:layout_toRightOf="@+id/linearLayout"/>
+                    android:layout_toRightOf="@+id/linearLayout"
+                    android:visibility="gone"/>
             </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
-                android:background="#f2f2f2" />
+                android:background="#f2f2f2"/>
 
             <RelativeLayout
                 android:id="@+id/wineShop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:background="@color/write">
+                android:background="@color/write"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_three"
@@ -368,7 +349,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:padding="15dp"
-                    android:src="@drawable/ic_shop" />
+                    android:src="@drawable/ic_shop"/>
+
                 <TextView
                     android:id="@+id/tv_wine_shop"
                     android:layout_width="wrap_content"
@@ -376,13 +358,14 @@
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/iv_three"
                     android:text="美酒商城"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"/>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/bg_color"
                     android:layout_alignLeft="@id/tv_wine_shop"
-                    android:layout_alignParentBottom="true"></TextView>
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/bg_color"></TextView>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -390,16 +373,16 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:padding="15dp"
-                    android:src="@drawable/ic_back" />
+                    android:src="@drawable/ic_back"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/write"
                 android:clickable="true"
-                android:onClick="onClick"
-                android:background="@color/write">
+                android:onClick="onClick">
 
                 <ImageView
                     android:id="@+id/iv_sever"
@@ -407,7 +390,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:padding="15dp"
-                    android:src="@drawable/ic_setting" />
+                    android:src="@drawable/ic_setting"/>
 
                 <TextView
                     android:id="@+id/tv_setting"
@@ -416,7 +399,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/iv_sever"
                     android:text="设置"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"/>
 
 
                 <ImageView
@@ -425,23 +408,42 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:padding="15dp"
-                    android:src="@drawable/ic_back" />
+                    android:src="@drawable/ic_back"/>
             </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="#f2f2f2"/>
+
+            <RelativeLayout
+                android:id="@+id/numbers_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/write">
+
+                <ImageView
+                    android:id="@+id/iv_sever1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="15dp"
+                    android:src="@drawable/ic_statistics"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/iv_sever1"
+                    android:text="数量统计"
+                    android:textSize="15sp"/>
+            </RelativeLayout>
+
+            <com.sicao.smartwine.xwidget.device.xchart.SplineChart03View
+                android:id="@+id/splinechart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginTop="10dp"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="BlueMor"
-            android:textSize="25sp"
-            android:visibility="gone" />
-    </RelativeLayout>
-
-</com.sicao.smartwine.xwidget.device.PullLayout>
+    </LinearLayout>
+</ScrollView>
