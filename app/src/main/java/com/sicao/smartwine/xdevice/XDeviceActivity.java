@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
@@ -58,7 +61,7 @@ public class XDeviceActivity extends SmartCabinetActivity implements AppBarLayou
     //酒柜灯开关
     ImageView mCabinetLightIcon;
     //
-    CollapsingToolbarLayout collapsingToolbarLayout;
+    CoordinatorLayout coordinatorLayout;
     //
     SmartCabinetToolBar smartCabinetToolBar;
     //折叠时显示的温度
@@ -89,11 +92,11 @@ public class XDeviceActivity extends SmartCabinetActivity implements AppBarLayou
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         splineChart03View = (SplineChart03View) findViewById(R.id.splinechart);
         splineChart03View.setLayoutParams(new LinearLayout.LayoutParams(SmartCabinetApplication.metrics.widthPixels, SmartCabinetApplication.metrics.widthPixels * 1/ 3));
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         smartCabinetToolBar = (SmartCabinetToolBar) findViewById(R.id.toolbar);
-        collapsingToolbarLayout.setMinimumHeight(SmartCabinetApplication.metrics.widthPixels/3);
         smartCabinetToolBar.setMinimumHeight(SmartCabinetApplication.metrics.widthPixels/3);
         mRealTemp2= (TextView) findViewById(R.id.textView15);
+        coordinatorLayout= (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
+        coordinatorLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
     }
 
     @Override

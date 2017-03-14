@@ -242,7 +242,11 @@
         <!-- share_sdk部分 -->
         <activity
             android:name=".xdevice.XDeviceActivity"
-            android:label="@string/title_activity_xdevice"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:label="@string/title_activity_smart_cabinet_wines"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
            >
         </activity>
     </application>

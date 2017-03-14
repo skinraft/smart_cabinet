@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sicao.smartwine.xdevice.XDeviceActivity">
@@ -18,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:contentScrim="?attr/colorPrimary"
-            android:descendantFocusability="blocksDescendants"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <LinearLayout
@@ -64,9 +64,9 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/base_top_device_light"
                         android:clickable="true"
                         android:onClick="onClick"
-                        android:layout_toLeftOf="@id/base_top_device_light"
                         android:src="@drawable/ic_cellar_setting"
                         />
                 </RelativeLayout>
@@ -217,15 +217,16 @@
                 </LinearLayout>
             </LinearLayout>
 
-
             <com.sicao.smartwine.xwidget.device.SmartCabinetToolBar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_gravity="top"
                 android:title=" "
                 app:contentInsetStart="0dp"
                 app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
                 <LinearLayout
@@ -258,11 +259,8 @@
                 </LinearLayout>
 
             </com.sicao.smartwine.xwidget.device.SmartCabinetToolBar>
-
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        layout="@layout/content_xdevice"
-        />
+    <include layout="@layout/content_xdevice"/>
 </android.support.design.widget.CoordinatorLayout>
