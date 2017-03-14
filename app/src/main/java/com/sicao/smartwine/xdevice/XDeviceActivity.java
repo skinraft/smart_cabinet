@@ -3,10 +3,12 @@ package com.sicao.smartwine.xdevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
@@ -20,7 +22,7 @@ import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xuser.XSettingActivity;
-import com.sicao.smartwine.xwidget.device.RingView;
+import com.sicao.smartwine.xwidget.device.SmartCabinetToolBar;
 import com.sicao.smartwine.xwidget.device.xchart.SplineChart03View;
 
 import org.json.JSONException;
@@ -29,10 +31,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/***
- * 主页面
- */
-public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity implements View.OnClickListener, RingView.AnimListener {
+public class XDeviceActivity extends SmartCabinetActivity implements AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
+
+    AppBarLayout appBarLayout;
+    LinearLayout linearLayout;
     //设置温度
     TextView mSetTemp;
     //实际温度
@@ -43,51 +45,55 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     TextView mBodys;
     //设备是否在线
     TextView mOnLine;
-    //动画效果
-    RingView mRingView;
-    //酒柜设置按钮
-    TextView wineSetting;
-    //设备信息面板控件
-    RelativeLayout mDeviceInfoLayout;
-    //同步控件
-    RelativeLayout mSynLayout;
     //当前设备
     GizWifiDevice mDevice = null;
     //设备灯开关
     boolean isLight = false;
-    //正在同步...控件
-    TextView mSynText;
     //正在扫描酒款的进度框
     ProgressBar progressBar;
     //数量统计
     SplineChart03View splineChart03View;
-
-    @Override
-    protected int setView() {
-        return R.layout.activity_device_info;
-    }
+    //酒柜设备按钮
+    ImageView mCabinetSetIcon;
+    //酒柜灯开关
+    ImageView mCabinetLightIcon;
+    //
+    CollapsingToolbarLayout collapsingToolbarLayout;
+    //
+    SmartCabinetToolBar smartCabinetToolBar;
+    //折叠时显示的温度
+    TextView mRealTemp2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
+    }
+
+    @Override
+    protected int setView() {
+        return R.layout.activity_xdevice;
+    }
+
+    void init() {
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        appBarLayout.addOnOffsetChangedListener(this);
+        linearLayout = (LinearLayout) findViewById(R.id.toolbar_layout1);
+        mCabinetLightIcon = (ImageView) findViewById(R.id.base_top_device_light);
+        mCabinetSetIcon = (ImageView) findViewById(R.id.base_top_device_set);
         mSetTemp = (TextView) findViewById(R.id.set_temp);
         mRealTemp = (TextView) findViewById(R.id.textView11);
-        mRingView = (RingView) findViewById(R.id.anim_start);
         mWorkModel = (TextView) findViewById(R.id.wine_mode);
-        wineSetting = (TextView) findViewById(R.id.textView13);
-        wineSetting.setOnClickListener(this);
-        mDeviceInfoLayout = (RelativeLayout) findViewById(R.id.lr_setting);
-        mSynLayout = (RelativeLayout) findViewById(R.id.syn_layout);
         mOnLine = (TextView) findViewById(R.id.online);
-        mSynText = (TextView) findViewById(R.id.syn_text);
         mBodys = (TextView) findViewById(R.id.tv_add_wine);
-        mRingView.setAnimListener(this);
-        mRightText.setVisibility(View.VISIBLE);
-        mRightText.setOnClickListener(this);
-        mRightText.setBackgroundResource(R.drawable.ic_bulb_off);
-        progressBar= (ProgressBar) findViewById(R.id.progressBar);
-        splineChart03View= (SplineChart03View) findViewById(R.id.splinechart);
-        splineChart03View.setLayoutParams(new LinearLayout.LayoutParams(SmartCabinetApplication.metrics.widthPixels,SmartCabinetApplication.metrics.widthPixels*2/3));
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        splineChart03View = (SplineChart03View) findViewById(R.id.splinechart);
+        splineChart03View.setLayoutParams(new LinearLayout.LayoutParams(SmartCabinetApplication.metrics.widthPixels, SmartCabinetApplication.metrics.widthPixels * 1/ 3));
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        smartCabinetToolBar = (SmartCabinetToolBar) findViewById(R.id.toolbar);
+        collapsingToolbarLayout.setMinimumHeight(SmartCabinetApplication.metrics.widthPixels/3);
+        smartCabinetToolBar.setMinimumHeight(SmartCabinetApplication.metrics.widthPixels/3);
+        mRealTemp2= (TextView) findViewById(R.id.textView15);
     }
 
     @Override
@@ -100,12 +106,12 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         } else {
             //当前没有设备进行监控
             mDevice = null;
-            mRightText.setBackgroundResource(R.drawable.ic_bulb_off);
+            mCabinetLightIcon.setImageResource(R.drawable.ic_bulb_off);
             mSetTemp.setText("0℃");
             mRealTemp.setText("0℃");
+            mRealTemp2.setText("0℃");
             mWorkModel.setText("未设置");
             mOnLine.setText("离线");
-            mSynText.setText("没有设备");
         }
     }
 
@@ -140,10 +146,8 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
                 mCenterTitle.setText(!"".equals(device.getRemark()) ? device.getRemark() : device.getProductName());
                 if (device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceControlled) {
-                    mRingView.startAnim();
                     device.setListener(mBindListener);
                     device.setSubscribe(true);
-                    mSynText.setText("正在同步...");
                     xCabinetApi.getDeviceStatus(device);
                     GizWifiSDK.sharedInstance().getDevicesToSetServerInfo();
                 } else {
@@ -156,15 +160,15 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     @Override
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
         mDevice = device;
-        mRingView.stopAnim();
         try {
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
                 SmartSicaoApi.log("current device is " + device.toString() + "\n" + object.toString());
                 //更新设备信息
                 isLight = object.getBoolean("light");
-                mRightText.setBackgroundResource(isLight ? R.drawable.ic_bulb_on : R.drawable.ic_bulb_off);
+                mCabinetLightIcon.setImageResource(isLight ? R.drawable.ic_bulb_on : R.drawable.ic_bulb_off);
                 mSetTemp.setText(object.getString("set_temp") + "℃");
                 mRealTemp.setText(object.getString("real_temp") + "℃");
+                mRealTemp2.setText(object.getString("real_temp") + "℃");
                 mWorkModel.setText(getResources().getStringArray(R.array.device_model_show)[object.getInt("model")]);
                 mOnLine.setText((mDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || mDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceControlled) ? "在线" : "离线");
                 if (object.getBoolean("door_open")) {
@@ -174,7 +178,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                     Toast("读写器正在扫描...");
                     mBodys.setText("正在扫描酒款...");
                     progressBar.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     progressBar.setVisibility(View.GONE);
                 }
             }
@@ -189,17 +193,17 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         int id = view.getId();
         switch (id) {
             case R.id.setting_connect://进入设备列表或者进入添加新设备页面
-//                startActivity(new Intent(this, SmartCabinetDeviceListActivity.class));
-                startActivity(new Intent(this, XDeviceActivity.class));
+                startActivity(new Intent(this, SmartCabinetDeviceListActivity.class));
+//                startActivity(new Intent(this, XDeviceActivity.class));
                 break;
-            case R.id.textView13://进入酒柜的设备页面
+            case R.id.base_top_device_set://进入酒柜的设备页面
                 if (null != mDevice) {
                     startActivity(new Intent(this, SmartCabinetSettingActivity.class).putExtra("device", mDevice));
                 } else {
                     Toast("请选择某一设备后重试!");
                 }
                 break;
-            case R.id.base_top_right_icon://设备灯开关
+            case R.id.base_top_device_light://设备灯开关
                 if (null != mDevice) {
                     xCabinetApi.controlDevice(mDevice, "light", isLight ? false : true, XConfig.CONFIG_CABINET_SET_LIGHT_ACTION);
                 } else {
@@ -207,7 +211,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 }
                 break;
             case R.id.setting://设置
-                startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, XSettingActivity.class));
+                startActivity(new Intent(XDeviceActivity.this, XSettingActivity.class));
                 break;
 //            case R.id.base_top_right_icon://
 //                final XWarnDialog dialog = new XWarnDialog(this);
@@ -233,7 +237,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
             case R.id.my_wines://酒柜内的酒款
                 //测试使用
                 if (null != mDevice) {
-                    startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, SmartCabinetRFIDActivity.class).putExtra("cabinet", mDevice));
+                    startActivity(new Intent(XDeviceActivity.this, SmartCabinetRFIDActivity.class).putExtra("cabinet", mDevice));
                 } else {
                     Toast("请选择某一设备后重试!");
                 }
@@ -255,39 +259,23 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
     }
 
     @Override
-    public void animStart() {
-        wineSetting.setVisibility(View.GONE);
-        mDeviceInfoLayout.setVisibility(View.GONE);
-        mSynLayout.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void animStop() {
-        handler.sendEmptyMessageDelayed(10093, 2000);
-    }
-
-    @Override
     public void message(Message msg) {
         int what = msg.what;
-        if (what == 10093) {
-            mDeviceInfoLayout.setVisibility(View.VISIBLE);
-            wineSetting.setVisibility(View.VISIBLE);
-            mSynLayout.setVisibility(View.GONE);
-        } else if (what == 10094) {
-            XUserData.setPassword(SmartCabinetDeviceInfoActivity.this, "");
+        if (what == 10094) {
+            XUserData.setPassword(XDeviceActivity.this, "");
             finish();
-        } else if ( what == XConfig.CURRENT_NO_CABINET) {
+        } else if (what == XConfig.CURRENT_NO_CABINET) {
             mDevice = null;
-            mRightText.setBackgroundResource(R.drawable.ic_bulb_off);
+            mCabinetLightIcon.setImageResource(R.drawable.ic_bulb_off);
             mSetTemp.setText("0℃");
             mRealTemp.setText("0℃");
+            mRealTemp2.setText("0℃");
             mWorkModel.setText("未设置");
             mOnLine.setText("离线");
-            mSynText.setText("没有设备");
         } else if (what == XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER) {
             //
             mBodys.setText("酒柜内放置" + msg.arg1 + "瓶酒");
-        }else if(what == XConfig.CABINET_HAS_EXCEPTION ){
+        } else if (what == XConfig.CABINET_HAS_EXCEPTION) {
             //设备异常状态
 
         }
@@ -302,5 +290,46 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
                 handler.sendEmptyMessage(XConfig.CABINET_HAS_EXCEPTION);
             }
         }
+    }
+
+    @Override
+    public final void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+        if (i == 0) {
+            if (mCurrentState != State.EXPANDED) {
+                onStateChanged(State.EXPANDED);
+            }
+            mCurrentState = State.EXPANDED;
+        } else if (Math.abs(i) >= appBarLayout.getTotalScrollRange()) {
+            if (mCurrentState != State.COLLAPSED) {
+                onStateChanged(State.COLLAPSED);
+            }
+            mCurrentState = State.COLLAPSED;
+        } else {
+            if (mCurrentState != State.IDLE) {
+                onStateChanged(State.IDLE);
+            }
+            mCurrentState = State.IDLE;
+        }
+    }
+
+    public void onStateChanged(State state) {
+        if (state == State.EXPANDED) {
+            //展开状态
+            linearLayout.setVisibility(View.GONE);
+        } else if (state == State.COLLAPSED) {
+            //折叠状态
+            linearLayout.setVisibility(View.VISIBLE);
+        } else {
+            //中间状态
+            linearLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private State mCurrentState = State.IDLE;
+
+    public enum State {
+        EXPANDED,
+        COLLAPSED,
+        IDLE
     }
 }

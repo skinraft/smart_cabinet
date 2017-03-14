@@ -17,6 +17,7 @@ import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.SmartCabinetDeviceInfoActivity;
+import com.sicao.smartwine.xdevice.XDeviceActivity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XApiException;
 
@@ -178,7 +179,7 @@ public class XLoginActivity extends SmartCabinetActivity {
         showProgress(false);
         mHintText.setVisibility(View.GONE);
         Toast("登录成功");
-        startActivity(new Intent(this, SmartCabinetDeviceInfoActivity.class));
+        startActivity(new Intent(this, XDeviceActivity.class));
         finish();
     }
 

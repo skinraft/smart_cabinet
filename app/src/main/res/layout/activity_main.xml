@@ -8,6 +8,7 @@
               tools:context="com.sicao.smartwine.SmartCabinetActivity">
 
     <RelativeLayout
+        android:id="@+id/base_top_layout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/actionBarColor"

@@ -18,6 +18,7 @@ import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.SmartCabinetDeviceInfoActivity;
+import com.sicao.smartwine.xdevice.XDeviceActivity;
 import com.sicao.smartwine.xhttp.XApiService;
 
 
@@ -78,7 +79,7 @@ public class XIndexActivity extends Activity {
     };
 
     public void loginSuccess() {
-        startActivity(new Intent(this, SmartCabinetDeviceInfoActivity.class));
+        startActivity(new Intent(this, XDeviceActivity.class));
         finish();
     }
 

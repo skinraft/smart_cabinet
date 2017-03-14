@@ -22,6 +22,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.sicao.smartwine.SmartCabinetApplication;
+
 public class SplineChart03View extends DemoView {
     private String TAG = "SplineChart03View";
     private SplineChart chart = new SplineChart();
@@ -64,7 +66,6 @@ public class SplineChart03View extends DemoView {
         //图所占范围大小
         chart.setChartRange(w, h);
     }
-
     private void chartRender() {
         try {
             //设置绘图区默认缩进px值,留置空间显示Axis,Axistitle....
@@ -79,22 +80,25 @@ public class SplineChart03View extends DemoView {
             chart.getDataAxis().setAxisMin(0);
             //数据轴刻度间隔
             chart.getDataAxis().setAxisSteps(30);
+            chart.getDataAxis().setAxisLineStyle(XEnum.AxisLineStyle.CAP);
             chart.setCustomLines(mYCustomLineDataset); //y轴
             //标签轴最大值
-            chart.setCategoryAxisMax(30);
+            chart.setCategoryAxisMax(31);
             //标签轴最小值
-            chart.setCategoryAxisMin(1);
+            chart.setCategoryAxisMin(0);
             //chart.setCustomLines(mXCustomLineDataset); //y轴
             chart.setCategoryAxisCustomLines(mXCustomLineDataset); //x轴
-
             //设置图的背景色
             chart.setApplyBackgroundColor(true);
             chart.setBackgroundColor(Color.parseColor("#FFFFFF"));
             //调轴线与网络线风格
             chart.getCategoryAxis().hideTickMarks();
             chart.getDataAxis().hideAxisLine();
-            chart.getDataAxis().hideTickMarks();
+            chart.getDataAxis().hideTickMarks();//刻度线
             chart.getPlotGrid().showHorizontalLines();
+            chart.setTitle("2017年3月");
+            //横线为虚线
+            chart.getPlotGrid().setHorizontalLineStyle(XEnum.LineStyle.DASH);
             chart.getPlotGrid().getHorizontalLinePaint().setColor(Color.rgb(229, 229, 229));
             chart.getCategoryAxis().getAxisPaint().setColor(
                     chart.getPlotGrid().getHorizontalLinePaint().getColor());
@@ -114,10 +118,12 @@ public class SplineChart03View extends DemoView {
             chart.extPointClickRange(5);
             chart.showClikedFocus();
             //显示平滑曲线
-            chart.setCrurveLineStyle(XEnum.CrurveLineStyle.BEZIERCURVE);
+            chart.setCrurveLineStyle(XEnum.CrurveLineStyle.BEELINE);
             //图例显示在正下方
             chart.getPlotLegend().setVerticalAlign(XEnum.VerticalAlign.BOTTOM);
             chart.getPlotLegend().setHorizontalAlign(XEnum.HorizontalAlign.CENTER);
+            //仅能横向移动
+            chart.setPlotPanMode(XEnum.PanMode.HORIZONTAL);
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, e.toString());

@@ -110,7 +110,10 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
      * 监控几个系统广播,用于更新页面设备信息
      */
     private XSmartCabinetReceiver xUpdateSmartCabinetReceiver;
-
+    /**
+     * 顶部标题栏
+     */
+    protected  RelativeLayout mBaseTopLayout;
     /**
      * 设置填充的布局ID
      *
@@ -136,8 +139,12 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         mProgressView = findViewById(R.id.login_progress);
         mCenterTitle = (TextView) findViewById(R.id.base_top_center_text);
         mHintText = (TextView) findViewById(R.id.hint_text);
+        mBaseTopLayout= (RelativeLayout) findViewById(R.id.base_top_layout);
         //兼容首页单独动画加载刷新数据
-        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XWebActivity")
+        if (this.getClass().getSimpleName().contains("XDeviceActivity")){
+            mBaseTopLayout.setVisibility(View.GONE);
+        }
+        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XDeviceActivity")
                 || this.getClass().getSimpleName().contains("SmartCabinetRFIDActivity")) {
             mContent2.addView(View.inflate(this, setView(), null));
             mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
