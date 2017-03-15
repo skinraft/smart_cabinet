@@ -122,34 +122,37 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
         int id = view.getId();
         switch (id) {
             case R.id.textView10://下一步
-                try {
-                    ///
-                    if (!TextUtils.isEmpty(SSID.getText().toString().trim()) &&
-                            !TextUtils.isEmpty(password.getText().toString().trim())) {
-                        wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-                        WifiInfo wifiInfo = wifi.getConnectionInfo();
-                        if (null == wifiInfo) {
-                            Toast("请正确配置当前WIFI信息");
-                            return;
-                        }
-                        SSID.setText(wifiInfo.getSSID());
-                        List<ScanResult> scanResults = wifi.getScanResults();
-                        for (ScanResult scan : scanResults) {
-                            if (wifiInfo.getSSID().contains(scan.SSID) && wifiInfo.getBSSID().contains(scan.BSSID)) {
-                                //配置设备入网
-                                showProgress(true);
-                                handler.sendEmptyMessage(ConfigStatus.START_CONFIG.ordinal());
-                                xCabinetApi.configAirLink(scan.SSID, password.getText().toString().trim());
+                if (allow)
+                    try {
+                        ///
+                        if (!TextUtils.isEmpty(SSID.getText().toString().trim()) &&
+                                !TextUtils.isEmpty(password.getText().toString().trim())) {
+                            wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                            WifiInfo wifiInfo = wifi.getConnectionInfo();
+                            if (null == wifiInfo) {
+                                Toast("请正确配置当前WIFI信息");
                                 return;
                             }
+                            SSID.setText(wifiInfo.getSSID());
+                            List<ScanResult> scanResults = wifi.getScanResults();
+                            for (ScanResult scan : scanResults) {
+                                if (wifiInfo.getSSID().contains(scan.SSID) && wifiInfo.getBSSID().contains(scan.BSSID)) {
+                                    //配置设备入网
+                                    showProgress(true);
+                                    handler.sendEmptyMessage(ConfigStatus.START_CONFIG.ordinal());
+                                    xCabinetApi.configAirLink(scan.SSID, password.getText().toString().trim());
+                                    return;
+                                }
+                            }
+
+                        } else {
+                            Toast("请正确配置当前WIFI信息");
                         }
+                    } catch (Exception e) {
 
-                    } else {
-                        Toast("请正确配置当前WIFI信息");
                     }
-                } catch (Exception e) {
-
-                }
+                else
+                    Toast.makeText(SmartCabinetConfigActivity.this, "本应用需要获取位置权限哦!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.open_pwd://隐藏和查看密码
                 if (!passwordShow) {
@@ -244,7 +247,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                 allow = true;
             } else {
                 // Permission Denied
-                Toast.makeText(SmartCabinetConfigActivity.this, "本应用需要该权限哦!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SmartCabinetConfigActivity.this, "本应用需要获取位置权限哦!", Toast.LENGTH_SHORT).show();
             }
         }
     }
