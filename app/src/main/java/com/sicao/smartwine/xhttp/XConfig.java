@@ -47,7 +47,7 @@ public class XConfig {
     /*
      *更新首页的RFID数量
      */
-    public static int CABINET_INFO_UPDATE_RFIDS_NUMBER=10020;
+    public static int CABINET_INFO_UPDATE_RFIDS_NUMBER = 10020;
     /*
      *设置读写器的工作时间action
      */
@@ -60,4 +60,12 @@ public class XConfig {
      *页面加载更多
      */
     public static int BASE_LOAD_ACTION = 999999;
+    /*
+     *请求文件读写的权限code
+     */
+    public static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 10021;
+    /*
+     *请求获取地理位置的权限code
+     */
+    public static int ACCESS_FINE_LOCATION_CODE = 10022;
 }

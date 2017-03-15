@@ -1,24 +1,30 @@
 package com.sicao.smartwine.xdevice;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xhttp.XConfig;
+import com.sicao.smartwine.xuser.XIndexActivity;
 
 import java.util.List;
 
@@ -37,6 +43,8 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
     //密码是否正在显示
     boolean passwordShow = false;
     WifiManager wifi = null;
+    //6.0系统权限检测
+    boolean allow = false;
 
     @Override
     public int setView() {
@@ -58,6 +66,13 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
         nextPage.setOnClickListener(this);
         lookPassword.setOnClickListener(this);
         mHintText.setVisibility(View.VISIBLE);
+        //权限检测
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, XConfig.ACCESS_FINE_LOCATION_CODE);
+            allow = false;
+        } else {
+            allow = true;
+        }
     }
 
     @Override
@@ -66,23 +81,23 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
         handler.sendEmptyMessage(ConfigStatus.CONFIG_SUCCESS.ordinal());
         Toast("设备配置OK,正在绑定该设备");
         //绑定该设备
-        xCabinetApi.bindDevice(XUserData.getCabinetUid(this),XUserData.getCabinetToken(this),mac,getProductKey(),getProductSecret());
-        handler.sendEmptyMessageDelayed(ConfigStatus.START_BIND.ordinal(),2000);
+        xCabinetApi.bindDevice(XUserData.getCabinetUid(this), XUserData.getCabinetToken(this), mac, getProductKey(), getProductSecret());
+        handler.sendEmptyMessageDelayed(ConfigStatus.START_BIND.ordinal(), 2000);
     }
 
     @Override
     public void bindSuccess(String did) {
         super.bindSuccess(did);
-        handler.sendEmptyMessageDelayed(ConfigStatus.BIND_SUCCESS.ordinal(),2000);
+        handler.sendEmptyMessageDelayed(ConfigStatus.BIND_SUCCESS.ordinal(), 2000);
     }
 
     @Override
     public void bindError(GizWifiErrorCode result) {
         super.bindError(result);
-        Message msg=handler.obtainMessage();
-        msg.obj=errorCodeToString(result);
-        msg.what=ConfigStatus.BIND_ERROR.ordinal();
-        handler.sendMessageDelayed(msg,2000);
+        Message msg = handler.obtainMessage();
+        msg.obj = errorCodeToString(result);
+        msg.what = ConfigStatus.BIND_ERROR.ordinal();
+        handler.sendMessageDelayed(msg, 2000);
     }
 
     @Override
@@ -96,9 +111,9 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
         super.configError(result);
         Toast(errorCodeToString(result));
         //配置失败，
-        Message msg=handler.obtainMessage();
-        msg.obj=errorCodeToString(result);
-        msg.what=ConfigStatus.CONFIG_ERROR.ordinal();
+        Message msg = handler.obtainMessage();
+        msg.obj = errorCodeToString(result);
+        msg.what = ConfigStatus.CONFIG_ERROR.ordinal();
         handler.sendMessage(msg);
     }
 
@@ -124,7 +139,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                                 //配置设备入网
                                 showProgress(true);
                                 handler.sendEmptyMessage(ConfigStatus.START_CONFIG.ordinal());
-                                xCabinetApi.configAirLink(scan.SSID,password.getText().toString().trim());
+                                xCabinetApi.configAirLink(scan.SSID, password.getText().toString().trim());
                                 return;
                             }
                         }
@@ -158,7 +173,8 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
         super.onDestroy();
         wifi = null;
     }
-    public  enum  ConfigStatus{
+
+    public enum ConfigStatus {
         START_CONFIG,//开始配置
         CONFIG_ING,  //配置中
         CONFIG_SUCCESS, //配置OK
@@ -172,9 +188,9 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
 
     @Override
     public void message(Message msg) {
-        if (msg.what!= XConfig.BASE_UPDATE_ACTION&&msg.what!=XConfig.BASE_LOAD_ACTION){
-            ConfigStatus key=ConfigStatus.values()[msg.what];
-            switch (key){
+        if (msg.what != XConfig.BASE_UPDATE_ACTION && msg.what != XConfig.BASE_LOAD_ACTION) {
+            ConfigStatus key = ConfigStatus.values()[msg.what];
+            switch (key) {
                 case START_CONFIG:
                     mHintText.setText("开始配置设备...");
                     break;
@@ -185,7 +201,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                     mHintText.setText("设备配置成功...");
                     break;
                 case CONFIG_ERROR:
-                    mHintText.setText("设备配置失败,"+msg.obj);
+                    mHintText.setText("设备配置失败," + msg.obj);
                     finish();
                     break;
                 case START_BIND:
@@ -202,19 +218,33 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                             startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
                             finish();
                         }
-                    },2000);
+                    }, 2000);
                     break;
                 case BIND_ERROR:
-                    mHintText.setText("绑定设备失败,"+msg.obj);
-                    Toast((String)msg.obj);
+                    mHintText.setText("绑定设备失败," + msg.obj);
+                    Toast((String) msg.obj);
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             startActivity(new Intent(SmartCabinetConfigActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
                             finish();
                         }
-                    },2000);
+                    }, 2000);
                     break;
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == XConfig.ACCESS_FINE_LOCATION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission Granted
+                allow = true;
+            } else {
+                // Permission Denied
+                Toast.makeText(SmartCabinetConfigActivity.this, "本应用需要该权限哦!", Toast.LENGTH_SHORT).show();
             }
         }
     }

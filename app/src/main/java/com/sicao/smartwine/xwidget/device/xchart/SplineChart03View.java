@@ -76,7 +76,7 @@ public class SplineChart03View extends DemoView {
             chart.setDataSource(chartData);
             //坐标系
             //数据轴最大值
-            chart.getDataAxis().setAxisMax(180);
+            chart.getDataAxis().setAxisMax(200);
             chart.getDataAxis().setAxisMin(0);
             //数据轴刻度间隔
             chart.getDataAxis().setAxisSteps(30);
@@ -96,7 +96,6 @@ public class SplineChart03View extends DemoView {
             chart.getDataAxis().hideAxisLine();
             chart.getDataAxis().hideTickMarks();//刻度线
             chart.getPlotGrid().showHorizontalLines();
-            chart.setTitle("2017年3月");
             //横线为虚线
             chart.getPlotGrid().setHorizontalLineStyle(XEnum.LineStyle.DASH);
             chart.getPlotGrid().getHorizontalLinePaint().setColor(Color.rgb(229, 229, 229));
@@ -119,6 +118,7 @@ public class SplineChart03View extends DemoView {
             chart.showClikedFocus();
             //显示平滑曲线
             chart.setCrurveLineStyle(XEnum.CrurveLineStyle.BEELINE);
+            chart.getCategoryAxis().getAxisPaint().setColor(Color.parseColor("#ad1c79"));
             //图例显示在正下方
             chart.getPlotLegend().setVerticalAlign(XEnum.VerticalAlign.BOTTOM);
             chart.getPlotLegend().setHorizontalAlign(XEnum.HorizontalAlign.CENTER);
@@ -145,10 +145,9 @@ public class SplineChart03View extends DemoView {
         linePoint1.add(new PointD(27d, 30d));
         linePoint1.add(new PointD(29d, 68d));
         SplineData dataSeries1 = new SplineData("", linePoint1,
-                Color.rgb(54, 141, 238));
+                Color.parseColor("#ad1c79"));
         //把线弄细点
         dataSeries1.getLinePaint().setStrokeWidth(2);
-        dataSeries1.setLabelVisible(true);
         //设定数据源
         chartData.add(dataSeries1);
     }
