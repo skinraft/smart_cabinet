@@ -93,6 +93,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             message(msg);
         }
     };
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -113,7 +114,8 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     /**
      * 顶部标题栏
      */
-    protected  RelativeLayout mBaseTopLayout;
+    protected RelativeLayout mBaseTopLayout;
+
     /**
      * 设置填充的布局ID
      *
@@ -139,9 +141,9 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         mProgressView = findViewById(R.id.login_progress);
         mCenterTitle = (TextView) findViewById(R.id.base_top_center_text);
         mHintText = (TextView) findViewById(R.id.hint_text);
-        mBaseTopLayout= (RelativeLayout) findViewById(R.id.base_top_layout);
-        //兼容首页单独动画加载刷新数据
-        if (this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")){
+        mBaseTopLayout = (RelativeLayout) findViewById(R.id.base_top_layout);
+        //兼容首页单独动画加载刷新数据和酒柜内的酒款列表的页面
+        if (this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("SmartCabinetWinesActivity")) {
             mBaseTopLayout.setVisibility(View.GONE);
         }
         if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")
@@ -190,8 +192,9 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         GizWifiSDK.sharedInstance().setListener(mGizListener);
         GizDeviceSharing.setListener(mSharingListener);
         //初始化分享部分
-        ShareSDK.initSDK(this,"e6f1c7c644ce");
+        ShareSDK.initSDK(this, "e6f1c7c644ce");
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -365,13 +368,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                             rfidstart();
                         } else if (content.equals("02020202020202020202")) {
                             rfidend();
-                            rfid(device,map);
+                            rfid(device, map);
                             map.clear();
                         } else if (content.equals("0")) {
                             rfidbreak();
                             map.clear();
-                        }else{
-                            map.putAll(XRfidDataUtil.parser(map,content));
+                        } else {
+                            map.putAll(XRfidDataUtil.parser(map, content));
                         }
                         SmartSicaoApi.log("透传数据-----" + content);
                     } else {
@@ -381,10 +384,10 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             } else {
                 showProgress(false);
                 swipeRefreshLayout.setRefreshing(false);
-                if (result.toString().equals("GIZ_SDK_REQUEST_TIMEOUT")||result.toString().equals("GIZ_SDK_DEVICE_NOT_READY")){
+                if (result.toString().equals("GIZ_SDK_REQUEST_TIMEOUT") || result.toString().equals("GIZ_SDK_DEVICE_NOT_READY")) {
                     deviceError(device);
                 }
-                SmartSicaoApi.log("didReceiveData--"+result.toString());
+                SmartSicaoApi.log("didReceiveData--" + result.toString());
             }
         }
 
@@ -399,34 +402,37 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             }
         }
     }
-    HashMap<String, ArrayList<XRfidEntity>> map=new HashMap<>();
+
+    HashMap<String, ArrayList<XRfidEntity>> map = new HashMap<>();
+
     //rfid读取完毕后回调更新部分
-    public void rfid(GizWifiDevice device,HashMap<String, ArrayList<XRfidEntity>> map) {
-        ArrayList<XRfidEntity>current=new ArrayList<>();
-        ArrayList<XRfidEntity>add=new ArrayList<>();
-        ArrayList<XRfidEntity>remove=new ArrayList<>();
+    public void rfid(GizWifiDevice device, HashMap<String, ArrayList<XRfidEntity>> map) {
+        ArrayList<XRfidEntity> current = new ArrayList<>();
+        ArrayList<XRfidEntity> add = new ArrayList<>();
+        ArrayList<XRfidEntity> remove = new ArrayList<>();
         if (map.containsKey("add")) {
             //增加的标签
             add = map.get("add");
-            if (add.size()>0)
-            AppManager.noti(this,device,"标签增加"+add.size()+"个",100);
+            if (add.size() > 0)
+                AppManager.noti(this, device, "标签增加" + add.size() + "个", 100);
         }
         if (map.containsKey("remove")) {
             //减少的标签
             remove = map.get("remove");
-            if (remove.size()>0)
-            AppManager.noti(this,device,"标签减少"+remove.size()+"个",101);
+            if (remove.size() > 0)
+                AppManager.noti(this, device, "标签减少" + remove.size() + "个", 101);
         }
         if (map.containsKey("current")) {
             //当前的标签
             current = map.get("current");
         }
-        rfid(device,current,add,remove);
+        rfid(device, current, add, remove);
         //通知栏通知
 
     }
+
     //rfid读取完毕后回调更新部分
-    public void rfid(GizWifiDevice device,ArrayList<XRfidEntity>current,ArrayList<XRfidEntity>add,ArrayList<XRfidEntity>remove){
+    public void rfid(GizWifiDevice device, ArrayList<XRfidEntity> current, ArrayList<XRfidEntity> add, ArrayList<XRfidEntity> remove) {
 
     }
 
@@ -492,7 +498,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 // 设备连接断开时可能产生的通知
                 GizWifiDevice mDevice = (GizWifiDevice) eventSource;
                 SmartSicaoApi.log("device mac: " + mDevice.getMacAddress() + " disconnect caused by eventID: " + eventID + ", eventMessage: " + eventMessage);
-                AppManager.noti(SmartCabinetActivity.this,mDevice,"您的设备已经离线，请检查该设备网络异常",103);
+                AppManager.noti(SmartCabinetActivity.this, mDevice, "您的设备已经离线，请检查该设备网络异常", 103);
             } else if (eventType == GizEventType.GizEventM2MService) {
                 // M2M服务返回的异常通知
                 SmartSicaoApi.log("M2M domain " + eventSource + " exception happened, eventID: " + eventID + ", eventMessage: " + eventMessage);
@@ -639,7 +645,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         // 实现设备分享的回调
         @Override
         public void didSharingDevice(GizWifiErrorCode result, String deviceID, int sharingID, Bitmap QRCodeImage) {
-            SmartSicaoApi.log("didSharingDevice,"+(result == GizWifiErrorCode.GIZ_SDK_SUCCESS?"OK":"ERROR"+errorCodeToString(result)));
+            SmartSicaoApi.log("didSharingDevice," + (result == GizWifiErrorCode.GIZ_SDK_SUCCESS ? "OK" : "ERROR" + errorCodeToString(result)));
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 // 分享成功
                 getSharingInfoSuccess(deviceID, sharingID, QRCodeImage);
@@ -648,12 +654,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 getSharingInfoError(errorCodeToString(result));
             }
         }
+
         @Override
         public void didCheckDeviceSharingInfoByQRCode(GizWifiErrorCode result, String userName, String productName, String deviceAlias, String expiredAt) {
             super.didCheckDeviceSharingInfoByQRCode(result, userName, productName, deviceAlias, expiredAt);
-            if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS){
+            if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 checkShareingCodeSuccess();
-            }else{
+            } else {
                 checkShareIngCodeError(errorCodeToString(result));
             }
         }
@@ -661,9 +668,9 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         @Override
         public void didAcceptDeviceSharingByQRCode(GizWifiErrorCode result) {
             super.didAcceptDeviceSharingByQRCode(result);
-            if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS){
+            if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 acceptShareingByCodeSuccess();
-            }else{
+            } else {
                 acceptShareIngByCodeError(errorCodeToString(result));
             }
         }
@@ -692,43 +699,105 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     };
 
 
-    public void deviceError(GizWifiDevice device){}
-    public void checkShareingCodeSuccess(){}
-    public void checkShareIngCodeError(String result){}
-    public void acceptShareingByCodeSuccess(){}
-    public void acceptShareIngByCodeError(String result){}
-    public void message(Message msg) {}
-    public void unBindGuestUserSuccess(String deviceID, String guestUID) {}
-    public void unBindGuestUserError(String result) {}
-    public void getBindingUsersSuccess(String deviceID, List<GizUserInfo> bindUsers) {}
-    public void getBindingUsersError(String result) {}
-    public void getSharingInfoError(String result) {}
-    public void getSharingInfoSuccess(String deviceID, int sharingID, Bitmap QRCodeImage) {}
+    public void deviceError(GizWifiDevice device) {
+    }
+
+    public void checkShareingCodeSuccess() {
+    }
+
+    public void checkShareIngCodeError(String result) {
+    }
+
+    public void acceptShareingByCodeSuccess() {
+    }
+
+    public void acceptShareIngByCodeError(String result) {
+    }
+
+    public void message(Message msg) {
+    }
+
+    public void unBindGuestUserSuccess(String deviceID, String guestUID) {
+    }
+
+    public void unBindGuestUserError(String result) {
+    }
+
+    public void getBindingUsersSuccess(String deviceID, List<GizUserInfo> bindUsers) {
+    }
+
+    public void getBindingUsersError(String result) {
+    }
+
+    public void getSharingInfoError(String result) {
+    }
+
+    public void getSharingInfoSuccess(String deviceID, int sharingID, Bitmap QRCodeImage) {
+    }
+
     public void setCustomInfoSuccess(GizWifiDevice device) {
     }
+
     public void setCustomInfoError(String result) {
     }
+
     public void registerError(GizWifiErrorCode result) {
     }
-    public void registerSuccess() {}
-    public void loginError(GizWifiErrorCode result) {}
-    public void loginSuccess() {}
-    public void requestCodeSuccess() {}
-    public void requestCodeError(GizWifiErrorCode result) {}
-    public void changePasswordSuccess() {}
-    public void changePasswordError(GizWifiErrorCode result) {}
-    public void configSuccess(String mac, String did, String productKey) {}
-    public void configing(String mac, String did, String productKey) {}
-    public void configError(GizWifiErrorCode result) {}
-    public void bindSuccess(String did) {}
-    public void bindError(GizWifiErrorCode result) {}
-    public void unbindSuccess(String did) {}
-    public void unbindError(GizWifiErrorCode result) {}
-    public void setSubscribeSuccess(GizWifiDevice device, boolean isSubscribed) {}
-    public void setSubscribeError(GizWifiErrorCode result) {}
-    public void refushDeviceList(List<GizWifiDevice> deviceList) {}
+
+    public void registerSuccess() {
+    }
+
+    public void loginError(GizWifiErrorCode result) {
+    }
+
+    public void loginSuccess() {
+    }
+
+    public void requestCodeSuccess() {
+    }
+
+    public void requestCodeError(GizWifiErrorCode result) {
+    }
+
+    public void changePasswordSuccess() {
+    }
+
+    public void changePasswordError(GizWifiErrorCode result) {
+    }
+
+    public void configSuccess(String mac, String did, String productKey) {
+    }
+
+    public void configing(String mac, String did, String productKey) {
+    }
+
+    public void configError(GizWifiErrorCode result) {
+    }
+
+    public void bindSuccess(String did) {
+    }
+
+    public void bindError(GizWifiErrorCode result) {
+    }
+
+    public void unbindSuccess(String did) {
+    }
+
+    public void unbindError(GizWifiErrorCode result) {
+    }
+
+    public void setSubscribeSuccess(GizWifiDevice device, boolean isSubscribed) {
+    }
+
+    public void setSubscribeError(GizWifiErrorCode result) {
+    }
+
+    public void refushDeviceList(List<GizWifiDevice> deviceList) {
+    }
+
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
     }
+
     public String errorCodeToString(GizWifiErrorCode errorCode) {
         String errorString = (String) getText(R.string.UNKNOWN_ERROR);
         switch (errorCode) {

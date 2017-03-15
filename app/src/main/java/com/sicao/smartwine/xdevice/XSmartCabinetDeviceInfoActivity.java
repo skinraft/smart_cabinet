@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,12 +89,12 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         mBodys = (TextView) findViewById(R.id.tv_add_wine);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         splineChart03View = (SplineChart03View) findViewById(R.id.splinechart);
-        splineChart03View.setLayoutParams(new LinearLayout.LayoutParams(SmartCabinetApplication.metrics.widthPixels, SmartCabinetApplication.metrics.widthPixels * 1/ 3));
+        splineChart03View.setLayoutParams(new LinearLayout.LayoutParams(SmartCabinetApplication.metrics.widthPixels, SmartCabinetApplication.metrics.widthPixels * 1 / 3));
         smartCabinetToolBar = (SmartCabinetToolBar) findViewById(R.id.toolbar);
-        smartCabinetToolBar.setMinimumHeight(SmartCabinetApplication.metrics.widthPixels/3);
-        mRealTemp2= (TextView) findViewById(R.id.textView15);
-        coordinatorLayout= (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
-        coordinatorLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
+        smartCabinetToolBar.setMinimumHeight(SmartCabinetApplication.metrics.widthPixels / 3);
+        mRealTemp2 = (TextView) findViewById(R.id.textView15);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
+        coordinatorLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
     }
 
     @Override
@@ -147,7 +145,7 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
     public void refushDeviceList(List<GizWifiDevice> deviceList) {
         for (GizWifiDevice device : deviceList) {
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
-                mCenterTitle.setText(!"".equals(device.getRemark()) ? device.getRemark() : device.getProductName());
+                mCenterTitle.setText(!"".equals(device.getRemark()) ? device.getRemark() : "智能酒柜");
                 if (device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceControlled) {
                     device.setListener(mBindListener);
                     device.setSubscribe(true);
@@ -239,7 +237,7 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
             case R.id.my_wines://酒柜内的酒款
                 //测试使用
                 if (null != mDevice) {
-                    startActivity(new Intent(this, SmartCabinetRFIDActivity.class).putExtra("cabinet", mDevice));
+                    startActivity(new Intent(this, SmartCabinetWinesActivity.class).putExtra("cabinet", mDevice));
                 } else {
                     Toast("请选择某一设备后重试!");
                 }

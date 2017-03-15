@@ -10,11 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="#FFFFFF"
-        android:paddingBottom="6dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="6dp">
+        android:background="#F5F5F5"
+        >
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_mycellarimage"
@@ -26,85 +23,59 @@
             android:layout_marginBottom="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            fresco:placeholderImage="@mipmap/ic_launcher" />
+            fresco:placeholderImage="@mipmap/ic_launcher"/>
 
-        <LinearLayout
-            android:id="@+id/ll_name"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_mywinename"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/iv_mycellarimage"
+            android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/iv_mycellarimage"
-            android:orientation="vertical">
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="澳大利亚奔富BIN28卡琳娜设拉子红葡萄酒"
+            android:textColor="#3D3D3D"
+            android:textSize="14sp"/>
 
-            <TextView
-                android:id="@+id/tv_mywinename"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:text="辨识度不高好吧 不上高地啊更不乐观的"
-                android:textColor="#42383E"
-                android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/tv_wine_englishname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textColor="#42383E"
-                android:textSize="14sp"/>
-        </LinearLayout>
-
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/layout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/iv_mycellarimage"
-            android:layout_alignLeft="@id/ll_name"
-            android:orientation="horizontal">
+            android:layout_toRightOf="@id/iv_mycellarimage"
+            >
 
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:text="￥ 445元"
-                android:textColor="@color/actionBarColor"
+                android:textColor="#3D3D3D"
                 android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:text="￥ 445元"
-                android:textColor="#A19A9E"
-                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
                 android:text="20支"
                 android:textColor="@color/actionBarColor"
                 android:textSize="12sp"/>
-        </LinearLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_below="@+id/layout2"
+            android:layout_marginTop="14dp"
+            android:layout_toRightOf="@id/iv_mycellarimage"
+            android:background="#E5E5E5"
+            />
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#dcdcdc"
-        />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:textColor="#F9F6F7"/>
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
+import com.gizwits.gizwifisdk.enumration.GizWifiDeviceNetStatus;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetWinesAdpter;
@@ -31,9 +32,16 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     //回到顶部按钮
     FloatingActionButton floatingActionButton;
     int page = 1;
-    //实时监控RFID变化
-    TextView rfids_text;
-    int i=100;
+    int i = 100;
+    //酒柜名称
+    TextView mCabinetName;
+    //酒柜连接状态
+    TextView mCabinetNetStatus;
+    //酒柜内酒款同步的时间
+    TextView mUpdateTime;
+    //酒柜内的酒款数量
+    TextView mCabinetWinesNum;
+
     @Override
     protected int setView() {
         return R.layout.activity_smart_cabinet_wines;
@@ -47,11 +55,17 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
 
     void init() {
         gizWifiDevice = (GizWifiDevice) getIntent().getExtras().get("cabinet");
-        rfids_text= (TextView) findViewById(R.id.rfids_text);
+        mCabinetWinesNum = (TextView) findViewById(R.id.rfids_text);
         listView = (ListView) findViewById(R.id.list_view);
         listView.setOnItemClickListener(this);
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(this);
+        mCabinetName = (TextView) findViewById(R.id.smart_cabinet_wines_name);
+        mUpdateTime= (TextView) findViewById(R.id.refesh_time);
+        mCenterTitle.setText(!"".equals(gizWifiDevice.getRemark()) ? gizWifiDevice.getRemark() : "智能酒柜");
+        mCabinetNetStatus = (TextView) findViewById(R.id.smart_cabinet_wines_statue);
+        mCabinetNetStatus.setText((gizWifiDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || gizWifiDevice.getNetStatus()
+                == GizWifiDeviceNetStatus.GizDeviceControlled) ? "酒柜状态: 已连接" : "酒柜状态: 离线");
         /////////////////////////
         smartCabinetWinesAdpter = new SmartCabinetWinesAdpter(this, mWins);
         listView.setAdapter(smartCabinetWinesAdpter);
@@ -67,7 +81,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                     }
                     Thread.currentThread();
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -98,22 +112,12 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         //设备状态查询
         xCabinetApi.bindDevice(gizWifiDevice, mBindListener);
         xCabinetApi.getDeviceStatus(gizWifiDevice);
-        //显示实时监控
-        rfids_text.setVisibility(View.VISIBLE);
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //隐藏实时监控
-        rfids_text.setVisibility(View.GONE);
     }
 
     @Override
     public void rfid(GizWifiDevice device, ArrayList<XRfidEntity> current, ArrayList<XRfidEntity> add, ArrayList<XRfidEntity> remove) {
-       //酒柜内RFID发生变化
-        rfids_text.setText("酒柜内标签:总共"+(current.size()+add.size())+"个,增加"+add.size()+"个,减少"+remove.size()+"个");
+        //酒柜内RFID发生变化
+        mCabinetWinesNum.setText("当前储藏酒款: " + (current.size() + add.size()));
     }
 
     @Override
@@ -131,10 +135,10 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
             //加载更多
             page++;
             getGoodsList(page);
-        }else if(msg.what == 10101010) {
-            rfids_text.setText("实时监控中" + rfids_text.getText().toString().trim().replace("实时监控中", "") + ".");
-            if (rfids_text.getText().toString().trim().contains(".......")){
-                rfids_text.setText(rfids_text.getText().toString().trim().replace(".......","."));
+        } else if (msg.what == 10101010) {
+            mUpdateTime.setText("监控中" + mUpdateTime.getText().toString().trim().replace("监控中", "") + ".");
+            if (mUpdateTime.getText().toString().trim().contains("....")) {
+                mUpdateTime.setText(mUpdateTime.getText().toString().trim().replace("....", "."));
             }
         }
     }

@@ -69,14 +69,10 @@ public class SmartCabinetWinesAdpter extends BaseAdapter {
                     .findViewById(R.id.iv_mycellarimage);
             mView.tv_mywinename = (TextView) convertView
                     .findViewById(R.id.tv_mywinename);
-            mView.textView1 = (TextView) convertView
+            mView.price = (TextView) convertView
                     .findViewById(R.id.textView1);
             mView.rr_jiondetails = (RelativeLayout) convertView
                     .findViewById(R.id.rr_jiondetails);
-            mView.activityPrice = (TextView) convertView
-                    .findViewById(R.id.textView2);
-            mView.tv_mywine_englishname = (TextView) convertView
-                    .findViewById(R.id.tv_wine_englishname);
             mView.num = (TextView) convertView
                     .findViewById(R.id.textView3);
             convertView.setTag(mView);
@@ -89,7 +85,6 @@ public class SmartCabinetWinesAdpter extends BaseAdapter {
             mView.iv_mycellarimage.setLayoutParams(params);
             mView.iv_mycellarimage.setTag(entity);
         }
-        
         mView.num.setText(entity.getMax_bought() + "支酒");
         mView.iv_mycellarimage.getHierarchy().setPlaceholderImage(
                 mContext.getResources().getDrawable(
@@ -109,38 +104,18 @@ public class SmartCabinetWinesAdpter extends BaseAdapter {
                                     R.mipmap.ic_launcher));
         }
         mView.tv_mywinename.setText(entity.getName());
-        if (!TextUtils.isEmpty(entity.getEnglish_name())) {
-            mView.tv_mywine_englishname.setVisibility(View.VISIBLE);
-            mView.tv_mywine_englishname.setText(entity.getEnglish_name());
-        } else {
-            mView.tv_mywine_englishname.setVisibility(View.GONE);
-        }
-        mView.activityPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        mView.activityPrice.setText("￥" + entity.getOrigin_price());
-        if (!entity.getFeatured_price().equals("0.00")) {
-            Drawable drawable = mContext.getResources().getDrawable(
-                    R.drawable.ic_promotion);
-            drawable.setBounds(0, 0, drawable.getMinimumWidth(),
-                    drawable.getMinimumHeight());
-            mView.textView1.setCompoundDrawables(drawable, null, null, null);
-            DecimalFormat df = new DecimalFormat("###.00");
-            mView.textView1.setText(df.format(Double
-                    .parseDouble(entity.getFeatured_price())));
-        } else {
-            mView.textView1.setCompoundDrawables(null, null, null, null);
-            mView.textView1.setText("￥ " + entity.getCurrent_price());
-        }
+        mView.price.setText("￥" + entity.getOrigin_price());
         return convertView;
     }
 
     // 口袋类
     class HoldView {
         SimpleDraweeView iv_mycellarimage;
-        TextView tv_mywinename, textView1, tv_mywine_englishname;// 酒名
+        TextView tv_mywinename;// 酒名
         // 酒的价格/酒的英文名字
         RelativeLayout rr_jiondetails;
         // 活动优惠价格
-        TextView activityPrice;
+        TextView price;
         //总共有几支酒
         TextView num;
     }
