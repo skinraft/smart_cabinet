@@ -20,12 +20,9 @@ import com.sicao.smartwine.SmartCabinetApi;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
-import com.sicao.smartwine.xdevice.XDeviceActivity;
+import com.sicao.smartwine.xdevice.XSmartCabinetDeviceInfoActivity;
 import com.sicao.smartwine.xhttp.XApiService;
 import com.sicao.smartwine.xhttp.XConfig;
-
-import java.util.concurrent.ConcurrentHashMap;
-
 
 public class XIndexActivity extends Activity {
 
@@ -90,7 +87,7 @@ public class XIndexActivity extends Activity {
     };
 
     public void loginSuccess() {
-        startActivity(new Intent(this, XDeviceActivity.class));
+        startActivity(new Intent(this, XSmartCabinetDeviceInfoActivity.class));
         finish();
     }
 

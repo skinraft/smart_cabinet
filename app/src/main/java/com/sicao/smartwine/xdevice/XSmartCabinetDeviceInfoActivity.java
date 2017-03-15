@@ -34,7 +34,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XDeviceActivity extends SmartCabinetActivity implements AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
+public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implements AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
 
     AppBarLayout appBarLayout;
     LinearLayout linearLayout;
@@ -197,7 +197,6 @@ public class XDeviceActivity extends SmartCabinetActivity implements AppBarLayou
         switch (id) {
             case R.id.setting_connect://进入设备列表或者进入添加新设备页面
                 startActivity(new Intent(this, SmartCabinetDeviceListActivity.class));
-//                startActivity(new Intent(this, XDeviceActivity.class));
                 break;
             case R.id.base_top_device_set://进入酒柜的设备页面
                 if (null != mDevice) {
@@ -214,7 +213,7 @@ public class XDeviceActivity extends SmartCabinetActivity implements AppBarLayou
                 }
                 break;
             case R.id.setting://设置
-                startActivity(new Intent(XDeviceActivity.this, XSettingActivity.class));
+                startActivity(new Intent(this, XSettingActivity.class));
                 break;
 //            case R.id.base_top_right_icon://
 //                final XWarnDialog dialog = new XWarnDialog(this);
@@ -240,7 +239,7 @@ public class XDeviceActivity extends SmartCabinetActivity implements AppBarLayou
             case R.id.my_wines://酒柜内的酒款
                 //测试使用
                 if (null != mDevice) {
-                    startActivity(new Intent(XDeviceActivity.this, SmartCabinetRFIDActivity.class).putExtra("cabinet", mDevice));
+                    startActivity(new Intent(this, SmartCabinetRFIDActivity.class).putExtra("cabinet", mDevice));
                 } else {
                     Toast("请选择某一设备后重试!");
                 }
@@ -265,7 +264,7 @@ public class XDeviceActivity extends SmartCabinetActivity implements AppBarLayou
     public void message(Message msg) {
         int what = msg.what;
         if (what == 10094) {
-            XUserData.setPassword(XDeviceActivity.this, "");
+            XUserData.setPassword(XSmartCabinetDeviceInfoActivity.this, "");
             finish();
         } else if (what == XConfig.CURRENT_NO_CABINET) {
             mDevice = null;

@@ -190,7 +190,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         switch (id) {
             case R.id.setting_connect://进入设备列表或者进入添加新设备页面
 //                startActivity(new Intent(this, SmartCabinetDeviceListActivity.class));
-                startActivity(new Intent(this, XDeviceActivity.class));
+                startActivity(new Intent(this, XSmartCabinetDeviceInfoActivity.class));
                 break;
             case R.id.textView13://进入酒柜的设备页面
                 if (null != mDevice) {

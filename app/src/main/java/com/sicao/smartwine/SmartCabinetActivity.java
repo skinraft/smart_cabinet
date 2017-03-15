@@ -141,10 +141,10 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         mHintText = (TextView) findViewById(R.id.hint_text);
         mBaseTopLayout= (RelativeLayout) findViewById(R.id.base_top_layout);
         //兼容首页单独动画加载刷新数据
-        if (this.getClass().getSimpleName().contains("XDeviceActivity")){
+        if (this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")){
             mBaseTopLayout.setVisibility(View.GONE);
         }
-        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XDeviceActivity")
+        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")
                 || this.getClass().getSimpleName().contains("SmartCabinetRFIDActivity")) {
             mContent2.addView(View.inflate(this, setView(), null));
             mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
