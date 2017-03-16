@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:text="当前储藏酒款: 12"
+                android:text="当前储藏酒款: "
                 android:textColor="@color/write"
                 android:textSize="16sp"
                 />

@@ -298,7 +298,7 @@ public class SmartSicaoApi implements XApiException {
                          final XApiCallBack callback, final XApiException exception) {
         String url = configParamsUrl("mine/feedback", context);
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("type",  "1");
+        params.put("type", "1");
         // 用户反馈
         params.put("remark", remark + "");
         XHttpUtil httpUtil = new XHttpUtil(context);
@@ -317,6 +317,7 @@ public class SmartSicaoApi implements XApiException {
                 } catch (JSONException e) {
                 }
             }
+
             @Override
             public void fail(String response) {
                 error(response);
@@ -335,9 +336,9 @@ public class SmartSicaoApi implements XApiException {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public  void configDefaultAddress(final Context context, String id,
-                                            final XApiCallBack callBack, final XApiException exception) {
-        String url = configParamsUrl("DealAddress/setdefaultaddress", context)+"&id="+id;
+    public void configDefaultAddress(final Context context, String id,
+                                     final XApiCallBack callBack, final XApiException exception) {
+        String url = configParamsUrl("DealAddress/setdefaultaddress", context) + "&id=" + id;
         XHttpUtil http = new XHttpUtil(context);
         http.get(url, new XCallBack() {
             @Override
@@ -353,6 +354,7 @@ public class SmartSicaoApi implements XApiException {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void fail(String response) {
                 error(response);
@@ -361,6 +363,7 @@ public class SmartSicaoApi implements XApiException {
             }
         });
     }
+
     /***
      * 获取我的地址列表信息
      *
@@ -368,8 +371,8 @@ public class SmartSicaoApi implements XApiException {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public  void getAddressList(final Context context,
-                                      final XApisCallBack callBack, final XApiException exception) {
+    public void getAddressList(final Context context,
+                               final XApisCallBack callBack, final XApiException exception) {
         String url = configParamsUrl("DealAddress/getaddress", context);
         XHttpUtil http = new XHttpUtil(context);
         http.get(url, new XCallBack() {
@@ -404,6 +407,7 @@ public class SmartSicaoApi implements XApiException {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void fail(String response) {
                 error(response);
@@ -421,9 +425,9 @@ public class SmartSicaoApi implements XApiException {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public  void deleteAddressByID(final Context context, String id,
-                                         final XApiCallBack callBack, final XApiException exception) {
-        String url = configParamsUrl("DealAddress/deleteaddress", context)+"&id="+id;
+    public void deleteAddressByID(final Context context, String id,
+                                  final XApiCallBack callBack, final XApiException exception) {
+        String url = configParamsUrl("DealAddress/deleteaddress", context) + "&id=" + id;
         XHttpUtil http = new XHttpUtil(context);
         http.get(url, new XCallBack() {
             @Override
@@ -439,6 +443,7 @@ public class SmartSicaoApi implements XApiException {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void fail(String response) {
                 error(response);
@@ -457,8 +462,8 @@ public class SmartSicaoApi implements XApiException {
      * @param callBack    接口执行OK回调对象
      * @param exception   接口执行失败回调对象
      */
-    public void addAddress(final Context context,final String name, final String phone,
-                           final String address,final XApiCallBack callBack,final XApiException exception) {
+    public void addAddress(final Context context, final String name, final String phone,
+                           final String address, final XApiCallBack callBack, final XApiException exception) {
         String url = configParamsUrl("DealAddress/addaddress", context);
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("user_token", XUserData.getToken(context));
@@ -482,6 +487,7 @@ public class SmartSicaoApi implements XApiException {
                 } catch (JSONException e) {
                 }
             }
+
             @Override
             public void fail(String response) {
                 error(response);
@@ -526,6 +532,7 @@ public class SmartSicaoApi implements XApiException {
                 } catch (JSONException e) {
                 }
             }
+
             @Override
             public void fail(String response) {
                 error(response);
@@ -535,4 +542,34 @@ public class SmartSicaoApi implements XApiException {
         });
     }
 
+    /***
+     * 根据设备的mac信息获取该设备的标签数据
+     * @param context
+     * @param mac
+     * @param callBack
+     */
+    public void getServerCabinetRfidsByMAC(Context context, String mac, final XApiCallBack callBack, final XApiException exception) {
+        String url = configParamsUrl("device/rfidLists", context) + "&jid=" + mac;
+        XHttpUtil xHttpUtil = new XHttpUtil(context);
+        xHttpUtil.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        if (null != callBack) callBack.response(object);
+                    } else {
+                        log(object.getString("message"));
+                    }
+                } catch (JSONException e) {
+                }
+            }
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
 }

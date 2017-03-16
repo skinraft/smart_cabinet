@@ -12,11 +12,16 @@ import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.enumration.GizWifiDeviceNetStatus;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
+import com.sicao.smartwine.SmartSicaoApi;
+import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetWinesAdpter;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
 import com.sicao.smartwine.xhttp.XApisCallBack;
 import com.sicao.smartwine.xhttp.XConfig;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -61,7 +66,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(this);
         mCabinetName = (TextView) findViewById(R.id.smart_cabinet_wines_name);
-        mUpdateTime= (TextView) findViewById(R.id.refesh_time);
+        mUpdateTime = (TextView) findViewById(R.id.refesh_time);
         mCenterTitle.setText(!"".equals(gizWifiDevice.getRemark()) ? gizWifiDevice.getRemark() : "智能酒柜");
         mCabinetNetStatus = (TextView) findViewById(R.id.smart_cabinet_wines_statue);
         mCabinetNetStatus.setText((gizWifiDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || gizWifiDevice.getNetStatus()
@@ -112,6 +117,18 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         //设备状态查询
         xCabinetApi.bindDevice(gizWifiDevice, mBindListener);
         xCabinetApi.getDeviceStatus(gizWifiDevice);
+        //先从缓存取出盘点数据
+        try {
+            JSONObject object1 = new JSONObject(XUserData.getDefaultCabinetScanRfids(this));
+            if (!object1.isNull("mac") && object1.getString("mac").equals(gizWifiDevice.getMacAddress())) {
+                if (!object1.isNull("current")) {
+                    //当前的数量
+                    mCabinetWinesNum.setText("当前储藏酒款: " + (object1.getInt("current") + object1.getInt("add")));
+                }
+            }
+        } catch (JSONException e) {
+            SmartSicaoApi.log(SmartCabinetWinesActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
+        }
     }
 
     @Override

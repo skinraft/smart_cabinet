@@ -132,9 +132,11 @@ public class XUserData {
     public static void setPassword(Context context, String password) {
         XShareps.putString(context, PASSWORD, PASSWORD, password);
     }
+
     public static String getPassword(Context context) {
         return XShareps.getString(context, PASSWORD, PASSWORD);
     }
+
     /**
      * 用户名
      */
@@ -143,6 +145,7 @@ public class XUserData {
     public static void setUserName(Context context, String username) {
         XShareps.putString(context, USERNAME, USERNAME, username);
     }
+
     public static String getUserName(Context context) {
         return XShareps.getString(context, USERNAME, USERNAME);
     }
@@ -150,13 +153,27 @@ public class XUserData {
     /**
      * 默认地址ID
      */
-    public static  String DEFAULT_ADDRESS_ID="DEFAULT_ADDRESS_ID";
+    public static String DEFAULT_ADDRESS_ID = "DEFAULT_ADDRESS_ID";
 
-    public static void setDefaultAddressId(Context context,String defaultAddressId) {
+    public static void setDefaultAddressId(Context context, String defaultAddressId) {
         XShareps.putString(context, DEFAULT_ADDRESS_ID, DEFAULT_ADDRESS_ID, defaultAddressId);
     }
 
     public static String getDefaultAddressId(Context context) {
         return XShareps.getString(context, DEFAULT_ADDRESS_ID, DEFAULT_ADDRESS_ID);
     }
+
+    /**
+     * 默认酒柜上次盘点的数据
+     */
+    public static String DEFAULT_CABINET_SCAN_RFIDS = "DEFAULT_CABINET_SCAN_RFIDS";
+
+    public static void setDefaultCabinetScanRfids(Context context, String defaultCabinetScanRfids) {
+        XShareps.putString(context, DEFAULT_CABINET_SCAN_RFIDS, DEFAULT_CABINET_SCAN_RFIDS, defaultCabinetScanRfids);
+    }
+
+    public static String getDefaultCabinetScanRfids(Context context) {
+        return XShareps.getString(context, DEFAULT_CABINET_SCAN_RFIDS, DEFAULT_CABINET_SCAN_RFIDS);
+    }
+
 }

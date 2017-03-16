@@ -21,6 +21,7 @@ import com.sicao.smartwine.SmartCabinetApplication;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
+import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xuser.XSettingActivity;
 import com.sicao.smartwine.xwidget.device.SmartCabinetToolBar;
@@ -64,6 +65,8 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
     SmartCabinetToolBar smartCabinetToolBar;
     //折叠时显示的温度
     TextView mRealTemp2;
+    //当前的RFID数量，增加的RFID数量，移除的RFID数量
+    TextView mCurrentRfid, mAddRfid, mRemoveRfid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +98,9 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         mRealTemp2 = (TextView) findViewById(R.id.textView15);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
         coordinatorLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        mCurrentRfid = (TextView) findViewById(R.id.current_rfids);
+        mAddRfid = (TextView) findViewById(R.id.add_rfids);
+        mRemoveRfid = (TextView) findViewById(R.id.remove_rfids);
     }
 
     @Override
@@ -118,17 +124,18 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
 
     @Override
     public void rfidstart() {
-        mBodys.setText("正在扫描酒柜...");
+        mBodys.setText("正在盘点酒柜...");
     }
 
     @Override
     public void rfidend() {
-        mBodys.setText("酒柜扫描完毕...");
+        mBodys.setText("酒柜盘点完毕...");
     }
 
     @Override
     public void rfidbreak() {
-        mBodys.setText("酒柜扫描中断...");
+        mBodys.setText("酒柜盘点中断...");
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -176,12 +183,42 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                     Toast("酒柜门----开");
                 }
                 if (object.getBoolean("scanning")) {
-                    Toast("读写器正在扫描...");
-                    mBodys.setText("正在扫描酒款...");
+                    Toast("正在盘点酒柜...");
+                    mBodys.setText("正在盘点酒柜...");
                     progressBar.setVisibility(View.VISIBLE);
                 } else {
                     progressBar.setVisibility(View.GONE);
                 }
+                //先从缓存取出盘点数据
+                try {
+                    JSONObject object1 = new JSONObject(XUserData.getDefaultCabinetScanRfids(this));
+                    if (!object1.isNull("mac") && object1.getString("mac").equals(device.getMacAddress())) {
+                        if (!object1.isNull("current")) {
+                            //当前的数量
+                            mCurrentRfid.setText("当前酒款\n" + (object1.getInt("current") + object1.getInt("add")));
+                            mBodys.setText("酒柜内放置" + (object1.getInt("current") + object1.getInt("add")) + "瓶酒");
+                        }
+                        if (!object1.isNull("add")) {
+                            //增加的数量
+                            mAddRfid.setText("增加酒数\n+" + object1.getInt("add"));
+                        }
+                        if (!object1.isNull("remove")) {
+                            //减少的数量
+                            mRemoveRfid.setText("取出酒数\n-" + object1.getInt("remove"));
+                        }
+                    }
+                } catch (JSONException e) {
+                    SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
+                }
+                //从服务器获取标签信息
+                xSicaoApi.getServerCabinetRfidsByMAC(this, mDevice.getMacAddress(), new XApiCallBack() {
+                    @Override
+                    public void response(Object object) {
+                        //设置相关酒款
+
+                    }
+                }, null);
+
             }
         } catch (JSONException e) {
             Toast("数据异常,请检查!");

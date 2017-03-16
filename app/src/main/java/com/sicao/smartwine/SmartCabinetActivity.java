@@ -360,25 +360,31 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 }
                 // 透传数据，自行解析
                 if (dataMap.get("binary") != null) {
-                    byte[] binary = (byte[]) dataMap.get("binary");
-                    if (binary.length > 0) {
-                        // 解析RFID数据
-                        String content = XRfidDataUtil.bytesToHexString(binary);
-                        if (content.equals("01010101010101010101")) {
-                            rfidstart();
-                        } else if (content.equals("02020202020202020202")) {
-                            rfidend();
-                            rfid(device, map);
-                            map.clear();
-                        } else if (content.equals("0")) {
-                            rfidbreak();
-                            map.clear();
+                    try {
+                        byte[] binary = (byte[]) dataMap.get("binary");
+                        if (binary.length > 0) {
+                            // 解析RFID数据
+                            String content = XRfidDataUtil.bytesToHexString(binary);
+                            if (content.equals("01010101010101010101")) {
+                                rfidstart();
+                            } else if (content.equals("02020202020202020202")) {
+                                rfidend();
+                                rfid(device, map);
+                                map.clear();
+                            } else if (content.equals("0")) {
+                                rfidbreak();
+                                map.clear();
+                            } else {
+                                map.putAll(XRfidDataUtil.parser(map, content));
+                            }
+                            SmartSicaoApi.log("透传数据-----" + content);
                         } else {
-                            map.putAll(XRfidDataUtil.parser(map, content));
+                            SmartSicaoApi.log("透传数据为空");
                         }
-                        SmartSicaoApi.log("透传数据-----" + content);
-                    } else {
-                        SmartSicaoApi.log("透传数据为空");
+                    } catch (Exception e) {
+                        map.clear();
+                        Toast("数据解析异常");
+                        rfidbreak();
                     }
                 }
             } else {
@@ -413,13 +419,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         if (map.containsKey("add")) {
             //增加的标签
             add = map.get("add");
-            if (add.size() > 0)
+            if (add.size() > 0) //通知栏通知
                 AppManager.noti(this, device, "标签增加" + add.size() + "个", 100);
         }
         if (map.containsKey("remove")) {
             //减少的标签
             remove = map.get("remove");
-            if (remove.size() > 0)
+            if (remove.size() > 0) //通知栏通知
                 AppManager.noti(this, device, "标签减少" + remove.size() + "个", 101);
         }
         if (map.containsKey("current")) {
@@ -427,8 +433,17 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             current = map.get("current");
         }
         rfid(device, current, add, remove);
-        //通知栏通知
-
+        try {
+            //保存缓存
+            JSONObject object = new JSONObject();
+            object.put("mac", device.getMacAddress());
+            object.put("add", add.size());
+            object.put("current", current.size());
+            object.put("remove", remove.size());
+            XUserData.setDefaultCabinetScanRfids(this, object.toString());
+        } catch (JSONException e) {
+            SmartSicaoApi.log("盘点缓存数据异常---" + e.getMessage());
+        }
     }
 
     //rfid读取完毕后回调更新部分

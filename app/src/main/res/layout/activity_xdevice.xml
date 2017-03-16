@@ -47,7 +47,7 @@
                         />
 
                     <ImageView
-                        android:id="@+id/base_top_device_light"
+                        android:id="@+id/base_top_device_set"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -55,19 +55,19 @@
                         android:layout_marginRight="10dp"
                         android:clickable="true"
                         android:onClick="onClick"
-                        android:src="@drawable/ic_bulb_off"
+                        android:src="@drawable/ic_cellar_setting"
                         />
 
                     <ImageView
-                        android:id="@+id/base_top_device_set"
+                        android:id="@+id/base_top_device_light"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="10dp"
-                        android:layout_toLeftOf="@id/base_top_device_light"
+                        android:layout_toLeftOf="@id/base_top_device_set"
                         android:clickable="true"
                         android:onClick="onClick"
-                        android:src="@drawable/ic_cellar_setting"
+                        android:src="@drawable/ic_bulb_off"
                         />
                 </RelativeLayout>
 
@@ -104,6 +104,96 @@
                         android:textSize="14sp"/>
                 </LinearLayout>
 
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="15dp"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1.0"
+                        android:gravity="center">
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_samll_circle"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:id="@+id/current_rfids"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="当前酒款\n"
+                                android:textColor="#CD76AE"
+                                android:textSize="12sp"
+                                />
+                        </FrameLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1.0"
+                        android:gravity="center">
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_samll_circle"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:id="@+id/add_rfids"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="新增酒款\n"
+                                android:textColor="#CD76AE"
+                                android:textSize="12sp"
+                                />
+                        </FrameLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1.0"
+                        android:gravity="center">
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_samll_circle"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:id="@+id/remove_rfids"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="取出酒款\n"
+                                android:textColor="#CD76AE"
+                                android:textSize="12sp"
+                                />
+                        </FrameLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -116,6 +206,7 @@
                         android:layout_marginLeft="30dp"
                         android:layout_weight="1.0"
                         android:gravity="center"
+                        android:layout_gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -221,8 +312,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_gravity="top"
+                android:gravity="center"
                 android:title=" "
                 app:contentInsetStart="0dp"
                 app:layout_collapseMode="pin"

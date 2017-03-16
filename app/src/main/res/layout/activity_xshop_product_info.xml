@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sicao.smartwine.xwidget.ScrollViewContainer
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sicao.smartwine.xshop.XShopProductInfoActivity">
+
+    <com.sicao.smartwine.xwidget.CircularBannerView
+        android:id="@+id/image_banner"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/actionBarColor">
+
+    </com.sicao.smartwine.xwidget.CircularBannerView>
+
+    <TextView
+        android:id="@+id/good_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_banner"
+        android:background="@color/write"
+        android:paddingBottom="13dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="13dp"
+        android:text="澳洲奔富"
+        android:textColor="#4a1938"
+        android:textSize="17sp"/>
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/good_name"
+        android:background="@color/write"
+        android:paddingLeft="10dp"
+        android:text="190.0￥"
+        android:textColor="#4a1938"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/price"
+        android:background="#eeeeee"
+        android:gravity="center"
+        android:text="继续拖动，查看图文详情"
+        android:textColor="#aaaaaa"/>
+
+    <com.sicao.smartwine.xwidget.TWebView
+        android:id="@+id/web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/line2">
+
+    </com.sicao.smartwine.xwidget.TWebView>
+</com.sicao.smartwine.xwidget.ScrollViewContainer>

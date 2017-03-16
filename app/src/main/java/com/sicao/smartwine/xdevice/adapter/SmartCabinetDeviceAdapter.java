@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.xdata.XUserData;
@@ -72,7 +73,7 @@ public class SmartCabinetDeviceAdapter extends BaseAdapter {
         }
         if (device.isOnline()) {
             if (XConfig.DEBUG) {
-                holder.tv_equipment.setText(holder.tv_equipment.getText().toString() + ":在线->" + device.getDid());
+                holder.tv_equipment.setText(holder.tv_equipment.getText().toString() + ":在线");
             } else {
                 holder.tv_equipment.setText(holder.tv_equipment.getText().toString() + ":在线");
             }
@@ -82,7 +83,7 @@ public class SmartCabinetDeviceAdapter extends BaseAdapter {
             holder.icon.setImageResource(R.drawable.ic_cupboard_gray);
             holder.tv_equipment.setTextColor(Color.parseColor("#3D3D3D"));
             if (XConfig.DEBUG) {
-                holder.tv_equipment.setText(holder.tv_equipment.getText().toString() + ":离线->" + device.getDid());
+                holder.tv_equipment.setText(holder.tv_equipment.getText().toString() + ":离线");
             } else {
                 holder.tv_equipment.setText(holder.tv_equipment.getText().toString() + ":离线");
             }
