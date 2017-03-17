@@ -26,7 +26,7 @@ import com.sicao.smartwine.xhttp.XConfig;
 
 public class XIndexActivity extends Activity {
 
-    ImageView mIcon;
+//    ImageView mIcon;
 
     SmartCabinetApi xCabinetApi = new SmartCabinetApi();
 
@@ -37,8 +37,8 @@ public class XIndexActivity extends Activity {
         GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), "57368a09e0b847a39e40469f88c06782");
         GizWifiSDK.sharedInstance().setListener(mGizListener);
         overridePendingTransition(R.anim.activity_out_anim, R.anim.activity_in_anim);// 淡出淡入动画效果
-        mIcon = (ImageView) findViewById(R.id.icon);
-        mIcon.startAnimation(AnimationUtils.loadAnimation(this, R.anim.xindex_icon_anim_enter));
+//        mIcon = (ImageView) findViewById(R.id.icon);
+//        mIcon.startAnimation(AnimationUtils.loadAnimation(this, R.anim.xindex_icon_anim_enter));
         if (!AppManager.isServiceRunning(this, "com.sicao.smartwine.xhttp.XApiService")) {
             startService(new Intent(this, XApiService.class));
         }

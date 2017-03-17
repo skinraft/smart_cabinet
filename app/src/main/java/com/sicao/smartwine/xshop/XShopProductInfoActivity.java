@@ -98,7 +98,7 @@ public class XShopProductInfoActivity extends SmartCabinetActivity {
             public void response(Object object) {
                 xWineEntity = (XProductEntity) object;
                 mWineName.setText(xWineEntity.getName());
-                mWinePrice.setText(xWineEntity.getCurrent_price() + "￥");
+                mWinePrice.setText("￥"+xWineEntity.getCurrent_price());
                 mWineDestail.setText(xWineEntity.getDescription());
                 String content = xWineEntity.getBrief();
                 if (null != xWineEntity && null != xWineEntity.getImgs()

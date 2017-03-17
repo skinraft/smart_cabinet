@@ -36,7 +36,6 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     SmartCabinetWinesAdpter smartCabinetWinesAdpter;
     //列表控件
     ListView listView;
-    int page = 1;
     int i = 100;
     //酒柜名称
     TextView mCabinetName;
@@ -115,7 +114,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     @Override
     protected void onResume() {
         super.onResume();
-        getGoodsList(page);
+        getGoodsList();
         //设备状态查询
         xCabinetApi.bindDevice(gizWifiDevice, mBindListener);
         xCabinetApi.getDeviceStatus(gizWifiDevice);
@@ -137,6 +136,8 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     public void rfid(GizWifiDevice device, ArrayList<XRfidEntity> current, ArrayList<XRfidEntity> add, ArrayList<XRfidEntity> remove) {
         //酒柜内RFID发生变化
         mCabinetWinesNum.setText("当前储藏酒款: " + (current.size() + add.size()));
+        //刷新酒款信息
+        getGoodsList();
     }
 
     @Override
@@ -148,12 +149,9 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     public void message(Message msg) {
         if (msg.what == XConfig.BASE_UPDATE_ACTION) {
             //刷新
-            page = 1;
-            getGoodsList(page);
+            getGoodsList();
         } else if (msg.what == XConfig.BASE_LOAD_ACTION) {
             //加载更多
-            page++;
-            getGoodsList(page);
         } else if (msg.what == 10101010) {
             mUpdateTime.setText("监控中" + mUpdateTime.getText().toString().trim().replace("监控中", "") + ".");
             if (mUpdateTime.getText().toString().trim().contains("....")) {
@@ -162,15 +160,11 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         }
     }
 
-    public void getGoodsList(final int page) {
-        xSicaoApi.getGoodsByMac(this, gizWifiDevice.getMacAddress(), page, new XApisCallBack() {
+    public void getGoodsList() {
+        xSicaoApi.getGoodsByMac(this, gizWifiDevice.getMacAddress(), new XApisCallBack() {
             @Override
             public <T> void response(ArrayList<T> list) {
-                if (page == 1) {
-                    mWins = (ArrayList<XWineEntity>) list;
-                } else {
-                    mWins.addAll((ArrayList<XWineEntity>) list);
-                }
+                mWins = (ArrayList<XWineEntity>) list;
                 smartCabinetWinesAdpter.upDataAdapter(mWins);
             }
         }, null);

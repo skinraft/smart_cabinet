@@ -67,15 +67,6 @@
                 android:textColor="@color/actionBarColor"
                 android:textSize="12sp"/>
         </RelativeLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_below="@+id/layout2"
-            android:layout_marginTop="14dp"
-            android:layout_toRightOf="@id/iv_mycellarimage"
-            android:background="#E5E5E5"
-            />
     </RelativeLayout>
 
 </LinearLayout>

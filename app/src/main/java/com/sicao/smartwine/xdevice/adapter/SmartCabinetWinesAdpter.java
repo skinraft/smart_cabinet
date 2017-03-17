@@ -85,7 +85,7 @@ public class SmartCabinetWinesAdpter extends BaseAdapter {
             mView.iv_mycellarimage.setLayoutParams(params);
             mView.iv_mycellarimage.setTag(entity);
         }
-        mView.num.setText(entity.getMax_bought() + "支酒");
+        mView.num.setText(wineEntity.getRfidnum() + "支酒");
         mView.iv_mycellarimage.getHierarchy().setPlaceholderImage(
                 mContext.getResources().getDrawable(
                         R.mipmap.ic_launcher),
@@ -104,7 +104,7 @@ public class SmartCabinetWinesAdpter extends BaseAdapter {
                                     R.mipmap.ic_launcher));
         }
         mView.tv_mywinename.setText(entity.getName());
-        mView.price.setText("￥" + entity.getOrigin_price());
+        mView.price.setText("￥" + entity.getCurrent_price());
         return convertView;
     }
 

@@ -63,7 +63,118 @@
                 android:paddingTop="5dp"
                 android:textColor="#a19a9e"
                 android:textSize="13sp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#f2f2f2"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="#f2f2f2"/>
+            <TextView
+                android:id="@+id/hotel_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/promis_putaoji"
+                android:drawablePadding="5dp"
+                android:gravity="center|left"
+                android:paddingBottom="0dp"
+                android:paddingLeft="10dp"
+                android:background="@color/write"
+                android:paddingRight="0dp"
+                android:paddingTop="13dp"
+                android:text="葡萄集旗舰店"
+                android:textColor="#646464"
+                android:textSize="14sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/write" >
+
+                <LinearLayout
+                    android:id="@+id/rr_promise"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="15dp" >
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:drawableLeft="@drawable/ic_promise1"
+                        android:drawablePadding="5dp"
+                        android:text="正品保证"
+                        android:textColor="#a19a9e"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:drawableLeft="@drawable/ic_promise2"
+                        android:drawablePadding="5dp"
+                        android:text="达人精选"
+                        android:textColor="#a19a9e"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:drawableLeft="@drawable/ic_promise3"
+                        android:drawablePadding="5dp"
+                        android:text="酒商直供"
+                        android:textColor="#a19a9e"
+                        android:textSize="12sp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="5dp" >
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:drawableLeft="@drawable/ic_promise6"
+                        android:drawablePadding="5dp"
+                        android:text="PTJ评分系统"
+                        android:textColor="#a19a9e"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:drawableLeft="@drawable/ic_promise5"
+                        android:drawablePadding="5dp"
+                        android:text="慢就赔"
+                        android:textColor="#a19a9e"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:drawableLeft="@drawable/ic_promise4"
+                        android:drawablePadding="5dp"
+                        android:text="七天退款承诺"
+                        android:textColor="#a19a9e"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+            </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1px"

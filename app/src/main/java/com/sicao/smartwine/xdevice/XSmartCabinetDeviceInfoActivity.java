@@ -249,7 +249,8 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                 }
                 break;
             case R.id.setting://设置
-                startActivity(new Intent(this, XSettingActivity.class));
+//                startActivity(new Intent(this, XSettingActivity.class));
+                startActivity(new Intent(this, XShopProductInfoActivity.class).putExtra("productID","1827"));
                 break;
 //            case R.id.base_top_right_icon://
 //                final XWarnDialog dialog = new XWarnDialog(this);

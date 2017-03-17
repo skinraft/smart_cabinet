@@ -74,9 +74,7 @@ public class SmartSicaoApi implements XApiException {
     public String configParamsUrl(String api, Context context) {
         return URL + api + "?user_token=" + XUserData.getToken(context)
                 + "&uid=" + XUserData.getUID(context) + "&api_version="
-                + XConfig.API_VERSION + "&w="
-                + SmartCabinetApplication.metrics.widthPixels + "&h="
-                + SmartCabinetApplication.metrics.heightPixels + "&tag=5618";
+                + XConfig.API_VERSION  ;
     }
 
     /***
@@ -500,31 +498,35 @@ public class SmartSicaoApi implements XApiException {
 
     /***
      * 获取酒柜中的酒信息
-     *
      * @param context   上下文对象
      * @param mac       酒柜mac
      * @param callback  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public void getGoodsByMac(Context context, String mac, int page, final XApisCallBack callback, final XApiException exception) {
-        String url = configParamsUrl("device/wineLists", context);
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("jid", mac);
-        params.put("row", 10 + "");
-        params.put("page", page + "");
+    public void getGoodsByMac(Context context, String mac,final XApisCallBack callback, final XApiException exception) {
+        String url = configParamsUrl("Device/newWineLists", context)+"&mac="+mac;
+        log(url);
         XHttpUtil httpUtil = new XHttpUtil(context);
-        httpUtil.post(url, params, new XCallBack() {
+        httpUtil.get(url,new XCallBack() {
             @Override
             public void success(String response) {
                 log(response);
                 try {
                     JSONObject object = new JSONObject(response);
                     if (status(object)) {
-                        JSONArray array = object.getJSONObject("data").getJSONArray("rfid_product_items");
+                        JSONArray array = object.getJSONObject("data").getJSONArray("products");
                         ArrayList<XWineEntity> mList = new ArrayList<>();
                         for (int i = 0; i < array.length(); i++) {
-                            XWineEntity goods = new Gson().fromJson(array.getJSONObject(i).toString(), XWineEntity.class);
-                            mList.add(goods);
+                            JSONObject wine=array.getJSONObject(i);
+                            XWineEntity wineEntity=new XWineEntity();
+                            XProductEntity xProductEntity=new XProductEntity();
+                            xProductEntity.setName(wine.getString("name"));
+                            xProductEntity.setCurrent_price(wine.getString("current_price"));
+                            xProductEntity.setIcon(wine.getString("icon"));
+                            xProductEntity.setId(wine.getString("id"));
+                            wineEntity.setProduct(xProductEntity);
+                            wineEntity.setRfidnum(wine.getString("num"));
+                            mList.add(wineEntity);
                         }
                         if (null != callback) callback.response(mList);
                     } else {
@@ -550,7 +552,7 @@ public class SmartSicaoApi implements XApiException {
      * @param callBack
      */
     public void getServerCabinetRfidsByMAC(Context context, String mac, final XApiCallBack callBack, final XApiException exception) {
-        String url = configParamsUrl("device/rfidLists", context) + "&jid=" + mac;
+        String url = configParamsUrl("device/rfidLists", context) + "&mac=" + mac;
         XHttpUtil xHttpUtil = new XHttpUtil(context);
         xHttpUtil.get(url, new XCallBack() {
             @Override
