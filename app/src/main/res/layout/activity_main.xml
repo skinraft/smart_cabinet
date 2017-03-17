@@ -22,7 +22,6 @@
             android:layout_centerVertical="true"
             android:src="@drawable/ic_back_left"
             android:clickable="true"
-            android:onClick="onClick"
             android:padding="15dp"/>
 
         <TextView

@@ -2,6 +2,7 @@ package com.sicao.smartwine;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
@@ -30,7 +31,10 @@ public class SmartCabinetApplication extends Application {
      */
     private WindowManager mManager = null;
     public static DisplayMetrics metrics = null;
-
+    /**
+     * 退出应用使用
+     */
+    public static ArrayList<AppCompatActivity> activities=new ArrayList<>();
     @Override
     public void onCreate() {
         super.onCreate();

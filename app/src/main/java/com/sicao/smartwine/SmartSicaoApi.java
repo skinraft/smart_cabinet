@@ -128,6 +128,7 @@ public class SmartSicaoApi implements XApiException {
      */
     public void login(final Context context, final String username, final String password, final XApiCallBack xApiCallBack, final XApiException xApiException) {
         String url = configParamsUrl("user/login?mobile=" + username + "&value=" + password + "&type=2", context);
+        log(url);
         XHttpUtil http = new XHttpUtil(context);
         http.get(url, new XCallBack() {
             @Override

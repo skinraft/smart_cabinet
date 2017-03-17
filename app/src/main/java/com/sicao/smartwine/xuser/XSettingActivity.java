@@ -4,14 +4,20 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
+import com.sicao.smartwine.SmartCabinetApplication;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xapp.FileUtils;
+import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xuser.address.XAddressListActivity;
+import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 
 import java.io.File;
 import java.util.List;
@@ -33,7 +39,35 @@ public class XSettingActivity extends SmartCabinetActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+        mRightText.setText("退出应用");
+        mRightText.setVisibility(View.VISIBLE);
+        mRightText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final XWarnDialog dialog = new XWarnDialog(XSettingActivity.this);
+                dialog.setTitle("退出登录");
+                dialog.setContent("您将要退出该帐号的登录,\n 注意:下次启用需要重新登录!");
+                dialog.show();
+                dialog.setOnListener(new XWarnDialog.OnClickListener() {
+                    @Override
+                    public void makeSure() {
+                        dialog.dismiss();
+                        mHintText.setVisibility(View.VISIBLE);
+                        mHintText.setText("正在退出...");
+                        showProgress(true);
+                        handler.sendEmptyMessageDelayed(XConfig.EXIT_APP_ACTION, 2000);
+                    }
+
+                    @Override
+                    public void cancle() {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
     }
+
 
     void init() {
         mCache = (TextView) findViewById(R.id.tv_cache);
@@ -59,6 +93,17 @@ public class XSettingActivity extends SmartCabinetActivity implements View.OnCli
             case R.id.lr_about_smart://关于智能酒柜
                 startActivity(new Intent(XSettingActivity.this, XAboutActivity.class));
                 break;
+        }
+    }
+
+    @Override
+    public void message(Message msg) {
+        int what = msg.what;
+        if (what == XConfig.EXIT_APP_ACTION) {
+            for (AppCompatActivity appCompatActivity : SmartCabinetApplication.activities) {
+                XUserData.setPassword(this,"");
+                appCompatActivity.finish();
+            }
         }
     }
 

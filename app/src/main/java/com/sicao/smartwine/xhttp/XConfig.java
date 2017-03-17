@@ -68,4 +68,8 @@ public class XConfig {
      *请求获取地理位置的权限code
      */
     public static int ACCESS_FINE_LOCATION_CODE = 10022;
+    /*
+     *退出应用
+     */
+    public static int EXIT_APP_ACTION = 10023;
 }

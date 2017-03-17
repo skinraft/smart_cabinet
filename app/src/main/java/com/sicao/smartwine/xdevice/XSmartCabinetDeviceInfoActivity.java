@@ -229,29 +229,7 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                 break;
             case R.id.setting://设置
                 startActivity(new Intent(this, XSettingActivity.class));
-//                startActivity(new Intent(this, XShopProductInfoActivity.class).putExtra("productID","1827"));
                 break;
-//            case R.id.base_top_right_icon://
-//                final XWarnDialog dialog = new XWarnDialog(this);
-//                dialog.setTitle("退出登录");
-//                dialog.setContent("您将要退出该帐号的登录,\n 注意:下次启用需要重新登录!");
-//                dialog.show();
-//                dialog.setOnListener(new XWarnDialog.OnClickListener() {
-//                    @Override
-//                    public void makeSure() {
-//                        dialog.dismiss();
-//                        mHintText.setVisibility(View.VISIBLE);
-//                        mHintText.setText("正在退出...");
-//                        showProgress(true);
-//                        handler.sendEmptyMessageDelayed(10094, 2000);
-//                    }
-//
-//                    @Override
-//                    public void cancle() {
-//                        dialog.dismiss();
-//                    }
-//                });
-//                break;
             case R.id.my_wines://酒柜内的酒款
                 //测试使用
                 if (null != mDevice) {

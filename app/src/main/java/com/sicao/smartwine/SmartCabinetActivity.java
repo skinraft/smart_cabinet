@@ -3,11 +3,9 @@ package com.sicao.smartwine;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -15,7 +13,6 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -23,12 +20,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizDeviceSharing;
-import com.gizwits.gizwifisdk.api.GizDeviceSharingInfo;
 import com.gizwits.gizwifisdk.api.GizUserInfo;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
@@ -37,7 +34,6 @@ import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizDeviceSharingListener;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
-import com.putaoji.android.XInterface;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XRfidDataUtil;
 import com.sicao.smartwine.xdata.XUserData;
@@ -60,7 +56,7 @@ import cn.sharesdk.framework.ShareSDK;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_OPENAPI_USERNAME_UNAVALIABLE;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_SDK_DEVICE_CONFIG_IS_RUNNING;
 
-public abstract class SmartCabinetActivity extends AppCompatActivity implements XSmartCabinetListener,View.OnClickListener {
+public abstract class SmartCabinetActivity extends AppCompatActivity implements XSmartCabinetListener {
     //硬件部分API
     protected SmartCabinetApi xCabinetApi;
     protected XDeviceListener mBindListener;
@@ -93,6 +89,8 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             message(msg);
         }
     };
+    //返回键
+    ImageView mBackIcon;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -123,10 +121,12 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
      */
     protected abstract int setView();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SmartCabinetApplication.activities.add(this);
         GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), getAppID());
 //        overridePendingTransition(R.anim.activity_out_anim, R.anim.activity_in_anim);// 淡出淡入动画效果
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,6 +141,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         mProgressView = findViewById(R.id.login_progress);
         mCenterTitle = (TextView) findViewById(R.id.base_top_center_text);
         mHintText = (TextView) findViewById(R.id.hint_text);
+        mBackIcon = (ImageView) findViewById(R.id.base_top_left_icon);
+        mBackIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         mBaseTopLayout = (RelativeLayout) findViewById(R.id.base_top_layout);
         //兼容首页单独动画加载刷新数据和酒柜内的酒款列表的页面
         if (this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")
@@ -149,7 +156,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         }
         if (this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")
                 || this.getClass().getSimpleName().contains("SmartCabinetRFIDActivity")
-                ||this.getClass().getSimpleName().contains("XShopProductInfoActivity")) {
+                || this.getClass().getSimpleName().contains("XShopProductInfoActivity")) {
             mContent2.addView(View.inflate(this, setView(), null));
             mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
@@ -185,16 +192,6 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         filter.addAction(Intent.ACTION_TIME_TICK);
         registerReceiver(xUpdateSmartCabinetReceiver, filter);
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        int id=v.getId();
-        switch (id){
-            case  R.id.base_top_left_icon:
-                onBackPressed();
-                break;
-        }
     }
 
     @Override
