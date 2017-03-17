@@ -552,7 +552,8 @@ public class SmartSicaoApi implements XApiException {
      * @param callBack
      */
     public void getServerCabinetRfidsByMAC(Context context, String mac, final XApiCallBack callBack, final XApiException exception) {
-        String url = configParamsUrl("device/rfidLists", context) + "&mac=" + mac;
+        String url = configParamsUrl("Device/tagLog", context) + "&mac=" + mac+"&page=1&row=1";
+        log(url);
         XHttpUtil xHttpUtil = new XHttpUtil(context);
         xHttpUtil.get(url, new XCallBack() {
             @Override
@@ -560,7 +561,8 @@ public class SmartSicaoApi implements XApiException {
                 try {
                     JSONObject object = new JSONObject(response);
                     if (status(object)) {
-                        if (null != callBack) callBack.response(object);
+                        //"{"newCount":8,"deleteCount":8,"num":"21","date":"2017-03-17 09:38:06","time":"1489714686"}
+                        if (null != callBack) callBack.response(object.getJSONObject("data").getJSONArray("tagLogs").getJSONObject(0));
                     } else {
                         log(object.getString("message"));
                     }

@@ -66,8 +66,6 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
     SmartCabinetToolBar smartCabinetToolBar;
     //折叠时显示的温度
     TextView mRealTemp2;
-    //当前的RFID数量，增加的RFID数量，移除的RFID数量
-    TextView mCurrentRfid, mAddRfid, mRemoveRfid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +97,6 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         mRealTemp2 = (TextView) findViewById(R.id.textView15);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
         coordinatorLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-        mCurrentRfid = (TextView) findViewById(R.id.current_rfids);
-        mAddRfid = (TextView) findViewById(R.id.add_rfids);
-        mRemoveRfid = (TextView) findViewById(R.id.remove_rfids);
     }
 
     @Override
@@ -190,33 +185,17 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                 } else {
                     progressBar.setVisibility(View.GONE);
                 }
-                //先从缓存取出盘点数据
-                try {
-                    JSONObject object1 = new JSONObject(XUserData.getDefaultCabinetScanRfids(this));
-                    if (!object1.isNull("mac") && object1.getString("mac").equals(device.getMacAddress())) {
-                        if (!object1.isNull("current")) {
-                            //当前的数量
-                            mCurrentRfid.setText("当前酒款\n" + (object1.getInt("current") + object1.getInt("add")));
-                            mBodys.setText("酒柜内放置" + (object1.getInt("current") + object1.getInt("add")) + "瓶酒");
-                        }
-                        if (!object1.isNull("add")) {
-                            //增加的数量
-                            mAddRfid.setText("增加酒数\n+" + object1.getInt("add"));
-                        }
-                        if (!object1.isNull("remove")) {
-                            //减少的数量
-                            mRemoveRfid.setText("取出酒数\n-" + object1.getInt("remove"));
-                        }
-                    }
-                } catch (JSONException e) {
-                    SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
-                }
                 //从服务器获取标签信息
                 xSicaoApi.getServerCabinetRfidsByMAC(this, mDevice.getMacAddress(), new XApiCallBack() {
                     @Override
                     public void response(Object object) {
-                        //设置相关酒款
-
+                        try{
+                           //设置相关酒款
+                            JSONObject object1= (JSONObject) object;
+                            mBodys.setText("总共:" + object1.getString("num") +"瓶酒，上次放入:"+object1.getString("newCount")+ "瓶酒，上次取出:"+object1.getInt("deleteCount"));
+                        }catch (JSONException e){
+                            SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
+                        }
                     }
                 }, null);
 
@@ -249,8 +228,8 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                 }
                 break;
             case R.id.setting://设置
-//                startActivity(new Intent(this, XSettingActivity.class));
-                startActivity(new Intent(this, XShopProductInfoActivity.class).putExtra("productID","1827"));
+                startActivity(new Intent(this, XSettingActivity.class));
+//                startActivity(new Intent(this, XShopProductInfoActivity.class).putExtra("productID","1827"));
                 break;
 //            case R.id.base_top_right_icon://
 //                final XWarnDialog dialog = new XWarnDialog(this);

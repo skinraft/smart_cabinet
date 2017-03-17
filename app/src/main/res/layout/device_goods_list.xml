@@ -4,15 +4,13 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
-
     <RelativeLayout
         android:id="@+id/rr_jiondetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="#F5F5F5"
+        android:background="@color/write"
         >
-
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_mycellarimage"
             android:layout_width="80dp"

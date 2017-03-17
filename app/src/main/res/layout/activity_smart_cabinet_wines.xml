@@ -38,7 +38,6 @@
                 android:id="@+id/smart_cabinet_wines_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="智能酒柜"
                 android:textColor="@color/write"
                 android:textSize="20sp"
                 />
@@ -48,7 +47,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="酒柜状态: 已连接"
+                android:textColor="#CD76AE"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:id="@+id/rfids_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:textColor="#CD76AE"
                 android:textSize="14sp"
                 />
@@ -61,18 +67,6 @@
             android:layout_marginBottom="5dp"
             android:layout_toRightOf="@id/smart_cabinet_wines_image1"
             >
-
-            <TextView
-                android:id="@+id/rfids_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:text="当前储藏酒款: "
-                android:textColor="@color/write"
-                android:textSize="16sp"
-                />
-
             <TextView
                 android:id="@+id/refesh_time"
                 android:layout_width="100dp"

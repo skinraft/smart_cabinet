@@ -60,7 +60,7 @@ import cn.sharesdk.framework.ShareSDK;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_OPENAPI_USERNAME_UNAVALIABLE;
 import static com.gizwits.gizwifisdk.enumration.GizWifiErrorCode.GIZ_SDK_DEVICE_CONFIG_IS_RUNNING;
 
-public abstract class SmartCabinetActivity extends AppCompatActivity implements XSmartCabinetListener {
+public abstract class SmartCabinetActivity extends AppCompatActivity implements XSmartCabinetListener,View.OnClickListener {
     //硬件部分API
     protected SmartCabinetApi xCabinetApi;
     protected XDeviceListener mBindListener;
@@ -185,6 +185,16 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         filter.addAction(Intent.ACTION_TIME_TICK);
         registerReceiver(xUpdateSmartCabinetReceiver, filter);
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id=v.getId();
+        switch (id){
+            case  R.id.base_top_left_icon:
+                onBackPressed();
+                break;
+        }
     }
 
     @Override

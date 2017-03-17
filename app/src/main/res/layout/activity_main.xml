@@ -20,7 +20,10 @@
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:padding="13dp"/>
+            android:src="@drawable/ic_back_left"
+            android:clickable="true"
+            android:onClick="onClick"
+            android:padding="15dp"/>
 
         <TextView
             android:id="@+id/base_top_right_icon"
