@@ -180,9 +180,8 @@
             android:name=".xdevice.SmartCabinetWinesActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:label="@string/title_activity_smart_cabinet_wines"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+           >
         </activity>
         <!-- web页面 -->
         <activity
@@ -248,7 +247,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
         </activity>
-        <activity android:name=".xshop.XShopProductInfoActivity">
+        <activity
+            android:name=".xshop.XShopProductInfoActivity"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

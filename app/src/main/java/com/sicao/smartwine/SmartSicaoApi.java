@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xdevice.entity.XProductEntity;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XApiException;
@@ -558,6 +559,42 @@ public class SmartSicaoApi implements XApiException {
                     JSONObject object = new JSONObject(response);
                     if (status(object)) {
                         if (null != callBack) callBack.response(object);
+                    } else {
+                        log(object.getString("message"));
+                    }
+                } catch (JSONException e) {
+                }
+            }
+
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+
+    /***
+     * 获取商品详情
+     * @param context
+     * @param productID
+     * @param callBack
+     * @param exception
+     */
+    public void getProductInfo(Context context, String productID, final XApiCallBack callBack, final XApiException exception) {
+        String url = configParamsUrl("deal/get", context) + "&id=" + productID;
+        log(url);
+        XHttpUtil xHttpUtil = new XHttpUtil(context);
+        xHttpUtil.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+
+                        XProductEntity entity=new Gson().fromJson(object.getJSONObject("data").getJSONObject("product").toString(),XProductEntity.class);
+                        if (null != callBack) callBack.response(entity);
                     } else {
                         log(object.getString("message"));
                     }

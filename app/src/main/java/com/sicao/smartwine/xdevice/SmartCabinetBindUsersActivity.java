@@ -36,6 +36,7 @@ public class SmartCabinetBindUsersActivity extends SmartCabinetActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCenterTitle.setText("共享用户");
         swipeRefreshLayout.setRefreshing(true);
         mDevice= (GizWifiDevice) getIntent().getExtras().get("GizWifiDevice");
         GizDeviceSharing.getBindingUsers(XUserData.getCabinetToken(this),mDevice.getDid());

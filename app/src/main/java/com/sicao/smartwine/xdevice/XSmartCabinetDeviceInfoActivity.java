@@ -23,6 +23,7 @@ import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XConfig;
+import com.sicao.smartwine.xshop.XShopProductInfoActivity;
 import com.sicao.smartwine.xuser.XSettingActivity;
 import com.sicao.smartwine.xwidget.device.SmartCabinetToolBar;
 import com.sicao.smartwine.xwidget.device.xchart.SplineChart03View;

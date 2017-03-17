@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sicao.smartwine.xdevice.SmartCabinetWinesActivity">
+    android:orientation="vertical"
+    >
 
     <RelativeLayout
         android:id="@+id/smart_cabinet_wines_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:background="@color/actionBarColor">
 
         <ImageView
@@ -78,11 +76,11 @@
             <TextView
                 android:id="@+id/refesh_time"
                 android:layout_width="100dp"
-                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
+                android:gravity="center"
                 android:text=""
                 android:textColor="#CD76AE"
                 android:textSize="14sp"
@@ -90,25 +88,9 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <FrameLayout
+    <ListView
+        android:id="@+id/list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/smart_cabinet_wines_top_layout">
-
-        <ListView
-            android:id="@+id/list_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </ListView>
-    </FrameLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:visibility="gone"
-        app:srcCompat="@android:drawable/ic_dialog_email"/>
-
-</RelativeLayout>
+        android:layout_height="wrap_content">
+    </ListView>
+</LinearLayout>

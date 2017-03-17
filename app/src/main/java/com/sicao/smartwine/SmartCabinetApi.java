@@ -9,6 +9,8 @@ import com.gizwits.gizwifisdk.enumration.GizUserAccountType;
 import com.gizwits.gizwifisdk.enumration.GizWifiConfigureMode;
 import com.gizwits.gizwifisdk.enumration.GizWifiGAgentType;
 import com.gizwits.gizwifisdk.listener.GizWifiDeviceListener;
+import com.sicao.smartwine.xdevice.entity.XProductEntity;
+import com.sicao.smartwine.xdevice.entity.XShareEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -258,6 +260,22 @@ public class SmartCabinetApi {
         Wechat.ShareParams shareParams = new Wechat.ShareParams();
         shareParams.setImageData(QRCodeImage);
         shareParams.setShareType(Platform.SHARE_IMAGE);
+        Platform platform = ShareSDK.getPlatform(Wechat.NAME);
+        platform.setPlatformActionListener(platformActionListener);
+        platform.share(shareParams);
+    }
+    /***
+     * 分享红酒到微信好友
+     * @param platformActionListener
+     * @param shareEntity   分享数据
+     */
+    public void shareProduct(PlatformActionListener platformActionListener, XShareEntity shareEntity) {
+        Wechat.ShareParams shareParams = new Wechat.ShareParams();
+        shareParams.setShareType(Platform.SHARE_WEBPAGE);
+        shareParams.setTitle(shareEntity.getTitle());
+        shareParams.setText(shareEntity.getContent()+shareEntity.getUrl());
+        shareParams.setUrl(shareEntity.getUrl());
+        shareParams.setSiteUrl(shareEntity.getUrl());
         Platform platform = ShareSDK.getPlatform(Wechat.NAME);
         platform.setPlatformActionListener(platformActionListener);
         platform.share(shareParams);

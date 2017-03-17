@@ -1,5 +1,6 @@
 package com.sicao.smartwine.xdevice;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +20,7 @@ import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
 import com.sicao.smartwine.xhttp.XApisCallBack;
 import com.sicao.smartwine.xhttp.XConfig;
+import com.sicao.smartwine.xshop.XShopProductInfoActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,8 +36,6 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     SmartCabinetWinesAdpter smartCabinetWinesAdpter;
     //列表控件
     ListView listView;
-    //回到顶部按钮
-    FloatingActionButton floatingActionButton;
     int page = 1;
     int i = 100;
     //酒柜名称
@@ -63,8 +63,6 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         mCabinetWinesNum = (TextView) findViewById(R.id.rfids_text);
         listView = (ListView) findViewById(R.id.list_view);
         listView.setOnItemClickListener(this);
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(this);
         mCabinetName = (TextView) findViewById(R.id.smart_cabinet_wines_name);
         mUpdateTime = (TextView) findViewById(R.id.refesh_time);
         mCenterTitle.setText(!"".equals(gizWifiDevice.getRemark()) ? gizWifiDevice.getRemark() : "智能酒柜");
@@ -93,6 +91,15 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                 }
             }
         }.start();
+        /**
+         * item点击事件
+         */
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(SmartCabinetWinesActivity.this, XShopProductInfoActivity.class).putExtra("productID", mWins.get(position).getProduct().getId()));
+            }
+        });
     }
 
     @Override
@@ -103,11 +110,6 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        switch (id) {
-            case R.id.fab://回到顶部
-                listView.smoothScrollToPosition(0);
-                break;
-        }
     }
 
     @Override
@@ -170,11 +172,6 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                     mWins.addAll((ArrayList<XWineEntity>) list);
                 }
                 smartCabinetWinesAdpter.upDataAdapter(mWins);
-                if (mWins.size() > 10) {
-                    floatingActionButton.setVisibility(View.VISIBLE);
-                } else {
-                    floatingActionButton.setVisibility(View.GONE);
-                }
             }
         }, null);
     }

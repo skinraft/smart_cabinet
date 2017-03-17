@@ -143,11 +143,13 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         mHintText = (TextView) findViewById(R.id.hint_text);
         mBaseTopLayout = (RelativeLayout) findViewById(R.id.base_top_layout);
         //兼容首页单独动画加载刷新数据和酒柜内的酒款列表的页面
-        if (this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("SmartCabinetWinesActivity")) {
+        if (this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")
+                || this.getClass().getSimpleName().contains("SmartCabinetWinesActivity")) {
             mBaseTopLayout.setVisibility(View.GONE);
         }
-        if (this.getClass().getSimpleName().contains("SmartCabinetDeviceInfoActivity") || this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")
-                || this.getClass().getSimpleName().contains("SmartCabinetRFIDActivity")) {
+        if (this.getClass().getSimpleName().contains("XSmartCabinetDeviceInfoActivity")
+                || this.getClass().getSimpleName().contains("SmartCabinetRFIDActivity")
+                ||this.getClass().getSimpleName().contains("XShopProductInfoActivity")) {
             mContent2.addView(View.inflate(this, setView(), null));
             mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             mContent.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));

@@ -213,7 +213,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
         //鉴定该用户是否有分享该设备的权限
         if (mDevice.getSharingRole() == GizDeviceSharingUserRole.GizDeviceSharingOwner) {
             //登录账号为设备的主账号
-            menu = new String[]{"分享给好友", "查看绑定账号"};
+            menu = new String[]{"分享给好友", "查看共享账号"};
             mRightText.setVisibility(View.VISIBLE);
         } else if (mDevice.getSharingRole() == GizDeviceSharingUserRole.GizDeviceSharingSpecial) {
             //还不是主账号，但是是第一个绑定设备的账号，分享该设备后即将成为主账号

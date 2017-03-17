@@ -18,6 +18,42 @@ public class XProductEntity implements Serializable {
     String featured_price;//活动价格
     String max_bought;//库存
     String icon;//商品图片
+    String brief;//简介
+    XShareEntity share;//分享字段信息
+    String[] imgs;//轮播图
+    String description;
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getBrief() {
+        return brief;
+    }
+
+    public XShareEntity getShare() {
+        return share;
+    }
+
+    public String[] getImgs() {
+        return imgs;
+    }
+
+    public void setBrief(String brief) {
+        this.brief = brief;
+    }
+
+    public void setShare(XShareEntity share) {
+        this.share = share;
+    }
+
+    public void setImgs(String[] imgs) {
+        this.imgs = imgs;
+    }
 
     public void setEnglish_name(String english_name) {
         this.english_name = english_name;
@@ -81,19 +117,5 @@ public class XProductEntity implements Serializable {
 
     public String getIcon() {
         return icon;
-    }
-
-    @Override
-    public String toString() {
-        return "XProductEntity{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", english_name='" + english_name + '\'' +
-                ", origin_price='" + origin_price + '\'' +
-                ", current_price='" + current_price + '\'' +
-                ", featured_price='" + featured_price + '\'' +
-                ", max_bought='" + max_bought + '\'' +
-                ", icon='" + icon + '\'' +
-                '}';
     }
 }
