@@ -72,4 +72,8 @@ public class XConfig {
      *退出应用
      */
     public static int EXIT_APP_ACTION = 10023;
+    /*
+     *主动盘点酒柜
+     */
+    public static int CABINET_OPEN_SCANNING=10024;
 }

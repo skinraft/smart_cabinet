@@ -342,7 +342,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 if (action == XConfig.CONFIG_CABINET_MODEL_TEMP_ACTION || action == XConfig.CONFIG_CABINET_SET_LIGHT_ACTION
                         || action == XConfig.CONFIG_CABINET_SET_TEMP_ACTION || action == XConfig.CONFIG_CABINET_WORK_MODEL_ACTION
-                        || action == XConfig.CONFIG_CABINET_SET_WORK_TIME) {
+                        || action == XConfig.CONFIG_CABINET_SET_WORK_TIME||action==XConfig.CABINET_OPEN_SCANNING) {
                     //设备属性修改结果回调
                     setCustomInfoSuccess(device);
                     return;

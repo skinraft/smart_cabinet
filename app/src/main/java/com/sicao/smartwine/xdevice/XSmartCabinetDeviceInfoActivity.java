@@ -140,6 +140,8 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         Message msg = handler.obtainMessage();
         msg.what = XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER;
         msg.arg1 = (current.size() + add.size());
+        msg.arg2=remove.size();
+        msg.obj=add.size();
         handler.sendMessageDelayed(msg, 1000);
         progressBar.setVisibility(View.GONE);
     }
@@ -154,6 +156,19 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                     device.setSubscribe(true);
                     xCabinetApi.getDeviceStatus(device);
                     GizWifiSDK.sharedInstance().getDevicesToSetServerInfo();
+                    //从服务器获取标签信息
+                    xSicaoApi.getServerCabinetRfidsByMAC(this, device.getMacAddress(), new XApiCallBack() {
+                        @Override
+                        public void response(Object object) {
+                            try{
+                                //设置相关酒款
+                                JSONObject object1= (JSONObject) object;
+                                mBodys.setText("总共:" + object1.getString("num") +"瓶，放入:"+object1.getString("newCount")+ "瓶，取出:"+object1.getInt("deleteCount")+"瓶");
+                            }catch (JSONException e){
+                                SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
+                            }
+                        }
+                    }, null);
                 } else {
                     Toast("目标设备处于不可监控状态");
                 }
@@ -185,20 +200,6 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                 } else {
                     progressBar.setVisibility(View.GONE);
                 }
-                //从服务器获取标签信息
-                xSicaoApi.getServerCabinetRfidsByMAC(this, mDevice.getMacAddress(), new XApiCallBack() {
-                    @Override
-                    public void response(Object object) {
-                        try{
-                           //设置相关酒款
-                            JSONObject object1= (JSONObject) object;
-                            mBodys.setText("总共:" + object1.getString("num") +"瓶酒，上次放入:"+object1.getString("newCount")+ "瓶酒，上次取出:"+object1.getInt("deleteCount"));
-                        }catch (JSONException e){
-                            SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
-                        }
-                    }
-                }, null);
-
             }
         } catch (JSONException e) {
             Toast("数据异常,请检查!");
@@ -269,8 +270,8 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
             mWorkModel.setText("未设置");
             mOnLine.setText("离线");
         } else if (what == XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER) {
-            //
-            mBodys.setText("酒柜内放置" + msg.arg1 + "瓶酒");
+            //msg.arg1 = (current.size() + add.size());
+            mBodys.setText("总共:" + msg.arg1 +"瓶，放入:"+msg.obj+ "瓶，取出:"+msg.arg2+ "瓶");
         } else if (what == XConfig.CABINET_HAS_EXCEPTION) {
             //设备异常状态
 

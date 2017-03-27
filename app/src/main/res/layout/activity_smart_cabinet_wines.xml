@@ -65,18 +65,19 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/smart_cabinet_wines_image1"
             android:layout_marginBottom="5dp"
+            android:gravity="right"
             android:layout_toRightOf="@id/smart_cabinet_wines_image1"
             >
             <TextView
                 android:id="@+id/refesh_time"
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
-                android:gravity="center"
-                android:text=""
+                android:layout_marginTop="10dp"
                 android:textColor="#CD76AE"
+                android:visibility="gone"
                 android:textSize="14sp"
                 />
         </RelativeLayout>

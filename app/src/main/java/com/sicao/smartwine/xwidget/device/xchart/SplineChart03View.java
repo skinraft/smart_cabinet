@@ -31,7 +31,7 @@ public class SplineChart03View extends DemoView {
     private LinkedList<String> labels = new LinkedList<String>();
     private LinkedList<SplineData> chartData = new LinkedList<SplineData>();
 
-    private Paint mPaintTooltips = new Paint(Paint.ANTI_ALIAS_FLAG);
+//    private Paint mPaintTooltips = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     // splinechart支持横向和竖向定制线
     private List<CustomLineData> mXCustomLineDataset = new ArrayList<CustomLineData>();
@@ -66,6 +66,7 @@ public class SplineChart03View extends DemoView {
         //图所占范围大小
         chart.setChartRange(w, h);
     }
+
     private void chartRender() {
         try {
             //设置绘图区默认缩进px值,留置空间显示Axis,Axistitle....
@@ -86,7 +87,6 @@ public class SplineChart03View extends DemoView {
             chart.setCategoryAxisMax(31);
             //标签轴最小值
             chart.setCategoryAxisMin(0);
-            //chart.setCustomLines(mXCustomLineDataset); //y轴
             chart.setCategoryAxisCustomLines(mXCustomLineDataset); //x轴
             //设置图的背景色
             chart.setApplyBackgroundColor(true);
@@ -228,16 +228,16 @@ public class SplineChart03View extends DemoView {
                 } else {
                     chart.getFocusPaint().setColor(Color.RED);
                 }
-                //在点击处显示tooltip
-                mPaintTooltips.setColor(Color.RED);
-                chart.getToolTip().setCurrentXY(x, y);
-                chart.getToolTip().addToolTip(Double.toString(xValue) + "号", mPaintTooltips);
-                chart.getToolTip().addToolTip(
-                        " 售出:" + Double.toString(yValue) + "瓶酒", mPaintTooltips);
-                if (null != xDataChatInterface) {
-                    xDataChatInterface.click(Integer.parseInt(Double.toString(xValue)), Integer.parseInt(Double.toString(yValue)));
-                }
-                chart.getToolTip().getBackgroundPaint().setAlpha(100);
+                //数据点的点击弹窗事件
+//                mPaintTooltips.setColor(Color.RED);
+//                chart.getToolTip().setCurrentXY(x, y);
+//                chart.getToolTip().addToolTip(Double.toString(xValue) + "号", mPaintTooltips);
+//                chart.getToolTip().addToolTip(
+//                        " 售出:" + Double.toString(yValue) + "瓶酒", mPaintTooltips);
+//                if (null != xDataChatInterface) {
+//                    xDataChatInterface.click(Integer.parseInt(Double.toString(xValue)), Integer.parseInt(Double.toString(yValue)));
+//                }
+//                chart.getToolTip().getBackgroundPaint().setAlpha(100);
                 this.invalidate();
                 break;
             }
@@ -245,13 +245,13 @@ public class SplineChart03View extends DemoView {
         }
     }
 
-    private XDataChatInterface xDataChatInterface;
-
-    public void setxDataChatInterface(XDataChatInterface xDataChatInterface) {
-        this.xDataChatInterface = xDataChatInterface;
-    }
-
-    public interface XDataChatInterface {
-        void click(int date, int number);
-    }
+//    private XDataChatInterface xDataChatInterface;
+//
+//    public void setxDataChatInterface(XDataChatInterface xDataChatInterface) {
+//        this.xDataChatInterface = xDataChatInterface;
+//    }
+//
+//    public interface XDataChatInterface {
+//        void click(int date, int number);
+//    }
 }

@@ -13,6 +13,7 @@ import com.gizwits.gizwifisdk.enumration.GizWifiDeviceNetStatus;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartSicaoApi;
+import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.adapter.SmartCabinetWinesAdpter;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
@@ -43,6 +44,8 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     TextView mUpdateTime;
     //酒柜内的酒款数量
     TextView mCabinetWinesNum;
+    // 是否允许主动盘点酒柜
+    boolean enable = false;
 
     @Override
     protected int setView() {
@@ -94,7 +97,6 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     @Override
     protected void onResume() {
         super.onResume();
-        getGoodsList();
         //设备状态查询
         xCabinetApi.bindDevice(gizWifiDevice, mBindListener);
         xCabinetApi.getDeviceStatus(gizWifiDevice);
@@ -102,24 +104,51 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         xSicaoApi.getServerCabinetRfidsByMAC(this, gizWifiDevice.getMacAddress(), new XApiCallBack() {
             @Override
             public void response(Object object) {
-                try{
+                try {
                     //设置相关酒款
-                    JSONObject object1= (JSONObject) object;
-                    mCabinetWinesNum.setText("总共:" + object1.getString("num") +"瓶酒，上次放入:"+object1.getString("newCount")+ "瓶酒，上次取出:"+object1.getInt("deleteCount"));
+                    JSONObject object1 = (JSONObject) object;
+                    mCabinetWinesNum.setText("总共:" + object1.getString("num") + "瓶，放入:" + object1.getString("newCount") + "瓶，取出:" + object1.getInt("deleteCount") + "瓶");
                     mUpdateTime.setText(object1.getString("date"));
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
                 }
             }
         }, null);
+        getGoodsList();
     }
 
     @Override
     public void rfid(GizWifiDevice device, ArrayList<XRfidEntity> current, ArrayList<XRfidEntity> add, ArrayList<XRfidEntity> remove) {
         //酒柜内RFID发生变化
-        mCabinetWinesNum.setText("总共:" + (current.size() + add.size()) +"瓶酒，上次放入:"+add.size()+ "瓶酒，上次取出:"+remove.size());
+        mCabinetWinesNum.setText("总共:" + (current.size() + add.size()) + "瓶，放入:" + add.size() + "瓶，取出:" + remove.size() + "瓶");
         //刷新酒款信息
         getGoodsList();
+    }
+
+    @Override
+    public void setCustomInfoSuccess(GizWifiDevice device) {
+        //主动盘点参数调整OK
+
+    }
+
+    @Override
+    public void setCustomInfoError(String result) {
+        //主动盘点参数调整失败
+
+    }
+
+    public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
+        try {
+            if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
+                enable = object.getBoolean("scanning");
+                if (enable){
+                    Toast("正在盘点酒柜...");
+                }
+            }
+        } catch (JSONException e) {
+            Toast("数据异常,请检查!");
+            SmartSicaoApi.log("the device update data json has error in " + (null == e ? getClass().getSimpleName() : e.getMessage()));
+        }
     }
 
     @Override
@@ -132,6 +161,9 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         if (msg.what == XConfig.BASE_UPDATE_ACTION) {
             //刷新
             getGoodsList();
+            if (!enable) {
+                xCabinetApi.controlDevice(gizWifiDevice, "scanning", "true", XConfig.CABINET_OPEN_SCANNING);
+            }
         }
     }
 
