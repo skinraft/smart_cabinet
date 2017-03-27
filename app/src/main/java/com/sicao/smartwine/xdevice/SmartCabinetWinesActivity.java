@@ -46,6 +46,8 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     TextView mCabinetWinesNum;
     // 是否允许主动盘点酒柜
     boolean enable = false;
+    //酒柜门是否已打开
+    boolean door_open = false;
 
     @Override
     protected int setView() {
@@ -114,7 +116,6 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                 }
             }
         }, null);
-        getGoodsList();
     }
 
     @Override
@@ -141,9 +142,11 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         try {
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
                 enable = object.getBoolean("scanning");
-                if (enable){
+                door_open = object.getBoolean("door_open");
+                if (enable) {
                     Toast("正在盘点酒柜...");
                 }
+                getGoodsList();
             }
         } catch (JSONException e) {
             Toast("数据异常,请检查!");
@@ -161,7 +164,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         if (msg.what == XConfig.BASE_UPDATE_ACTION) {
             //刷新
             getGoodsList();
-            if (!enable) {
+            if (!enable && !door_open) {
                 xCabinetApi.controlDevice(gizWifiDevice, "scanning", "true", XConfig.CABINET_OPEN_SCANNING);
             }
         }
