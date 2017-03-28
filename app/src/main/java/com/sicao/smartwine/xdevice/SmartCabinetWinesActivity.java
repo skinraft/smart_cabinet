@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
+import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizWifiDeviceNetStatus;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
@@ -48,6 +49,8 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     boolean enable = false;
     //酒柜门是否已打开
     boolean door_open = false;
+    //主动盘点按钮
+    TextView scaning;
 
     @Override
     protected int setView() {
@@ -71,6 +74,18 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         mCabinetNetStatus = (TextView) findViewById(R.id.smart_cabinet_wines_statue);
         mCabinetNetStatus.setText((gizWifiDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || gizWifiDevice.getNetStatus()
                 == GizWifiDeviceNetStatus.GizDeviceControlled) ? "酒柜状态: 已连接" : "酒柜状态: 离线");
+        scaning = (TextView) findViewById(R.id.scaning);
+        scaning.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!enable && !door_open) {
+                    xCabinetApi.controlDevice(gizWifiDevice, "scanning", "true", XConfig.CABINET_OPEN_SCANNING);
+                    scaning.setText("正在盘点中...");
+                } else {
+                    Toast("正在盘点中...");
+                }
+            }
+        });
         /////////////////////////
         smartCabinetWinesAdpter = new SmartCabinetWinesAdpter(this, mWins);
         listView.setAdapter(smartCabinetWinesAdpter);
@@ -100,8 +115,9 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     protected void onResume() {
         super.onResume();
         //设备状态查询
-        xCabinetApi.bindDevice(gizWifiDevice, mBindListener);
+        gizWifiDevice.setListener(mBindListener);
         xCabinetApi.getDeviceStatus(gizWifiDevice);
+        GizWifiSDK.sharedInstance().getDevicesToSetServerInfo();
         //从服务器获取标签信息
         xSicaoApi.getServerCabinetRfidsByMAC(this, gizWifiDevice.getMacAddress(), new XApiCallBack() {
             @Override
@@ -129,13 +145,13 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     @Override
     public void setCustomInfoSuccess(GizWifiDevice device) {
         //主动盘点参数调整OK
-
+        xCabinetApi.getDeviceStatus(gizWifiDevice);
     }
 
     @Override
     public void setCustomInfoError(String result) {
         //主动盘点参数调整失败
-
+        xCabinetApi.getDeviceStatus(gizWifiDevice);
     }
 
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
@@ -145,6 +161,9 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                 door_open = object.getBoolean("door_open");
                 if (enable) {
                     Toast("正在盘点酒柜...");
+                }
+                if (!enable && !door_open) {
+                    scaning.setText("刷新");
                 }
                 getGoodsList();
             }
