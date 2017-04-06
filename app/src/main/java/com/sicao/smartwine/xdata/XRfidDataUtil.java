@@ -1,5 +1,6 @@
 package com.sicao.smartwine.xdata;
 
+import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.sicao.smartwine.SmartCabinetApi;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
@@ -14,62 +15,65 @@ import java.util.HashMap;
 public class XRfidDataUtil {
 
 
-    public static HashMap<String,ArrayList<XRfidEntity>> parser(HashMap<String,ArrayList<XRfidEntity>>map , String str) {
-        ArrayList<XRfidEntity>current=new ArrayList<>();
-        ArrayList<XRfidEntity>add=new ArrayList<>();
-        ArrayList<XRfidEntity>remove=new ArrayList<>();
-        if (map.containsKey("add")){
-            add=map.get("add");
+    public static HashMap<String, ArrayList<XRfidEntity>> parser(GizWifiDevice device, HashMap<String, ArrayList<XRfidEntity>> map, String str) {
+        ArrayList<XRfidEntity> current = new ArrayList<>();
+        ArrayList<XRfidEntity> add = new ArrayList<>();
+        ArrayList<XRfidEntity> remove = new ArrayList<>();
+        if (map.containsKey("add")) {
+            add = map.get("add");
         }
-        if (map.containsKey("remove")){
-            remove=map.get("remove");
+        if (map.containsKey("remove")) {
+            remove = map.get("remove");
         }
-        if (map.containsKey("current")){
-            current=map.get("current");
+        if (map.containsKey("current")) {
+            current = map.get("current");
         }
-        String s=str.substring(0, 2);
-        if (s.contains("a0")||s.contains("b0")||s.contains("c0")){
-            while(str.length()>0){
-                String start=str.substring(0, 2);
-                if(start.equals("a0")){
-                    String l=str.substring(2, 4);
-                    int lenght=HexToInt(l);
-                    str=str.substring(4,str.length());
-                    String rfid=str.substring(0, lenght*2);
-                    str=str.substring(lenght*2,str.length());
-                    XRfidEntity entity=new XRfidEntity();
+        String s = str.substring(0, 2);
+        if (s.contains("a0") || s.contains("b0") || s.contains("c0")) {
+            while (str.length() > 0) {
+                String start = str.substring(0, 2);
+                if (start.equals("a0")) {
+                    String l = str.substring(2, 4);
+                    int lenght = HexToInt(l);
+                    str = str.substring(4, str.length());
+                    String rfid = str.substring(0, lenght * 2);
+                    str = str.substring(lenght * 2, str.length());
+                    XRfidEntity entity = new XRfidEntity();
                     entity.setRfid(rfid);
                     entity.setTag("current");
+                    entity.setDevice_name(device.getRemark());
                     current.add(entity);
-                }
-                else if(start.equals("b0")){
-                    String l=str.substring(2, 4);
-                    int lenght=HexToInt(l);
-                    str=str.substring(4,str.length());
-                    String rfid=str.substring(0, lenght*2);
-                    str=str.substring(lenght*2,str.length());
-                    XRfidEntity entity=new XRfidEntity();
+                } else if (start.equals("b0")) {
+                    String l = str.substring(2, 4);
+                    int lenght = HexToInt(l);
+                    str = str.substring(4, str.length());
+                    String rfid = str.substring(0, lenght * 2);
+                    str = str.substring(lenght * 2, str.length());
+                    XRfidEntity entity = new XRfidEntity();
                     entity.setRfid(rfid);
                     entity.setTag("add");
+                    entity.setDevice_name(device.getRemark());
                     add.add(entity);
-                }else if(start.equals("c0")){
-                    String l=str.substring(2, 4);
-                    int lenght=HexToInt(l);
-                    str=str.substring(4,str.length());
-                    String rfid=str.substring(0, lenght*2);
-                    str=str.substring(lenght*2,str.length());
-                    XRfidEntity entity=new XRfidEntity();
+                } else if (start.equals("c0")) {
+                    String l = str.substring(2, 4);
+                    int lenght = HexToInt(l);
+                    str = str.substring(4, str.length());
+                    String rfid = str.substring(0, lenght * 2);
+                    str = str.substring(lenght * 2, str.length());
+                    XRfidEntity entity = new XRfidEntity();
                     entity.setRfid(rfid);
                     entity.setTag("remove");
+                    entity.setDevice_name(device.getRemark());
                     remove.add(entity);
                 }
             }
-            map.put("current",current);
-            map.put("add",add);
-            map.put("remove",remove);
+            map.put("current", current);
+            map.put("add", add);
+            map.put("remove", remove);
         }
         return map;
     }
+
     //16进制转10进制
     public static int HexToInt(String strHex) {
         int nResult = 0;

@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class XRfidEntity implements Serializable {
     String rfid;
     String tag;
+    String device_name;
 
     public String getRfid() {
         return rfid;
@@ -26,11 +27,20 @@ public class XRfidEntity implements Serializable {
         this.tag = tag;
     }
 
+    public void setDevice_name(String device_name) {
+        this.device_name = device_name;
+    }
+
+    public String getDevice_name() {
+        return device_name;
+    }
+
     @Override
     public String toString() {
         return "XRfidEntity{" +
                 "rfid='" + rfid + '\'' +
                 ", tag='" + tag + '\'' +
+                ", device_name='" + device_name + '\'' +
                 '}';
     }
 }

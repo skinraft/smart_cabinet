@@ -342,7 +342,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             if (result == GizWifiErrorCode.GIZ_SDK_SUCCESS) {
                 if (action == XConfig.CONFIG_CABINET_MODEL_TEMP_ACTION || action == XConfig.CONFIG_CABINET_SET_LIGHT_ACTION
                         || action == XConfig.CONFIG_CABINET_SET_TEMP_ACTION || action == XConfig.CONFIG_CABINET_WORK_MODEL_ACTION
-                        || action == XConfig.CONFIG_CABINET_SET_WORK_TIME||action==XConfig.CABINET_OPEN_SCANNING) {
+                        || action == XConfig.CONFIG_CABINET_SET_WORK_TIME || action == XConfig.CABINET_OPEN_SCANNING) {
                     //设备属性修改结果回调
                     setCustomInfoSuccess(device);
                     return;
@@ -384,7 +384,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                                 rfidbreak();
                                 map.clear();
                             } else {
-                                map.putAll(XRfidDataUtil.parser(map, content));
+                                map.putAll(XRfidDataUtil.parser(device, map, content));
                             }
                             SmartSicaoApi.log("透传数据-----" + content);
                         } else {
@@ -429,13 +429,19 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             //增加的标签
             add = map.get("add");
             if (add.size() > 0) //通知栏通知
-                AppManager.noti(this, device, "标签增加" + add.size() + "个", 100);
+                synchronized (SmartCabinetApplication.notiQueue) {
+                    SmartCabinetApplication.notiQueue.addAll(add);
+
+                }
         }
         if (map.containsKey("remove")) {
             //减少的标签
             remove = map.get("remove");
             if (remove.size() > 0) //通知栏通知
-                AppManager.noti(this, device, "标签减少" + remove.size() + "个", 101);
+                synchronized (SmartCabinetApplication.notiQueue) {
+                    SmartCabinetApplication.notiQueue.addAll(remove);
+
+                }
         }
         if (map.containsKey("current")) {
             //当前的标签
@@ -522,7 +528,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 // 设备连接断开时可能产生的通知
                 GizWifiDevice mDevice = (GizWifiDevice) eventSource;
                 SmartSicaoApi.log("device mac: " + mDevice.getMacAddress() + " disconnect caused by eventID: " + eventID + ", eventMessage: " + eventMessage);
-                AppManager.noti(SmartCabinetActivity.this, mDevice, "您的设备已经离线，请检查该设备网络异常", 103);
+                AppManager.noti(SmartCabinetActivity.this, mDevice.getRemark()==null?"智能酒柜":mDevice.getRemark(), "您的设备已经离线，请检查该设备网络异常", 103);
             } else if (eventType == GizEventType.GizEventM2MService) {
                 // M2M服务返回的异常通知
                 SmartSicaoApi.log("M2M domain " + eventSource + " exception happened, eventID: " + eventID + ", eventMessage: " + eventMessage);

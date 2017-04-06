@@ -161,6 +161,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                 door_open = object.getBoolean("door_open");
                 if (enable) {
                     Toast("正在盘点酒柜...");
+                    scaning.setText("正在盘点中...");
                 }
                 if (!enable && !door_open) {
                     scaning.setText("刷新");

@@ -614,4 +614,37 @@ public class SmartSicaoApi implements XApiException {
             }
         });
     }
+    /***
+     * 获取商品详情
+     * @param context
+     * @param rfid
+     * @param callBack
+     * @param exception
+     */
+    public void getProductByRFID(Context context, String rfid, final XApiCallBack callBack, final XApiException exception) {
+        String url = configParamsUrl("Device/getByTag", context) + "&tag=" + rfid;
+        log(url);
+        XHttpUtil xHttpUtil = new XHttpUtil(context);
+        xHttpUtil.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        XProductEntity entity=new Gson().fromJson(object.getJSONObject("data").getJSONObject("product").toString(),XProductEntity.class);
+                        if (null != callBack) callBack.response(entity);
+                    } else {
+                        log(object.getString("message"));
+                    }
+                } catch (JSONException e) {
+                }
+            }
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
 }

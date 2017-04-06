@@ -2,6 +2,7 @@ package com.sicao.smartwine.xapp;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -241,17 +242,16 @@ public class AppManager {
         return macSerial;
     }
 
-    public static void noti(Context context, GizWifiDevice device, String content, int notifyid) {
+    public static void noti(Context context, String  title,String content, int notifyid) {
         // Instantiate a Builder object.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        String title = device.getRemark().equals("") ? "智能酒柜" : device.getRemark();
         builder.setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(R.mipmap.ic_launcher);
+        builder.setDefaults(Notification.DEFAULT_SOUND);
 // Creates an Intent for the Activity
         Intent notifyIntent =
                 new Intent(context, SmartCabinetRFIDActivity.class);
-        notifyIntent.putExtra("cabinet", device);
 // Sets the Activity to start in a new, empty task
         notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);

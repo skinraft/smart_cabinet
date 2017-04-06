@@ -12,6 +12,7 @@ import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizEventType;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
+import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,13 @@ public class SmartCabinetApplication extends Application {
     /**
      * 退出应用使用
      */
-    public static ArrayList<AppCompatActivity> activities=new ArrayList<>();
+    public static ArrayList<AppCompatActivity> activities = new ArrayList<>();
+
+    /**
+     * 酒柜内酒款的取出和放入的消息通知
+     */
+    public static ArrayList<XRfidEntity> notiQueue = new ArrayList<>();
+
     @Override
     public void onCreate() {
         super.onCreate();
