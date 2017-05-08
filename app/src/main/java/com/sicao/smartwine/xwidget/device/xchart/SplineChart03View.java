@@ -54,7 +54,6 @@ public class SplineChart03View extends DemoView {
 
     private void initView() {
         chartLabels();
-        chartDataSet();
         chartRender();
         //綁定手势滑动事件
         this.bindTouch(this, chart);
@@ -130,25 +129,13 @@ public class SplineChart03View extends DemoView {
         }
     }
 
-    private void chartDataSet() {
-        //线1的数据集
-        List<PointD> linePoint1 = new ArrayList<PointD>();
-        linePoint1.add(new PointD(1d, 170d));
-        linePoint1.add(new PointD(3d, 150d));
-        linePoint1.add(new PointD(5d, 120d));
-        linePoint1.add(new PointD(10d, 180d));
-        linePoint1.add(new PointD(15d, 180d));
-        linePoint1.add(new PointD(17d, 160d));
-        linePoint1.add(new PointD(22d, 0d));
-        linePoint1.add(new PointD(25d, 50d));
-        linePoint1.add(new PointD(26d, 60d));
-        linePoint1.add(new PointD(27d, 30d));
-        linePoint1.add(new PointD(29d, 68d));
-        SplineData dataSeries1 = new SplineData("", linePoint1,
+    public void chartDataSet(List<PointD> linePoint) {
+        SplineData dataSeries1 = new SplineData("", linePoint,
                 Color.parseColor("#ad1c79"));
         //把线弄细点
         dataSeries1.getLinePaint().setStrokeWidth(2);
         //设定数据源
+        chartData.clear();
         chartData.add(dataSeries1);
     }
 

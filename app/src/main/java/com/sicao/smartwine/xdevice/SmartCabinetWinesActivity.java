@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -96,7 +97,32 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(SmartCabinetWinesActivity.this, XShopProductInfoActivity.class).putExtra("productID", mWins.get(position).getProduct().getId()));
+                if (!"-1".equals(mWins.get(position).getProduct().getId())) {
+                    startActivity(new Intent(SmartCabinetWinesActivity.this, XShopProductInfoActivity.class).putExtra("productID", mWins.get(position).getProduct().getId()));
+                } else {
+                    Toast("无法识别该酒款");
+                }
+            }
+        });
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if (listView != null && listView.getChildCount() > 0) {
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = listView.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = listView.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                }
+                swipeRefreshLayout.setEnabled(enable);
             }
         });
     }
@@ -125,8 +151,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
                 try {
                     //设置相关酒款
                     JSONObject object1 = (JSONObject) object;
-                    mCabinetWinesNum.setText("总共:" + object1.getString("num") + "瓶，放入:" + object1.getString("newCount") + "瓶，取出:" + object1.getInt("deleteCount") + "瓶");
-                    mUpdateTime.setText(object1.getString("date"));
+                    mCabinetWinesNum.setText("总共:" + object1.getInt("all") + "支，放入:" + object1.getString("add") + "支，取出:" + object1.getInt("remove") + "支");
                 } catch (JSONException e) {
                     SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
                 }
@@ -137,7 +162,7 @@ public class SmartCabinetWinesActivity extends SmartCabinetActivity implements A
     @Override
     public void rfid(GizWifiDevice device, ArrayList<XRfidEntity> current, ArrayList<XRfidEntity> add, ArrayList<XRfidEntity> remove) {
         //酒柜内RFID发生变化
-        mCabinetWinesNum.setText("总共:" + (current.size() + add.size()) + "瓶，放入:" + add.size() + "瓶，取出:" + remove.size() + "瓶");
+        mCabinetWinesNum.setText("总共:" + (current.size() + add.size()) + "支，放入:" + add.size() + "支，取出:" + remove.size() + "支");
         //刷新酒款信息
         getGoodsList();
     }

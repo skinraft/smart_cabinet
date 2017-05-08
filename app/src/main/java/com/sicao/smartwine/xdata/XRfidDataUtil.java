@@ -39,7 +39,7 @@ public class XRfidDataUtil {
                     String rfid = str.substring(0, lenght * 2);
                     str = str.substring(lenght * 2, str.length());
                     XRfidEntity entity = new XRfidEntity();
-                    entity.setRfid(rfid);
+                    entity.setRfid(Long.parseLong(rfid, 16) + "");
                     entity.setTag("current");
                     entity.setDevice_name(device.getRemark());
                     current.add(entity);
@@ -50,7 +50,7 @@ public class XRfidDataUtil {
                     String rfid = str.substring(0, lenght * 2);
                     str = str.substring(lenght * 2, str.length());
                     XRfidEntity entity = new XRfidEntity();
-                    entity.setRfid(rfid);
+                    entity.setRfid(Long.parseLong(rfid, 16) + "");
                     entity.setTag("add");
                     entity.setDevice_name(device.getRemark());
                     add.add(entity);
@@ -61,7 +61,7 @@ public class XRfidDataUtil {
                     String rfid = str.substring(0, lenght * 2);
                     str = str.substring(lenght * 2, str.length());
                     XRfidEntity entity = new XRfidEntity();
-                    entity.setRfid(rfid);
+                    entity.setRfid(Long.parseLong(rfid, 16) + "");
                     entity.setTag("remove");
                     entity.setDevice_name(device.getRemark());
                     remove.add(entity);

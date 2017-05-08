@@ -17,6 +17,7 @@ import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.XSmartCabinetDeviceInfoActivity;
+import com.sicao.smartwine.xhttp.MD5;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XApiException;
 
@@ -160,7 +161,7 @@ public class XLoginActivity extends SmartCabinetActivity {
         xSicaoApi.login(this, username, password, new XApiCallBack() {
             @Override
             public void response(Object object) {
-                xCabinetApi.register("sicao-" + XUserData.getUID(XLoginActivity.this), XUserData.getPassword(XLoginActivity.this));
+                xCabinetApi.register("sicao-cabinet-" + XUserData.getUID(XLoginActivity.this), MD5.Encode("sicao-cabinet-" + XUserData.getUID(XLoginActivity.this)));
             }
         }, new XApiException() {
             @Override
@@ -194,7 +195,7 @@ public class XLoginActivity extends SmartCabinetActivity {
     public void registerSuccess() {
         super.registerSuccess();
         //执行登录动作
-        xCabinetApi.login("sicao-" + XUserData.getUID(XLoginActivity.this), mPassword.getText().toString().trim());
+        xCabinetApi.login("sicao-cabinet-" + XUserData.getUID(XLoginActivity.this), MD5.Encode("sicao-cabinet-" + XUserData.getUID(XLoginActivity.this)));
     }
 
     @Override

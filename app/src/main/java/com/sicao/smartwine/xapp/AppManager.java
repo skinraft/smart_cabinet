@@ -21,7 +21,9 @@ import android.text.TextUtils;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartSicaoApi;
+import com.sicao.smartwine.xdevice.SmartCabinetDeviceListActivity;
 import com.sicao.smartwine.xdevice.SmartCabinetRFIDActivity;
+import com.sicao.smartwine.xshop.XShopProductInfoActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -242,7 +244,7 @@ public class AppManager {
         return macSerial;
     }
 
-    public static void noti(Context context, String  title,String content, int notifyid) {
+    public static void noti(Context context, String title, String content, int notifyid) {
         // Instantiate a Builder object.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(title)
@@ -251,7 +253,7 @@ public class AppManager {
         builder.setDefaults(Notification.DEFAULT_SOUND);
 // Creates an Intent for the Activity
         Intent notifyIntent =
-                new Intent(context, SmartCabinetRFIDActivity.class);
+                new Intent(context, SmartCabinetDeviceListActivity.class);
 // Sets the Activity to start in a new, empty task
         notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -273,6 +275,40 @@ public class AppManager {
 // passes it to the NotificationManager
         mNotificationManager.notify(notifyid, builder.build());
     }
+
+    public static void notiToProduct(Context context, String title, String content, int notifyid, String product_id) {
+        // Instantiate a Builder object.
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setContentTitle(title)
+                .setContentText(content)
+                .setSmallIcon(R.mipmap.ic_launcher);
+        builder.setDefaults(Notification.DEFAULT_SOUND);
+// Creates an Intent for the Activity
+        Intent notifyIntent =
+                new Intent(context, XShopProductInfoActivity.class);
+        notifyIntent.putExtra("productID", product_id);
+// Sets the Activity to start in a new, empty task
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+// Creates the PendingIntent
+        PendingIntent notifyPendingIntent =
+                PendingIntent.getActivity(
+                        context,
+                        0,
+                        notifyIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+// Puts the PendingIntent into the notification builder
+        builder.setContentIntent(notifyPendingIntent);
+// Notifications are issued by sending them to the
+// NotificationManager system service.
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+// Builds an anonymous Notification object from the builder, and
+// passes it to the NotificationManager
+        mNotificationManager.notify(notifyid, builder.build());
+    }
+
 
     /***
      * 启动某一个应用

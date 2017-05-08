@@ -4,17 +4,18 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
+
     <RelativeLayout
-        android:id="@+id/rr_jiondetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:background="@color/write"
         >
+
         <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/iv_mycellarimage"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:id="@+id/picture"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
@@ -24,44 +25,55 @@
             fresco:placeholderImage="@mipmap/ic_launcher"/>
 
         <TextView
-            android:id="@+id/tv_mywinename"
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/iv_mycellarimage"
+            android:layout_alignBaseline="@id/picture"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/iv_mycellarimage"
+            android:layout_toRightOf="@id/picture"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="#3D3D3D"
             android:textSize="14sp"/>
 
-        <RelativeLayout
-            android:id="@+id/layout2"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/iv_mycellarimage"
-            android:layout_toRightOf="@id/iv_mycellarimage"
+            android:layout_alignBottom="@id/picture"
+            android:layout_toRightOf="@id/picture"
+            android:textColor="#3D3D3D"
+            android:textSize="12sp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
             >
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:textColor="#3D3D3D"
-                android:textSize="16sp"/>
+            <ImageView
+                android:id="@+id/tag"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_in"/>
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/tag_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="存入"
                 android:textColor="@color/actionBarColor"
                 android:textSize="12sp"/>
-        </RelativeLayout>
+        </LinearLayout>
+
     </RelativeLayout>
 
 </LinearLayout>

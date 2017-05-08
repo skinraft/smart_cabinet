@@ -15,6 +15,8 @@ import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.entity.XProductEntity;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 
+import java.util.ArrayList;
+
 /**
  * Created by techssd on 2017/1/12.
  */
@@ -101,63 +103,75 @@ public class XApiService extends Service {
     }
 
     public void notiQueue() {
-        synchronized (SmartCabinetApplication.notiQueue) {
-            SmartSicaoApi.log("消息通知队列信息-----" + SmartCabinetApplication.notiQueue.size());
-            if (SmartCabinetApplication.notiQueue.size() > 0) {
-                final XRfidEntity rfidEntity = SmartCabinetApplication.notiQueue.get(0);
-                xApiClient.getProductByRFID(XApiService.this, rfidEntity.getRfid(), new XApiCallBack() {
-                    @Override
-                    public void response(Object object) {
-                        //移除该消息
-                        XProductEntity entity = (XProductEntity) object;
-                        String content = "";
-                        if (rfidEntity.getTag().equals("add")) {
-                            content = "[放入]" + entity.getName();
-                        } else if (rfidEntity.getTag().equals("remove")) {
-                            content = "[取出]" + entity.getName();
-                        }
-                        String title = rfidEntity.getDevice_name().equals("") ? "智能酒柜" : rfidEntity.getDevice_name();
-                        AppManager.noti(XApiService.this, title, content, XRfidDataUtil.HexToInt(rfidEntity.getRfid()));
-                        SmartCabinetApplication.notiQueue.remove(rfidEntity);
-                    }
-                }, new XApiException() {
-                    @Override
-                    public void error(String error) {
-                        //酒款信息获取失败，执行第二次获取
-                        notiQueue(rfidEntity);
-                    }
-                });
+//            SmartSicaoApi.log("消息通知队列信息-----" + SmartCabinetApplication.notiQueue.size());
+        if (SmartCabinetApplication.notiQueue.size() > 0) {
+            final XRfidEntity rfidEntity = SmartCabinetApplication.notiQueue.get(0);
+            String code = XRfidDataUtil.HexToInt(rfidEntity.getRfid()) + "";
+            // 长度为10的标签的老标签,前4位数字为某一款酒的对照参数，(扩展标签以增加长度为准扩展程序)
+            if (code.length() == 10) {
+                code = code.substring(0, 4);
+            } else if (code.length() == 14) {
+                // 长度为14的标签的新标签,前9位数字为某一款酒的对照参数，(扩展标签以增加长度为准扩展程序)
+                code = code.substring(0, 9);
             }
+            xApiClient.getProductsByRFID(XApiService.this, code, new XApisCallBack() {
+                @Override
+                public <T> void response(ArrayList<T> list) {
+                    //移除该消息
+                    XProductEntity entity = (XProductEntity) list.get(0);
+                    String content = "";
+                    if (rfidEntity.getTag().equals("add")) {
+                        content = "[放入]" + entity.getName();
+                    } else if (rfidEntity.getTag().equals("remove")) {
+                        content = "[取出]" + entity.getName();
+                    }
+                    String title = rfidEntity.getDevice_name().equals("") ? "智能酒柜" : rfidEntity.getDevice_name();
+                    AppManager.notiToProduct(XApiService.this, title, content, XRfidDataUtil.HexToInt(rfidEntity.getRfid()), entity.getId());
+                    SmartCabinetApplication.notiQueue.remove(rfidEntity);
+                }
+
+            }, new XApiException() {
+                @Override
+                public void error(String error) {
+                    //酒款信息获取失败，执行第二次获取
+                    notiQueue(rfidEntity);
+                }
+            });
         }
     }
 
     public void notiQueue(final XRfidEntity rfidEntity) {
-        synchronized (SmartCabinetApplication.notiQueue) {
-            if (SmartCabinetApplication.notiQueue.size() > 0) {
-                xApiClient.getProductByRFID(XApiService.this, rfidEntity.getRfid(), new XApiCallBack() {
-                    @Override
-                    public void response(Object object) {
-                        //移除该消息
-                        XProductEntity entity = (XProductEntity) object;
-                        String content = "";
-                        if (rfidEntity.getTag().equals("add")) {
-                            content = "[放入]" + entity.getName();
-                        } else if (rfidEntity.getTag().equals("remove")) {
-                            content = "[取出]" + entity.getName();
-                        }
-                        String title = rfidEntity.getDevice_name().equals("") ? "智能酒柜" : rfidEntity.getDevice_name();
-                        AppManager.noti(XApiService.this, title, content, XRfidDataUtil.HexToInt(rfidEntity.getRfid()));
-                        SmartCabinetApplication.notiQueue.remove(rfidEntity);
-
-                    }
-                }, new XApiException() {
-                    @Override
-                    public void error(String error) {
-                        //第二次酒款信息获取失败，直接移除
-                        SmartCabinetApplication.notiQueue.remove(rfidEntity);
-                    }
-                });
+        if (SmartCabinetApplication.notiQueue.size() > 0) {
+            String code = XRfidDataUtil.HexToInt(rfidEntity.getRfid()) + "";
+            // 长度为10的标签的老标签,前4位数字为某一款酒的对照参数，(扩展标签以增加长度为准扩展程序)
+            if (code.length() == 10) {
+                code = code.substring(0, 4);
+            } else if (code.length() == 14) {
+                // 长度为14的标签的新标签,前9位数字为某一款酒的对照参数，(扩展标签以增加长度为准扩展程序)
+                code = code.substring(0, 9);
             }
+            xApiClient.getProductsByRFID(XApiService.this, code, new XApisCallBack() {
+                @Override
+                public <T> void response(ArrayList<T> list) {
+                    //移除该消息
+                    XProductEntity entity = (XProductEntity) list.get(0);
+                    String content = "";
+                    if (rfidEntity.getTag().equals("add")) {
+                        content = "[放入]" + entity.getName();
+                    } else if (rfidEntity.getTag().equals("remove")) {
+                        content = "[取出]" + entity.getName();
+                    }
+                    String title = rfidEntity.getDevice_name().equals("") ? "智能酒柜" : rfidEntity.getDevice_name();
+                    AppManager.notiToProduct(XApiService.this, title, content, XRfidDataUtil.HexToInt(rfidEntity.getRfid()), entity.getId());
+                    SmartCabinetApplication.notiQueue.remove(rfidEntity);
+                }
+            }, new XApiException() {
+                @Override
+                public void error(String error) {
+                    //第二次酒款信息获取失败，直接移除
+                    SmartCabinetApplication.notiQueue.remove(rfidEntity);
+                }
+            });
         }
     }
 

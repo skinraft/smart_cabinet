@@ -162,18 +162,4 @@ public class XUserData {
     public static String getDefaultAddressId(Context context) {
         return XShareps.getString(context, DEFAULT_ADDRESS_ID, DEFAULT_ADDRESS_ID);
     }
-
-    /**
-     * 默认酒柜上次盘点的数据
-     */
-    public static String DEFAULT_CABINET_SCAN_RFIDS = "DEFAULT_CABINET_SCAN_RFIDS";
-
-    public static void setDefaultCabinetScanRfids(Context context, String defaultCabinetScanRfids) {
-        XShareps.putString(context, DEFAULT_CABINET_SCAN_RFIDS, DEFAULT_CABINET_SCAN_RFIDS, defaultCabinetScanRfids);
-    }
-
-    public static String getDefaultCabinetScanRfids(Context context) {
-        return XShareps.getString(context, DEFAULT_CABINET_SCAN_RFIDS, DEFAULT_CABINET_SCAN_RFIDS);
-    }
-
 }

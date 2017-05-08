@@ -22,6 +22,7 @@ import com.sicao.smartwine.xdevice.entity.XWineEntity;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
 public class SmartCabinetWinesAdpter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
@@ -80,7 +81,7 @@ public class SmartCabinetWinesAdpter extends BaseAdapter {
             mView = (HoldView) convertView.getTag();
         }
         final XWineEntity wineEntity = mlist.get(position);
-        final XProductEntity entity=wineEntity.getProduct();
+        final XProductEntity entity = wineEntity.getProduct();
         if (null == mView.iv_mycellarimage.getTag()) {
             mView.iv_mycellarimage.setLayoutParams(params);
             mView.iv_mycellarimage.setTag(entity);
@@ -94,17 +95,26 @@ public class SmartCabinetWinesAdpter extends BaseAdapter {
                 mContext.getResources().getDrawable(
                         R.mipmap.ic_launcher),
                 ScalingUtils.ScaleType.FIT_CENTER);
-        if (null != entity.getIcon() && !entity.getIcon().equals("")) {
-            Uri uri = Uri.parse(entity.getIcon());
-            mView.iv_mycellarimage.setImageURI(uri);
-        } else {
+        if (!"-1".equals(entity.getId())) {
+            if (null != entity.getIcon() && !entity.getIcon().equals("")) {
+                Uri uri = Uri.parse(entity.getIcon());
+                mView.iv_mycellarimage.setImageURI(uri);
+            } else {
+                mView.iv_mycellarimage.getHierarchy()
+                        .setFailureImage(
+                                mContext.getResources().getDrawable(
+                                        R.mipmap.ic_launcher));
+            }
+            mView.price.setText("￥" + entity.getCurrent_price());
+        }else{
+            //未识别的酒款
             mView.iv_mycellarimage.getHierarchy()
                     .setFailureImage(
                             mContext.getResources().getDrawable(
                                     R.mipmap.ic_launcher));
+            mView.price.setText("");
         }
         mView.tv_mywinename.setText(entity.getName());
-        mView.price.setText("￥" + entity.getCurrent_price());
         return convertView;
     }
 

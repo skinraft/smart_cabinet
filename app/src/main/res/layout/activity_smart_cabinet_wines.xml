@@ -32,6 +32,7 @@
             android:layout_alignBottom="@id/smart_cabinet_wines_image1"
             android:layout_toRightOf="@id/smart_cabinet_wines_image1"
             android:text="刷新"
+            android:visibility="gone"
             android:textColor="@color/write"
             android:textSize="16sp"
             />

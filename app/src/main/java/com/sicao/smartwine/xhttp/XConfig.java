@@ -75,5 +75,14 @@ public class XConfig {
     /*
      *主动盘点酒柜
      */
-    public static int CABINET_OPEN_SCANNING=10024;
+    public static int CABINET_OPEN_SCANNING = 10024;
+    /*
+     *通知主屏拉取服务器盘点数据
+     */
+    public static int CABINET_GET_RFIDS_ALL_ADD_REMOVE_ACTION = 10025;
+    /*
+     *通知主屏拉取服务器统计数据
+     */
+    public static int CABINET_GET_STATISTICS_ALL_ADD_REMOVE_ACTION = 10026;
+
 }

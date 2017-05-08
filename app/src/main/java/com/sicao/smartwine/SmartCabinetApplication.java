@@ -13,6 +13,7 @@ import com.gizwits.gizwifisdk.enumration.GizEventType;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
+import com.tendcloud.tenddata.TCAgent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +52,12 @@ public class SmartCabinetApplication extends Application {
         mManager.getDefaultDisplay().getMetrics(metrics);
         //初始化图片处理器
         Fresco.initialize(this);
+        //talkingData部分
+        TCAgent.LOG_ON = true;
+        TCAgent.init(this);
+        TCAgent.setReportUncaughtExceptions(true);
+        //talkingData用户质量评估
+        TCAgent.setAntiCheatingEnabled(this,true);
     }
 
 

@@ -55,7 +55,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SSID = (TextView) findViewById(R.id.editText1);
-        WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifi = (WifiManager) getApplication().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifi.getConnectionInfo();
         if (null != wifiInfo) {
             SSID.setText(wifiInfo.getSSID());
@@ -127,7 +127,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                         ///
                         if (!TextUtils.isEmpty(SSID.getText().toString().trim()) &&
                                 !TextUtils.isEmpty(password.getText().toString().trim())) {
-                            wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                            wifi = (WifiManager) getApplication().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                             WifiInfo wifiInfo = wifi.getConnectionInfo();
                             if (null == wifiInfo) {
                                 Toast("请正确配置当前WIFI信息");

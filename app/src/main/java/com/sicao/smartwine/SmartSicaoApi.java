@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.entity.XProductEntity;
+import com.sicao.smartwine.xdevice.entity.XProductHistoryEntity;
 import com.sicao.smartwine.xdevice.entity.XWineEntity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
 import com.sicao.smartwine.xhttp.XApiException;
@@ -21,9 +22,11 @@ import com.sicao.smartwine.xuser.address.XAddressEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xclcharts.chart.PointD;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 非硬件部分API
@@ -74,7 +77,7 @@ public class SmartSicaoApi implements XApiException {
     public String configParamsUrl(String api, Context context) {
         return URL + api + "?user_token=" + XUserData.getToken(context)
                 + "&uid=" + XUserData.getUID(context) + "&api_version="
-                + XConfig.API_VERSION  ;
+                + XConfig.API_VERSION;
     }
 
     /***
@@ -504,34 +507,34 @@ public class SmartSicaoApi implements XApiException {
      * @param callback  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public void getGoodsByMac(Context context, String mac,final XApisCallBack callback, final XApiException exception) {
-        String url = configParamsUrl("Device/newWineLists", context)+"&mac="+mac;
+    public void getGoodsByMac(Context context, String mac, final XApisCallBack callback, final XApiException exception) {
+        String url = "http://t.putaoji.cn:8080/cabinet/get_product_by_mac?mac=" + mac;
         log(url);
         XHttpUtil httpUtil = new XHttpUtil(context);
-        httpUtil.get(url,new XCallBack() {
+        httpUtil.get(url, new XCallBack() {
             @Override
             public void success(String response) {
                 log(response);
                 try {
                     JSONObject object = new JSONObject(response);
                     if (status(object)) {
-                        JSONArray array = object.getJSONObject("data").getJSONArray("products");
+                        JSONArray array = object.getJSONArray("data");
                         ArrayList<XWineEntity> mList = new ArrayList<>();
                         for (int i = 0; i < array.length(); i++) {
-                            JSONObject wine=array.getJSONObject(i);
-                            XWineEntity wineEntity=new XWineEntity();
-                            XProductEntity xProductEntity=new XProductEntity();
+                            JSONObject wine = array.getJSONObject(i);
+                            XWineEntity wineEntity = new XWineEntity();
+                            XProductEntity xProductEntity = new XProductEntity();
                             xProductEntity.setName(wine.getString("name"));
-                            xProductEntity.setCurrent_price(wine.getString("current_price"));
+                            xProductEntity.setCurrent_price(wine.getString("price"));
                             xProductEntity.setIcon(wine.getString("icon"));
                             xProductEntity.setId(wine.getString("id"));
                             wineEntity.setProduct(xProductEntity);
-                            wineEntity.setRfidnum(wine.getString("num"));
+                            wineEntity.setRfidnum(wine.getString("count"));
                             mList.add(wineEntity);
                         }
                         if (null != callback) callback.response(mList);
                     } else {
-                        log(object.getString("message"));
+                        log(object.getString("msg"));
                     }
                 } catch (JSONException e) {
                 }
@@ -553,7 +556,7 @@ public class SmartSicaoApi implements XApiException {
      * @param callBack
      */
     public void getServerCabinetRfidsByMAC(Context context, String mac, final XApiCallBack callBack, final XApiException exception) {
-        String url = configParamsUrl("Device/tagLog", context) + "&mac=" + mac+"&page=1&row=1";
+        String url = "http://t.putaoji.cn:8080/cabinet/getrfids?mac=" + mac;
         log(url);
         XHttpUtil xHttpUtil = new XHttpUtil(context);
         xHttpUtil.get(url, new XCallBack() {
@@ -562,10 +565,11 @@ public class SmartSicaoApi implements XApiException {
                 try {
                     JSONObject object = new JSONObject(response);
                     if (status(object)) {
-                        //"{"newCount":8,"deleteCount":8,"num":"21","date":"2017-03-17 09:38:06","time":"1489714686"}
-                        if (null != callBack) callBack.response(object.getJSONObject("data").getJSONArray("tagLogs").getJSONObject(0));
+                        if (null != callBack) callBack.response(object.getJSONObject("data"));
                     } else {
-                        log(object.getString("message"));
+                        log(object.getString("msg"));
+                        if (null != exception)
+                            exception.error(response);
                     }
                 } catch (JSONException e) {
                 }
@@ -598,7 +602,7 @@ public class SmartSicaoApi implements XApiException {
                     JSONObject object = new JSONObject(response);
                     if (status(object)) {
 
-                        XProductEntity entity=new Gson().fromJson(object.getJSONObject("data").getJSONObject("product").toString(),XProductEntity.class);
+                        XProductEntity entity = new Gson().fromJson(object.getJSONObject("data").getJSONObject("product").toString(), XProductEntity.class);
                         if (null != callBack) callBack.response(entity);
                     } else {
                         log(object.getString("message"));
@@ -606,6 +610,7 @@ public class SmartSicaoApi implements XApiException {
                 } catch (JSONException e) {
                 }
             }
+
             @Override
             public void fail(String response) {
                 error(response);
@@ -614,6 +619,7 @@ public class SmartSicaoApi implements XApiException {
             }
         });
     }
+
     /***
      * 获取商品详情
      * @param context
@@ -621,8 +627,8 @@ public class SmartSicaoApi implements XApiException {
      * @param callBack
      * @param exception
      */
-    public void getProductByRFID(Context context, String rfid, final XApiCallBack callBack, final XApiException exception) {
-        String url = configParamsUrl("Device/getByTag", context) + "&tag=" + rfid;
+    public void getProductsByRFID(Context context, String rfid, final XApisCallBack callBack, final XApiException exception) {
+        String url = "http://t.putaoji.cn:8080/cabinet/get_product_by_code?mac=" + rfid;
         log(url);
         XHttpUtil xHttpUtil = new XHttpUtil(context);
         xHttpUtil.get(url, new XCallBack() {
@@ -631,14 +637,158 @@ public class SmartSicaoApi implements XApiException {
                 try {
                     JSONObject object = new JSONObject(response);
                     if (status(object)) {
-                        XProductEntity entity=new Gson().fromJson(object.getJSONObject("data").getJSONObject("product").toString(),XProductEntity.class);
-                        if (null != callBack) callBack.response(entity);
+                        JSONArray array = object.getJSONArray("data");
+                        ArrayList<XProductEntity> l = new ArrayList<XProductEntity>();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject wine = array.getJSONObject(i);
+                            XProductEntity xProductEntity = new XProductEntity();
+                            xProductEntity.setName(wine.getString("name"));
+                            xProductEntity.setCurrent_price(wine.getString("price"));
+                            xProductEntity.setIcon(wine.getString("icon"));
+                            xProductEntity.setId(wine.getString("id"));
+                            l.add(xProductEntity);
+                        }
+                        if (null != callBack) callBack.response(l);
                     } else {
                         log(object.getString("message"));
                     }
                 } catch (JSONException e) {
                 }
             }
+
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+
+    /***
+     * 每月每天的数据统计
+     * @param context
+     * @param mac
+     * @param callback
+     * @param exception
+     */
+    public void getstatistics(Context context, String mac, final XApisCallBack callback, final XApiException exception) {
+        String url = "http://t.putaoji.cn:8080/cabinet/getstatistics?mac=" + mac;
+        log(url);
+        XHttpUtil httpUtil = new XHttpUtil(context);
+        httpUtil.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                log(response);
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        JSONArray array = object.getJSONArray("data");
+                        ArrayList<PointD> linePoint1 = new ArrayList<PointD>();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject wine = array.getJSONObject(i);
+                            linePoint1.add(new PointD(Integer.parseInt(wine.getString("date").substring(8, 10)), wine.getInt("count")));
+                        }
+                        if (null != callback) callback.response(linePoint1);
+                    } else {
+                        log(object.getString("msg"));
+                    }
+                } catch (JSONException e) {
+                }
+            }
+
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+
+    /***
+     * 获取当天柜子的历史记录
+     * @param context
+     * @param mac
+     * @param callback
+     * @param exception
+     */
+    public void getCurHistoryByMac(Context context, String mac, final XApisCallBack callback, final XApiException exception) {
+        String url = "http://t.putaoji.cn:8080/cabinet/get_history_by_mac?type=1&page=1&mac=" + mac;
+        log(url);
+        XHttpUtil httpUtil = new XHttpUtil(context);
+        httpUtil.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                log(response);
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        JSONArray array = object.getJSONArray("data");
+                        ArrayList<XProductHistoryEntity> list = new ArrayList<>();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject wine = array.getJSONObject(i);
+                            XProductHistoryEntity e = new Gson().fromJson(wine.toString(), XProductHistoryEntity.class);
+                            list.add(e);
+                        }
+                        if (null != callback) callback.response(list);
+                    } else {
+                        log(object.getString("msg"));
+                        if (null != exception)
+                            exception.error(response);
+                    }
+                } catch (JSONException e) {
+                    if (null != exception)
+                        exception.error(response);
+                }
+            }
+
+            @Override
+            public void fail(String response) {
+                error(response);
+                if (null != exception)
+                    exception.error(response);
+            }
+        });
+    }
+
+    /***
+     * 获取柜子的历史记录
+     * @param context
+     * @param mac
+     * @param callback
+     * @param exception
+     */
+    public void getHistoryByMac(Context context, String mac, String page, final XApisCallBack callback, final XApiException exception) {
+        String url = "http://t.putaoji.cn:8080/cabinet/get_history_by_mac?type=2&page=" + page + "&mac=" + mac;
+        log(url);
+        XHttpUtil httpUtil = new XHttpUtil(context);
+        httpUtil.get(url, new XCallBack() {
+            @Override
+            public void success(String response) {
+                log(response);
+                try {
+                    JSONObject object = new JSONObject(response);
+                    if (status(object)) {
+                        JSONArray array = object.getJSONArray("data");
+                        ArrayList<XProductHistoryEntity> list = new ArrayList<>();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject wine = array.getJSONObject(i);
+                            XProductHistoryEntity e = new Gson().fromJson(wine.toString(), XProductHistoryEntity.class);
+                            list.add(e);
+                        }
+                        if (null != callback) callback.response(list);
+                    } else {
+                        log(object.getString("msg"));
+                        if (null != exception)
+                            exception.error(response);
+                    }
+                } catch (JSONException e) {
+                    if (null != exception)
+                        exception.error(response);
+                }
+            }
+
             @Override
             public void fail(String response) {
                 error(response);

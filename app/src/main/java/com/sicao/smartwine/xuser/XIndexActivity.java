@@ -21,6 +21,7 @@ import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XUserData;
 import com.sicao.smartwine.xdevice.XSmartCabinetDeviceInfoActivity;
+import com.sicao.smartwine.xhttp.MD5;
 import com.sicao.smartwine.xhttp.XApiService;
 import com.sicao.smartwine.xhttp.XConfig;
 
@@ -57,7 +58,7 @@ public class XIndexActivity extends Activity {
                 if (!"".equals(XUserData.getPassword(XIndexActivity.this))) {
                     if (!"".equals(XUserData.getUserName(XIndexActivity.this))) {
                         //执行登录
-                        xCabinetApi.login("sicao-" + XUserData.getUID(XIndexActivity.this), XUserData.getPassword(XIndexActivity.this));
+                        xCabinetApi.login("sicao-cabinet-" + XUserData.getUID(XIndexActivity.this), MD5.Encode("sicao-cabinet-" + XUserData.getUID(XIndexActivity.this)));
                     }
                 } else {
                     startActivity(new Intent(XIndexActivity.this, XLoginActivity.class));

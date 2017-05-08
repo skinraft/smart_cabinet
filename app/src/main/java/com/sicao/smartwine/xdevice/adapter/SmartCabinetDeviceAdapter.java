@@ -67,9 +67,9 @@ public class SmartCabinetDeviceAdapter extends BaseAdapter {
         final GizWifiDevice device = mList.get(position);
         holder.name.setText("设备名称：" + (!"".equals(device.getRemark()) ? device.getRemark() : device.getProductName()) + "[" + (device.isBind() ? "已绑定" : "未绑定") + "]");
         if (XUserData.getCurrentCabinetId(mContext).equals(device.getDid())) {
-            holder.tv_equipment.setText("[当前]");
+            holder.tv_equipment.setText("[当前:"+device.getMacAddress()+"]");
         } else {
-            holder.tv_equipment.setText("[其他]");
+            holder.tv_equipment.setText("[其他:"+device.getMacAddress()+"]");
         }
         if (device.isOnline()) {
             if (XConfig.DEBUG) {

@@ -139,6 +139,7 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
         for (GizWifiDevice device : deviceList) {
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
                 mCenterTitle.setText(!"".equals(device.getRemark()) ? device.getRemark() : device.getProductName());
+
                 if (device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceControlled) {
                     mRingView.startAnim();
                     device.setListener(mBindListener);
@@ -209,27 +210,6 @@ public class SmartCabinetDeviceInfoActivity extends SmartCabinetActivity impleme
             case R.id.setting://设置
                 startActivity(new Intent(SmartCabinetDeviceInfoActivity.this, XSettingActivity.class));
                 break;
-//            case R.id.base_top_right_icon://
-//                final XWarnDialog dialog = new XWarnDialog(this);
-//                dialog.setTitle("退出登录");
-//                dialog.setContent("您将要退出该帐号的登录,\n 注意:下次启用需要重新登录!");
-//                dialog.show();
-//                dialog.setOnListener(new XWarnDialog.OnClickListener() {
-//                    @Override
-//                    public void makeSure() {
-//                        dialog.dismiss();
-//                        mHintText.setVisibility(View.VISIBLE);
-//                        mHintText.setText("正在退出...");
-//                        showProgress(true);
-//                        handler.sendEmptyMessageDelayed(10094, 2000);
-//                    }
-//
-//                    @Override
-//                    public void cancle() {
-//                        dialog.dismiss();
-//                    }
-//                });
-//                break;
             case R.id.my_wines://酒柜内的酒款
                 //测试使用
                 if (null != mDevice) {

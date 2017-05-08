@@ -5,9 +5,13 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,16 +24,20 @@ import com.sicao.smartwine.SmartCabinetActivity;
 import com.sicao.smartwine.SmartCabinetApplication;
 import com.sicao.smartwine.SmartSicaoApi;
 import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xdevice.adapter.SmartCabinetWinesHistoryAdpter;
+import com.sicao.smartwine.xdevice.entity.XProductHistoryEntity;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
 import com.sicao.smartwine.xhttp.XApiCallBack;
+import com.sicao.smartwine.xhttp.XApiException;
+import com.sicao.smartwine.xhttp.XApisCallBack;
 import com.sicao.smartwine.xhttp.XConfig;
-import com.sicao.smartwine.xshop.XShopProductInfoActivity;
 import com.sicao.smartwine.xuser.XSettingActivity;
 import com.sicao.smartwine.xwidget.device.SmartCabinetToolBar;
 import com.sicao.smartwine.xwidget.device.xchart.SplineChart03View;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xclcharts.chart.PointD;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +52,7 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
     TextView mRealTemp;
     //工作模式
     TextView mWorkModel;
-    //酒柜内有多少瓶酒
+    //酒柜内有多少支酒
     TextView mBodys;
     //设备是否在线
     TextView mOnLine;
@@ -66,6 +74,12 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
     SmartCabinetToolBar smartCabinetToolBar;
     //折叠时显示的温度
     TextView mRealTemp2;
+    //历史记录
+    ListView list_view;
+    //历史记录的适配器
+    SmartCabinetWinesHistoryAdpter smartCabinetWinesHistoryAdpter;
+    //历史记录的数据
+    ArrayList<XProductHistoryEntity> historyEntities = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +111,30 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         mRealTemp2 = (TextView) findViewById(R.id.textView15);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
         coordinatorLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        list_view = (ListView) findViewById(R.id.list_view);
+        smartCabinetWinesHistoryAdpter = new SmartCabinetWinesHistoryAdpter(this, historyEntities);
+        list_view.setAdapter(smartCabinetWinesHistoryAdpter);
+        list_view.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if (list_view != null && list_view.getChildCount() > 0) {
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = list_view.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = list_view.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                }
+                swipeRefreshLayout.setEnabled(enable);
+            }
+        });
     }
 
     @Override
@@ -140,8 +178,8 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         Message msg = handler.obtainMessage();
         msg.what = XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER;
         msg.arg1 = (current.size() + add.size());
-        msg.arg2=remove.size();
-        msg.obj=add.size();
+        msg.arg2 = remove.size();
+        msg.obj = add.size();
         handler.sendMessageDelayed(msg, 1000);
         progressBar.setVisibility(View.GONE);
     }
@@ -156,19 +194,6 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                     device.setSubscribe(true);
                     xCabinetApi.getDeviceStatus(device);
                     GizWifiSDK.sharedInstance().getDevicesToSetServerInfo();
-                    //从服务器获取标签信息
-                    xSicaoApi.getServerCabinetRfidsByMAC(this, device.getMacAddress(), new XApiCallBack() {
-                        @Override
-                        public void response(Object object) {
-                            try{
-                                //设置相关酒款
-                                JSONObject object1= (JSONObject) object;
-                                mBodys.setText("总共:" + object1.getString("num") +"瓶，放入:"+object1.getString("newCount")+ "瓶，取出:"+object1.getInt("deleteCount")+"瓶");
-                            }catch (JSONException e){
-                                SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
-                            }
-                        }
-                    }, null);
                 } else {
                     Toast("目标设备处于不可监控状态");
                 }
@@ -181,6 +206,7 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         mDevice = device;
         try {
             if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
+                //
                 SmartSicaoApi.log("current device is " + device.toString() + "\n" + object.toString());
                 //更新设备信息
                 isLight = object.getBoolean("light");
@@ -199,7 +225,11 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
                     progressBar.setVisibility(View.VISIBLE);
                 } else {
                     progressBar.setVisibility(View.GONE);
+                    //通知从服务器拉取rfid数据
+                    handler.sendEmptyMessageAtTime(XConfig.CABINET_GET_RFIDS_ALL_ADD_REMOVE_ACTION, 2000);
                 }
+                //通知从服务器拉取统计数据
+                handler.sendEmptyMessageAtTime(XConfig.CABINET_GET_STATISTICS_ALL_ADD_REMOVE_ACTION, 2000);
             }
         } catch (JSONException e) {
             Toast("数据异常,请检查!");
@@ -242,6 +272,14 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         }
     }
 
+    public void openHistory(View view) {
+        if (null != mDevice) {
+            startActivity(new Intent(this, SmartCabinetHistoryActivity.class).putExtra("mac", mDevice.getMacAddress()));
+        } else {
+            Toast("请选择某一设备后重试!");
+        }
+    }
+
     @Override
     public void setCustomInfoSuccess(GizWifiDevice device) {
         super.setCustomInfoSuccess(device);
@@ -271,11 +309,51 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
             mOnLine.setText("离线");
         } else if (what == XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER) {
             //msg.arg1 = (current.size() + add.size());
-            mBodys.setText("总共:" + msg.arg1 +"瓶，放入:"+msg.obj+ "瓶，取出:"+msg.arg2+ "瓶");
+            mBodys.setText("总共:" + msg.arg1 + "支，放入:" + msg.obj + "支，取出:" + msg.arg2 + "支");
         } else if (what == XConfig.CABINET_HAS_EXCEPTION) {
             //设备异常状态
 
+        } else if (what == XConfig.CABINET_GET_RFIDS_ALL_ADD_REMOVE_ACTION) {
+            //
+            notifyRfid();
+        } else if (what == XConfig.CABINET_GET_STATISTICS_ALL_ADD_REMOVE_ACTION) {
+            notifyStatistics();
         }
+    }
+
+    public void notifyRfid() {
+        //从服务器获取标签信息
+        xSicaoApi.getServerCabinetRfidsByMAC(this, mDevice.getMacAddress(), new XApiCallBack() {
+            @Override
+            public void response(Object object) {
+                try {
+                    //设置相关酒款
+                    JSONObject object1 = (JSONObject) object;
+                    mBodys.setText("总共:" + object1.getInt("all") + "支，放入:" + object1.getString("add") + "支，取出:" + object1.getInt("remove") + "支");
+                } catch (JSONException e) {
+                    SmartSicaoApi.log(XSmartCabinetDeviceInfoActivity.class.getSimpleName() + "--获取盘点数据--" + e.getMessage());
+                }
+            }
+        }, new XApiException() {
+            @Override
+            public void error(String error) {
+                mBodys.setText("总共:" + 0 + "支，放入:" + 0 + "支，取出:" + 0 + "支");
+            }
+        });
+    }
+
+    public void notifyStatistics() {
+        //从服务器获取当月统计信息
+        xSicaoApi.getstatistics(this, mDevice.getMacAddress(), new XApisCallBack() {
+            @Override
+            public <T> void response(ArrayList<T> list) {
+                ArrayList<PointD> linePoint1 = (ArrayList<PointD>) list;
+                splineChart03View.chartDataSet(linePoint1);
+                splineChart03View.invalidate();
+            }
+        }, null);
+        //历史记录
+        getHistory(mDevice.getMacAddress());
     }
 
     @Override
@@ -328,5 +406,25 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
         EXPANDED,
         COLLAPSED,
         IDLE
+    }
+
+    /***
+     * 获取该设备的历史记录
+     * @param mac
+     */
+    public void getHistory(String mac) {
+        xSicaoApi.getCurHistoryByMac(this, mac, new XApisCallBack() {
+            @Override
+            public <T> void response(ArrayList<T> list) {
+                historyEntities = (ArrayList<XProductHistoryEntity>) list;
+                smartCabinetWinesHistoryAdpter.upDataAdapter(historyEntities);
+            }
+        }, new XApiException() {
+            @Override
+            public void error(String error) {
+                historyEntities.clear();
+                smartCabinetWinesHistoryAdpter.upDataAdapter(historyEntities);
+            }
+        });
     }
 }

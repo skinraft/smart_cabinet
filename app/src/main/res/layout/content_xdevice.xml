@@ -249,7 +249,9 @@
             android:id="@+id/history_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/write">
+            android:background="@color/write"
+            android:clickable="true"
+            android:onClick="openHistory">
 
             <ImageView
                 android:id="@+id/iv_sever2"
@@ -268,6 +270,16 @@
                 android:textSize="15sp"/>
         </RelativeLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#f2f2f2"/>
+
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ></ListView>
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

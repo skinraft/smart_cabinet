@@ -67,6 +67,14 @@ public class XWarnDialog extends Dialog implements OnClickListener {
         }
     }
 
+    public void setMakeSure(String makeSure){
+        mMakeSure.setText(makeSure);
+    }
+
+    public void setmColse(String close) {
+        mColse.setText(close);
+    }
+
     public void setTitle(String title) {
         if (!"".equals(title) && null != title) {
             mTitle.setText(title);

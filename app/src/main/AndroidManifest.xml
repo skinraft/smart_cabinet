@@ -29,7 +29,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <!-- 开机启动 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- 发送持久广播 -->
+    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+    <!-- 修改全局系统设置 -->
+    <!-- 如果需要唤醒屏幕，需要添加此权限 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <application
         android:name=".SmartCabinetApplication"
         android:allowBackup="true"
@@ -52,6 +59,20 @@
         <!-- 更新校验码的服务 -->
         <service android:name=".xhttp.XApiService"/>
 
+        <service
+            android:name="com.talkingdata.sdk.TDAntiCheatingService">
+            <!--用户质量评估Service可以配置在主进程或者单独进程-->
+            <intent-filter>
+                <action android:name="com.talkingdata.sdk.TDAntiCheatingService"/>
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="TD_APP_ID"
+            android:value="FA536065967F4FCBA0D7A80821B957D5"/>
+        <meta-data
+            android:name="TD_CHANNEL_ID"
+            android:value="YYB"/>
         <!-- 注册页面 -->
         <!-- 主页面 -->
         <activity
@@ -180,8 +201,7 @@
             android:name=".xdevice.SmartCabinetWinesActivity"
             android:configChanges="orientation|keyboard"
             android:exported="false"
-            android:screenOrientation="portrait"
-           >
+            android:screenOrientation="portrait">
         </activity>
         <!-- web页面 -->
         <activity
@@ -252,6 +272,8 @@
             android:configChanges="orientation|keyboard"
             android:exported="false"
             android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".xdevice.SmartCabinetHistoryActivity">
         </activity>
     </application>
 

@@ -37,11 +37,17 @@ import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.sicao.smartwine.xapp.AppManager;
 import com.sicao.smartwine.xdata.XRfidDataUtil;
 import com.sicao.smartwine.xdata.XUserData;
+import com.sicao.smartwine.xdevice.SmartCabinetDeviceListActivity;
+import com.sicao.smartwine.xdevice.SmartCabinetHistoryActivity;
 import com.sicao.smartwine.xdevice.entity.XRfidEntity;
+import com.sicao.smartwine.xhttp.MD5;
 import com.sicao.smartwine.xhttp.XConfig;
 import com.sicao.smartwine.xhttp.XSmartCabinetListener;
 import com.sicao.smartwine.xhttp.XSmartCabinetReceiver;
+import com.sicao.smartwine.xuser.XLoginActivity;
+import com.sicao.smartwine.xwidget.dialog.XWarnDialog;
 import com.sicao.smartwine.xwidget.refresh.SwipeRefreshLayout;
+import com.tendcloud.tenddata.TCAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -121,6 +127,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
      */
     protected abstract int setView();
 
+    protected XWarnDialog dialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +172,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             mContent2.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
             mContent.addView(View.inflate(this, setView(), null));
         }
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -191,7 +199,10 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
         //时间广播
         filter.addAction(Intent.ACTION_TIME_TICK);
         registerReceiver(xUpdateSmartCabinetReceiver, filter);
-
+        //
+        dialog = new XWarnDialog(this);
+        dialog.setMakeSure("查看详情");
+        dialog.setmColse("关闭");
     }
 
     @Override
@@ -250,6 +261,20 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
      * 权限请求OK
      */
     public void requestPermissionSuccess(int requestCode) {
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //talkingData页面统计
+        TCAgent.onPageStart(this, getClass().getSimpleName());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //talkingData页面统计
+        TCAgent.onPageEnd(this, getClass().getSimpleName());
     }
 
     /***
@@ -374,6 +399,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                         if (binary.length > 0) {
                             // 解析RFID数据
                             String content = XRfidDataUtil.bytesToHexString(binary);
+                            SmartSicaoApi.log("透传数据-----" + content);
                             if (content.equals("01010101010101010101")) {
                                 rfidstart();
                             } else if (content.equals("02020202020202020202")) {
@@ -384,9 +410,36 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                                 rfidbreak();
                                 map.clear();
                             } else {
-                                map.putAll(XRfidDataUtil.parser(device, map, content));
+                                String s0_4 = content.substring(0, 4);
+                                String s0_2 = content.substring(0, 2);
+                                String s2_4 = content.substring(2, 4);
+                                if (s0_4.equals("0201") || s0_4.equals("0101") || s0_4.equals("0202")) {
+                                    String str = content.substring(4, content.length());
+                                    if (str.equals("03030303030303030303")) {
+                                        //酒柜内是空的
+                                        map.clear();
+                                        rfid(device, map);
+                                    } else if (str.equals("04040404040404040404")) {
+                                        //中断
+                                        map.clear();
+                                        rfidbreak();
+                                    } else {
+                                        if (XRfidDataUtil.HexToInt(s0_2) > XRfidDataUtil.HexToInt(s2_4)) {
+                                            //不是末尾的数据
+                                            SmartSicaoApi.log("数据-----" + str);
+                                            map.putAll(XRfidDataUtil.parser(device, map, str));
+                                        } else if (XRfidDataUtil.HexToInt(s0_2) == XRfidDataUtil.HexToInt(s2_4)) {
+                                            //末尾数据
+                                            SmartSicaoApi.log("尾数据-----" + str);
+                                            map.putAll(XRfidDataUtil.parser(device, map, str));
+                                            rfid(device, map);
+                                            map.clear();
+                                        }
+                                    }
+                                } else {
+                                    map.putAll(XRfidDataUtil.parser(device, map, content));
+                                }
                             }
-                            SmartSicaoApi.log("透传数据-----" + content);
                         } else {
                             SmartSicaoApi.log("透传数据为空");
                         }
@@ -421,44 +474,50 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     HashMap<String, ArrayList<XRfidEntity>> map = new HashMap<>();
 
     //rfid读取完毕后回调更新部分
-    public void rfid(GizWifiDevice device, HashMap<String, ArrayList<XRfidEntity>> map) {
+    public void rfid(final GizWifiDevice device, HashMap<String, ArrayList<XRfidEntity>> map) {
         ArrayList<XRfidEntity> current = new ArrayList<>();
         ArrayList<XRfidEntity> add = new ArrayList<>();
         ArrayList<XRfidEntity> remove = new ArrayList<>();
+        SmartSicaoApi.log("current---" + current.size() + ";add---" + add.size() + ";remove---" + remove.size());
         if (map.containsKey("add")) {
             //增加的标签
             add = map.get("add");
-            if (add.size() > 0) //通知栏通知
-                synchronized (SmartCabinetApplication.notiQueue) {
-                    SmartCabinetApplication.notiQueue.addAll(add);
-
-                }
         }
         if (map.containsKey("remove")) {
             //减少的标签
             remove = map.get("remove");
-            if (remove.size() > 0) //通知栏通知
-                synchronized (SmartCabinetApplication.notiQueue) {
-                    SmartCabinetApplication.notiQueue.addAll(remove);
-
-                }
         }
         if (map.containsKey("current")) {
             //当前的标签
             current = map.get("current");
         }
         rfid(device, current, add, remove);
-        try {
-            //保存缓存
-            JSONObject object = new JSONObject();
-            object.put("mac", device.getMacAddress());
-            object.put("add", add.size());
-            object.put("current", current.size());
-            object.put("remove", remove.size());
-            XUserData.setDefaultCabinetScanRfids(this, object.toString());
-        } catch (JSONException e) {
-            SmartSicaoApi.log("盘点缓存数据异常---" + e.getMessage());
+        //通知用户
+        dialog.setTitle("酒款变化");
+        String content = "";
+        if (add.size() > 0) {
+            content = "新增了" + add.size() + "支酒";
         }
+        if (remove.size() > 0) {
+            content = content + " 取出了" + remove.size() + "支酒";
+        }
+        if (add.size() > 0 || remove.size() > 0) {
+            dialog.setContent(content);
+            if (!dialog.isShowing()) {
+                dialog.show();
+            }
+        }
+        dialog.setOnListener(new XWarnDialog.OnClickListener() {
+            @Override
+            public void makeSure() {
+                dialog.dismiss();
+                startActivity(new Intent(SmartCabinetActivity.this, SmartCabinetHistoryActivity.class).putExtra("mac", device.getMacAddress()));
+            }
+            @Override
+            public void cancle() {
+                dialog.dismiss();
+            }
+        });
     }
 
     //rfid读取完毕后回调更新部分
@@ -528,7 +587,6 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 // 设备连接断开时可能产生的通知
                 GizWifiDevice mDevice = (GizWifiDevice) eventSource;
                 SmartSicaoApi.log("device mac: " + mDevice.getMacAddress() + " disconnect caused by eventID: " + eventID + ", eventMessage: " + eventMessage);
-                AppManager.noti(SmartCabinetActivity.this, mDevice.getRemark()==null?"智能酒柜":mDevice.getRemark(), "您的设备已经离线，请检查该设备网络异常", 103);
             } else if (eventType == GizEventType.GizEventM2MService) {
                 // M2M服务返回的异常通知
                 SmartSicaoApi.log("M2M domain " + eventSource + " exception happened, eventID: " + eventID + ", eventMessage: " + eventMessage);
@@ -537,7 +595,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 SmartSicaoApi.log("token " + eventSource + " expired: " + eventMessage);
                 //需要重新登录
                 if (!"".equals(XUserData.getCabinetUid(SmartCabinetActivity.this))) {
-                    xCabinetApi.login("sicao-" + XUserData.getUID(SmartCabinetActivity.this), XUserData.getPassword(SmartCabinetActivity.this));
+                    xCabinetApi.login("sicao-cabinet-" + XUserData.getUID(SmartCabinetActivity.this), MD5.Encode("sicao-cabinet-" + XUserData.getUID(SmartCabinetActivity.this)));
                     return;
                 }
             }
