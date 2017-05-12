@@ -224,7 +224,7 @@ public class SmartCabinetConfigActivity extends SmartCabinetActivity implements 
                     }, 2000);
                     break;
                 case BIND_ERROR:
-                    mHintText.setText("绑定设备失败," + msg.obj);
+                    mHintText.setText("绑定设备失败,请联系设备主帐号已获取绑定权限!" );
                     Toast((String) msg.obj);
                     handler.postDelayed(new Runnable() {
                         @Override

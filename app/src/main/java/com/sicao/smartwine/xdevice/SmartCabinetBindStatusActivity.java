@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.SmartCabinetActivity;
 
@@ -37,23 +38,23 @@ public class SmartCabinetBindStatusActivity extends SmartCabinetActivity {
         if (status.equals("1")) {
             tv_status.setText("绑定成功");
             tv_complete.setText("完成");
-            tv_status_prompt.setText("现在您可以使用手机控制您的设备");
+            tv_status_prompt.setText("现在您可以使用手机控制您的设备！");
             tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_success));
         } else if (status.equals("2")) {
-            tv_status.setText("连接失败");
+            tv_status.setText("绑定失败");
             tv_complete.setText("确认");
-            tv_status_prompt.setText("请检查设备是否运行正常，指示灯是否指示待配置状态");
-            tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_success));
+            tv_status_prompt.setText("请检查设备是否运行正常。若设备运行正常，请联系设备管理员并确认是否已获取绑定权限。");
+            tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_fail));
         } else if (status.equals("3")) {
             tv_status.setText("解绑成功");
             tv_complete.setText("确认");
-            tv_status_prompt.setText("您的设备已经解绑成功，欢迎您再次使用");
+            tv_status_prompt.setText("您的设备已经解绑成功，欢迎您再次使用！");
             tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_success));
         } else if (status.equals("4")) {
             tv_status.setText("解绑失败");
             tv_complete.setText("确认");
-            tv_status_prompt.setText("您的设备已经解绑失败，请检查网络后重试!");
-            tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_success));
+            tv_status_prompt.setText("您的设备解绑失败，请检查网络后重试!");
+            tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_fail));
         }
         tv_complete.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -102,6 +102,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                         HashMap<String, Object> map = new HashMap<String, Object>();
                         map.put("model", device_model_int);
                         map.put("set_temp", device_set_temp);
+                        map.put("switch", "true");
                         //更新设备的工作模式
                         xCabinetApi.controlDevice(mDevice, map, XConfig.CONFIG_CABINET_MODEL_TEMP_ACTION);
                         swipeRefreshLayout.setRefreshing(true);
@@ -155,8 +156,8 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        if (null!=mDevice){
-            outState.putParcelable("smart_cabinet_set",mDevice);
+        if (null != mDevice) {
+            outState.putParcelable("smart_cabinet_set", mDevice);
         }
         super.onSaveInstanceState(outState, outPersistentState);
     }
@@ -164,9 +165,9 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onRestoreInstanceState(savedInstanceState, persistentState);
-        if (null!=savedInstanceState){
-            if (savedInstanceState.containsKey("smart_cabinet_set")){
-                mDevice= (GizWifiDevice) savedInstanceState.get("smart_cabinet_set");
+        if (null != savedInstanceState) {
+            if (savedInstanceState.containsKey("smart_cabinet_set")) {
+                mDevice = (GizWifiDevice) savedInstanceState.get("smart_cabinet_set");
                 init();
                 swipeRefreshLayout.setRefreshing(true);
             }
@@ -184,9 +185,10 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
             int model = object.getInt("model");
             mWorkName.setText(getResources().getStringArray(R.array.device_model_string)[model]);
             mWorkTemp.setText(object.getString("set_temp") + "℃");
-            wineName.setText(!"".equals(device.getRemark()) ? device.getRemark() : "智能酒柜");
+            wineName.setText(!"".equals(device.getRemark()) ? device.getRemark(): "智能酒柜");
             serverTime = object.getInt("scan_time");
             scan_time.setText(serverTime + "");
+
         } catch (JSONException e) {
             SmartSicaoApi.log("the device update data json has error in " + (null == e ? getClass().getSimpleName() : e.getMessage()));
         }
@@ -235,7 +237,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                 smartCabinetSettingDialog.dismiss();
                 if (position == 0) {
                     //获取该设备的分享信息
-                    GizDeviceSharing.sharingDevice(XUserData.getCabinetToken(SmartCabinetSettingActivity.this),mDevice.getDid(),GizDeviceSharingWay.GizDeviceSharingByQRCode,
+                    GizDeviceSharing.sharingDevice(XUserData.getCabinetToken(SmartCabinetSettingActivity.this), mDevice.getDid(), GizDeviceSharingWay.GizDeviceSharingByQRCode,
                             null, GizUserAccountType.GizUserNormal);
                 } else {
                     //查看设备所有绑定的账号
@@ -244,7 +246,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
             }
         });
         QRcode = (ImageView) findViewById(R.id.qrcode);
-        mQRcodeHint= (TextView) findViewById(R.id.qrcode_hint);
+        mQRcodeHint = (TextView) findViewById(R.id.qrcode_hint);
         wineName = (EditText) findViewById(R.id.editText);
         mWorkName = (TextView) findViewById(R.id.work_mode_name);
         mWorkTemp = (TextView) findViewById(R.id.work_mode_temp_name);
@@ -340,7 +342,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
         super.getSharingInfoError(result);
         QRcode.setVisibility(View.GONE);
         mQRcodeHint.setVisibility(View.GONE);
-        Toast("获取分享信息失败---"+result.toString());
+        Toast("获取分享信息失败---" + result.toString());
     }
 
     @Override
@@ -366,7 +368,7 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                 public void onCancel(Platform platform, int i) {
                     Toast("您已取消分享");
                 }
-            },QRCodeImage);
+            }, QRCodeImage);
         }
     }
 }

@@ -86,6 +86,8 @@ public final class CameraManager {
 	public static void init(Context context) {
 		if (cameraManager == null) {
 			cameraManager = new CameraManager(context);
+		}else{
+			cameraManager.camera.release();
 		}
 	}
 

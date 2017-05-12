@@ -108,7 +108,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     }
 
     public void Toast(String str) {
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+        Toast.makeText(SmartCabinetActivity.this, str, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -244,9 +244,9 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
      * @param requestCode 请求码
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public void requestPermission(String permission, int requestCode) {
+    public void requestPermission(String[] permission, int requestCode) {
         mPermissonRequestCode = requestCode;
-        requestPermissions(new String[]{permission}, requestCode);
+        requestPermissions(permission, requestCode);
     }
 
     int mPermissonRequestCode = 0;
@@ -261,6 +261,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
      * 权限请求OK
      */
     public void requestPermissionSuccess(int requestCode) {
+
     }
 
     @Override
@@ -288,8 +289,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == mPermissonRequestCode) {
-            if (permissions.length != 1 || grantResults.length != 1 ||
-                    grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 requestPermissionError();
             } else {
                 requestPermissionSuccess(requestCode);
@@ -513,6 +513,7 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 dialog.dismiss();
                 startActivity(new Intent(SmartCabinetActivity.this, SmartCabinetHistoryActivity.class).putExtra("mac", device.getMacAddress()));
             }
+
             @Override
             public void cancle() {
                 dialog.dismiss();
@@ -931,9 +932,6 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
             case GIZ_SDK_DEVICE_MAC_INVALID:
                 errorString = (String) getText(R.string.GIZ_SDK_DEVICE_MAC_INVALID);
                 break;
-            case GIZ_SDK_SUBDEVICE_DID_INVALID:
-                errorString = (String) getText(R.string.GIZ_SDK_SUBDEVICE_DID_INVALID);
-                break;
             case GIZ_SDK_DEVICE_PASSCODE_INVALID:
                 errorString = (String) getText(R.string.GIZ_SDK_DEVICE_PASSCODE_INVALID);
                 break;
@@ -1035,15 +1033,6 @@ public abstract class SmartCabinetActivity extends AppCompatActivity implements 
                 break;
             case GIZ_SDK_GROUP_PRODUCTKEY_INVALID:
                 errorString = (String) getText(R.string.GIZ_SDK_GROUP_PRODUCTKEY_INVALID);
-                break;
-            case GIZ_SDK_GROUP_FAILED_DELETE_DEVICE:
-                errorString = (String) getText(R.string.GIZ_SDK_GROUP_FAILED_DELETE_DEVICE);
-                break;
-            case GIZ_SDK_GROUP_FAILED_ADD_DEVICE:
-                errorString = (String) getText(R.string.GIZ_SDK_GROUP_FAILED_ADD_DEVICE);
-                break;
-            case GIZ_SDK_GROUP_GET_DEVICE_FAILED:
-                errorString = (String) getText(R.string.GIZ_SDK_GROUP_GET_DEVICE_FAILED);
                 break;
             case GIZ_SDK_DATAPOINT_NOT_DOWNLOAD:
                 errorString = (String) getText(R.string.GIZ_SDK_DATAPOINT_NOT_DOWNLOAD);

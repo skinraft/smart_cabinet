@@ -153,6 +153,12 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
             mRealTemp2.setText("0℃");
             mWorkModel.setText("未设置");
             mOnLine.setText("离线");
+            mBodys.setText("总共:" + 0 + "支，放入:" + 0 + "支，取出:" + 0 + "支");
+            ArrayList<PointD> linePoint1 = new ArrayList<>();
+            splineChart03View.chartDataSet(linePoint1);
+            splineChart03View.invalidate();
+            historyEntities = new ArrayList<>();
+            smartCabinetWinesHistoryAdpter.upDataAdapter(historyEntities);
         }
     }
 
@@ -187,7 +193,7 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
     @Override
     public void refushDeviceList(List<GizWifiDevice> deviceList) {
         for (GizWifiDevice device : deviceList) {
-            if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
+            if (device.getDid().equals(XUserData.getCurrentCabinetId(this)) && device.isBind()) {
                 mCenterTitle.setText(!"".equals(device.getRemark()) ? device.getRemark() : "智能酒柜");
                 if (device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOnline || device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceControlled) {
                     device.setListener(mBindListener);
@@ -205,7 +211,7 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
     public void refushDeviceInfo(GizWifiDevice device, JSONObject object) {
         mDevice = device;
         try {
-            if (device.getDid().equals(XUserData.getCurrentCabinetId(this))) {
+            if (device.getDid().equals(XUserData.getCurrentCabinetId(this)) && device.isBind()) {
                 //
                 SmartSicaoApi.log("current device is " + device.toString() + "\n" + object.toString());
                 //更新设备信息
@@ -307,6 +313,12 @@ public class XSmartCabinetDeviceInfoActivity extends SmartCabinetActivity implem
             mRealTemp2.setText("0℃");
             mWorkModel.setText("未设置");
             mOnLine.setText("离线");
+            mBodys.setText("总共:" + 0 + "支，放入:" + 0 + "支，取出:" + 0 + "支");
+            ArrayList<PointD> linePoint1 = new ArrayList<>();
+            splineChart03View.chartDataSet(linePoint1);
+            splineChart03View.invalidate();
+            historyEntities = new ArrayList<>();
+            smartCabinetWinesHistoryAdpter.upDataAdapter(historyEntities);
         } else if (what == XConfig.CABINET_INFO_UPDATE_RFIDS_NUMBER) {
             //msg.arg1 = (current.size() + add.size());
             mBodys.setText("总共:" + msg.arg1 + "支，放入:" + msg.obj + "支，取出:" + msg.arg2 + "支");

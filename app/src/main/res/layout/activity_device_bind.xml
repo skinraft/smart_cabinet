@@ -38,7 +38,9 @@
                     android:textSize="14sp"
                     android:layout_marginTop="10dp"
                     android:text="请检查设备是否运行正常，指示灯是否闪烁"
-                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:padding="10dp"
                     android:layout_height="wrap_content" />
             </LinearLayout>
         </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.sicao.smartwine.xdevice;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
+import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.gizwits.gizwifisdk.enumration.GizWifiDeviceNetStatus;
 import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
 import com.sicao.smartwine.R;
@@ -44,6 +46,9 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     SmartCabinetDeviceAdapter mAdapter;
     //添加设备的菜单
     SmartCabinetSettingDialog smartCabinetSettingDialog = null;
+    //
+    GizWifiDevice gizWifiDevice=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,20 +98,19 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 if (position == 0) {
                     //扫码添加设备
                     //判断权限
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                        if (!checkPermission(android.Manifest.permission.CAMERA)) {
-                            requestPermission(android.Manifest.permission.CAMERA, 10086);
-                        }else{
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (!checkPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) || !checkPermission(Manifest.permission.CAMERA)) {
+                            requestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 10086);
+                        } else {
                             startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
                         }
-                    }else{
+                    } else {
                         startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
                     }
                 } else {
                     //配置新设备
                     startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetConfigActivity.class));
                 }
-                finish();
             }
         });
         mDeviceListView = (SwipeMenuListView) findViewById(R.id.view4);
@@ -142,10 +146,10 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             @Override
             public void onMenuItemClick(final int position, SwipeMenu menu, int index) {
                 //"设备解绑后您将不再拥有该设备,请谨慎操作!"
-                GizWifiDevice device = mListData.get(position);
-                if (device.isBind()) {
+                gizWifiDevice = mListData.get(position);
+                if (gizWifiDevice.isBind()) {
                     //已经绑定的设备才可以处理解绑动作
-                    bindDevice(device, false);
+                    bindDevice(gizWifiDevice, false);
                 } else {
                     //表逗我，没绑定解绑你妹哦
                     Toast.makeText(SmartCabinetDeviceListActivity.this, "亲,您还没有绑定该设备哦", Toast.LENGTH_LONG).show();
@@ -156,22 +160,21 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         mDeviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                GizWifiDevice device = mListData.get(position);
-                if (!device.isBind()) {
+                gizWifiDevice = mListData.get(position);
+                if (!gizWifiDevice.isBind()) {
                     //没有绑定的设备，执行绑定设备，并为其设置监听并订阅
-                    bindDevice(device, true);
-                    XUserData.setCurrentCabinetId(SmartCabinetDeviceListActivity.this, device.getDid());
-                    SmartSicaoApi.log("bind device ,your will bind device ,id is " + device.getDid());
+                    bindDevice(gizWifiDevice, true);
+                    SmartSicaoApi.log("bind device ,your will bind device ,id is " + gizWifiDevice.getDid());
                 } else {
                     //已经绑定的设备，则执行为该设备设置监听,并订阅该设备
                     //如果设备处于离线或者不可用的状态，则不执行订阅监控的操作
-                    if (device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOffline || device.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceUnavailable) {
-                        Toast.makeText(SmartCabinetDeviceListActivity.this, "设备处于" + device.getNetStatus() + "状态", Toast.LENGTH_LONG).show();
-                        SmartSicaoApi.log("the device is not control ,that net status is " + device.getNetStatus());
+                    if (gizWifiDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceOffline || gizWifiDevice.getNetStatus() == GizWifiDeviceNetStatus.GizDeviceUnavailable) {
+                        Toast.makeText(SmartCabinetDeviceListActivity.this, "设备处于" + gizWifiDevice.getNetStatus() + "状态", Toast.LENGTH_LONG).show();
+                        SmartSicaoApi.log("the device is not control ,that net status is " + gizWifiDevice.getNetStatus());
                     } else {
-                        xCabinetApi.bindDevice(device, mBindListener);
-                        XUserData.setCurrentCabinetId(SmartCabinetDeviceListActivity.this, device.getDid());
-                        SmartSicaoApi.log("set current device  ,your set current device id is " + device.getDid());
+                        xCabinetApi.bindDevice(gizWifiDevice, mBindListener);
+                        XUserData.setCurrentCabinetId(SmartCabinetDeviceListActivity.this, gizWifiDevice.getDid());
+                        SmartSicaoApi.log("set current device  ,your set current device id is " + gizWifiDevice.getDid());
                     }
                 }
             }
@@ -180,15 +183,16 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
 
     @Override
     public void message(Message msg) {
-        int what=msg.what;
-        if (what== XConfig.BASE_UPDATE_ACTION){
+        int what = msg.what;
+        if (what == XConfig.BASE_UPDATE_ACTION) {
             initDate(xCabinetApi.getCacheDeviceList());
         }
     }
+
     @Override
     public void requestPermissionError() {
         super.requestPermissionError();
-        Toast("授权异常,请重试!");
+        Toast("相机授权异常,请重试!");
         finish();
     }
 
@@ -197,6 +201,8 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
         super.requestPermissionSuccess(requestCode);
         if (requestCode == 10086) {
             startActivity(new Intent(SmartCabinetDeviceListActivity.this, ActivityCapture.class));
+        } else {
+            Toast("授权异常,请重试!");
             finish();
         }
     }
@@ -223,9 +229,12 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
                 showProgress(true);
                 if (bind) {
                     //绑定该设备
-                    xCabinetApi.bindDevice(device, mBindListener);
+                    GizWifiSDK.sharedInstance().bindDevice(XUserData.getCabinetUid(SmartCabinetDeviceListActivity.this),
+                            XUserData.getCabinetToken(SmartCabinetDeviceListActivity.this),
+                            device.getDid(), device.getPasscode(), device.getRemark());
                 } else {
-                    xCabinetApi.unBindDevice(XUserData.getCabinetUid(SmartCabinetDeviceListActivity.this), XUserData.getCabinetToken(SmartCabinetDeviceListActivity.this), device.getDid());
+                    xCabinetApi.unBindDevice(XUserData.getCabinetUid(SmartCabinetDeviceListActivity.this), XUserData.getCabinetToken(SmartCabinetDeviceListActivity.this),
+                            device.getDid());
                 }
             }
 
@@ -241,10 +250,16 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     public void setSubscribeSuccess(GizWifiDevice device, boolean isSubscribed) {
         super.setSubscribeSuccess(device, isSubscribed);
         /***
-         * 订阅OK
+         * 订阅OK,需再次判断是否已经是绑定了该设备，若没有绑定,则说明该用户没有绑定权限
          */
-        Toast("操作成功!");
-        finish();
+        if (isSubscribed) {
+            Toast("操作成功!");
+            XUserData.setCurrentCabinetId(SmartCabinetDeviceListActivity.this, device.getDid());
+            finish();
+        } else {
+            showProgress(false);
+            startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "2"));
+        }
     }
 
     @Override
@@ -261,9 +276,9 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
     public void bindSuccess(String did) {
         super.bindSuccess(did);
         /***
-         * 绑定成功，
+         * 绑定成功，开始订阅该设备
          */
-        startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "1"));
+        xCabinetApi.bindDevice(gizWifiDevice, mBindListener);
     }
 
     @Override
@@ -289,6 +304,7 @@ public class SmartCabinetDeviceListActivity extends SmartCabinetActivity {
             XUserData.setCurrentCabinetId(this, "");
         }
         startActivity(new Intent(SmartCabinetDeviceListActivity.this, SmartCabinetBindStatusActivity.class).putExtra("status", "3"));
+        finish();
     }
 
     @Override
