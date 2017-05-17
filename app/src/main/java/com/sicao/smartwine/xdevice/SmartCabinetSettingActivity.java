@@ -102,7 +102,6 @@ public class SmartCabinetSettingActivity extends SmartCabinetActivity implements
                         HashMap<String, Object> map = new HashMap<String, Object>();
                         map.put("model", device_model_int);
                         map.put("set_temp", device_set_temp);
-                        map.put("switch", "true");
                         //更新设备的工作模式
                         xCabinetApi.controlDevice(mDevice, map, XConfig.CONFIG_CABINET_MODEL_TEMP_ACTION);
                         swipeRefreshLayout.setRefreshing(true);
